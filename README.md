@@ -14,23 +14,17 @@
 [**Network & system administration**] [**Object-oriented programming**] [**Unix**] [**Rigor**] | *Subscribed* |
 <!-- **:white_check_mark: 100%** -->
 
-<!-- * **[Introduction](#introduction)**
-  * **[General rules](#general-rules)**
-  * **[design requirements](#alguns-requisitos-de-design)**
-  * **[Read me](#read-me)**
-  * **[Orthodox Canonical Form](#orthodox-canonical-form)**
-* **[Module-specific rules](#module-specific-rules)** -->
 * **[Mandatory part](#mandatory-part)**
 * **[Study resources](#study-resources)**
-<!-- * ### [Usage]() -->
-<!-- * ### [Workflow](#workflow-1) -->
-<!-- * ### [Tools](#tools-1) -->
 
 <details>
   <summary><b>See</b></summary>
 
 - <cstring> (c++) vs <string.h> (c)
 - **Boost libraries** (are forbidden).
+- file type *.ipp
+- optional configuration file
+- relacao e uso de: select(), kqueue() ou epoll().
 
 </details>
 
@@ -72,6 +66,83 @@ Funcoes externas | Header | Brief
 
 </details>
 
+<details>
+  <summary><b>IRC server in C++ 98.</b></summary>
+
+- Você não deve desenvolver um cliente. 
+- Você não deve lidar com a comunicação de servidor para servidor.
+- `./ircserv <port> <password>`
+  - **port:** O número da porta na qual seu servidor IRC estará ouvindo as conexões de IRC de entrada.
+  - **password:** A senha da conexão. Será necessário para qualquer cliente de IRC que tente se conectar ao seu servidor.
+
+</details>
+
+<details>
+  <summary><b>Requirements</b></summary>
+
+- O servidor deve ser capaz de lidar com vários clientes ao mesmo tempo e nunca travar. 
+- Forking não é permitido. Todas as operações de I/O devem **não bloquear**.
+- Apenas 1 poll() (ou equivalente) pode ser usado para lidar com todas essas operações\
+(ler, escrever, mas também ouvir e assim por diante).
+
+> [!NOTE]
+> *Como você precisa usar descritores de arquivo sem bloqueio, é possível usar funções de read/recv ou write/send sem poll()\
+(ou equivalente), e seu servidor não estaria bloqueando. Mas consumiria mais recursos do sistema.\
+Assim, se você tentar read/recv ou write/send em qualquer descritor de arquivo sem usar poll() (ou equivalente), sua nota será 0.*
+
+- Existem vários clientes de IRC. Você tem que escolher um deles como **referência**.\
+Seu cliente de referência será usado durante o processo de avaliação. 
+- Seu cliente de referência deve ser capaz de se conectar ao seu servidor sem encontrar nenhum erro. 
+- A comunicação entre cliente e servidor deve ser feita via TCP/IP (v4 ou v6). 
+- Usar seu cliente de referência com seu servidor deve ser semelhante a usá-lo com qualquer servidor IRC oficial.\
+No entanto, você só precisa implementar os seguintes recursos: 
+  - Você deve ser capaz de autenticar, definir um apelido, um nome de usuário, ingressar em um canal,\
+  enviar e receber mensagens privadas usando seu cliente de referência. 
+  - Todas as mensagens enviadas de um cliente para um canal precisam ser encaminhadas para todos os\
+  outros clientes que se juntaram ao canal. 
+  - Você deve ter operadores e usuários regulares. 
+  - Então, você tem que implementar os comandos que são específicos para os **operadores de canal**: 
+    - KICK - Ejetar um cliente do canal
+    - INVITE - Convidar um cliente para um canal 
+    - TOPIC - Alterar ou visualizar o canal 
+    - MODE - Alterar o modo do canal: 
+      - i: Definir/remover o canal somente para convite 
+      - t: Definir/remover as restrições dos operadores topo o comando TOPIC para canal 
+      - k: Definir/remover a chave do canal (senha) 
+      - o: Dar/retirar privilégio do operador de canal
+      - l: Defina/remova o limite do usuário para o canal 
+- Claro, espera-se que você escreva um código limpo.
+
+</details>
+
+<details>
+  <summary><b>For MacOS only</b></summary>
+
+*Como o MacOS não implementa write() da mesma maneira que outros sistemas operacionais Unix,\
+você tem permissão para usar fcntl(). Você deve usar descritores de arquivo no modo sem bloqueio\
+para obter um comportamento semelhante ao de outros sistemas operacionais Unix.*
+
+*No entanto, você tem permissão para usar fcntl() apenas da seguinte forma:\
+`fcntl(fd, F_SETFL, O_NONBLOCK);` Qualquer outro sinalizador é proibido.*
+
+</details>
+
+<details>
+  <summary><b>Test Example</b></summary>
+
+- Verifique absolutamente todos os erros e problemas possíveis (receber dados parciais,\
+baixa largura de banda e assim por diante). 
+- Para garantir que seu servidor processe corretamente\
+tudo o que você envia para ele, o seguinte teste simples usando **nc** pode ser feito:
+```bash
+\$> nc 127.0.0.1 6667
+com^Dman^Dd
+\$>
+```
+- Use **ctrl+D** para enviar o comando em várias partes: `'com'`, depois `'man'` e depois `'d\n'`. 
+- Para processar um comando, você deve primeiro agregar os pacotes recebidos para reconstruí-lo.
+
+</details>
 
 ## Study resources
 Resource | Source
