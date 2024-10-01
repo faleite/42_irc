@@ -5,6 +5,7 @@
  ██║  ██╔══██╗  ██║
  ██║  ██║  ██║  ╚██████╗
  ╚═╝  ╚═╝  ╚═╝   ╚═════╝
+    Internet Relay Chat
 ```
 
 *Create your own IRC server in C++, fully compatible with an official client.*
@@ -147,6 +148,10 @@ com^Dman^Dd
 ## Study resources
 Resource | Source
 ---------|:-----:
+[Medium](https://medium.com/@afatir.ahmedfatir/small-irc-server-ft-irc-42-network-7cee848de6f9) | `Article`
+[ircgod](https://www.ircgod.com/irc-server-implementation-in-c/) | `Article`
+[Guia uso IRC](https://youtu.be/ZA9NoLiIHCI?si=dSsAll3lBZSLPgP2) | `Youtube`
+[ircdocs](https://ircdocs.horse/) | `Website`
 [CPP Tutorial (C++98)](https://cplusplus.com/doc/oldtutorial) | `Website`
 [CPP Reference](https://cplusplus.com/) | `Website`
 [Wiki 42cpp](https://github.com/faleite/CPP_42_School/wiki) | `Wiki`
