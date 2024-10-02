@@ -26,6 +26,8 @@
 - file type *.ipp
 - optional configuration file
 - relacao e uso de: select(), kqueue() ou epoll().
+- Use o **wireshark**/um **proxy** personalizado etc. para inspecionar a\
+  comunicação entre seu servidor de referência (ou seu servidor) e você, seu cliente
 
 </details>
 
@@ -148,10 +150,15 @@ com^Dman^Dd
 ## Study resources
 Resource | Source
 ---------|:-----:
+[ircgod](https://ircgod.com/) | `Article`
+[Medium - B.R.O.L.Y](https://medium.com/@ridwaneelfilali/internet-relay-chat-da58a0e4d2ba) | `Article`
+[Medium - Talha Demir](https://medium.com/@talhadmr/ft-irc-server-92ffcd1d4338) | `Article`
 [Medium](https://medium.com/@afatir.ahmedfatir/small-irc-server-ft-irc-42-network-7cee848de6f9) | `Article`
-[ircgod](https://www.ircgod.com/irc-server-implementation-in-c/) | `Article`
-[Guia uso IRC](https://youtu.be/ZA9NoLiIHCI?si=dSsAll3lBZSLPgP2) | `Youtube`
+[ft_irc guide](https://reactive.so/post/42-a-comprehensive-guide-to-ft_irc/) | `Article`
 [ircdocs](https://ircdocs.horse/) | `Website`
-[CPP Tutorial (C++98)](https://cplusplus.com/doc/oldtutorial) | `Website`
-[CPP Reference](https://cplusplus.com/) | `Website`
-[Wiki 42cpp](https://github.com/faleite/CPP_42_School/wiki) | `Wiki`
+[IRC specifications](https://ircdocs.horse/specs/) | `Website`
+[Modern IRC](https://modern.ircdocs.horse/) | `Website`
+[Using Internet Sockets](https://beej.us/guide/bgnet/html/split-wide/index.html) | `Website`
+[ircv3](https://ircv3.net/) | `Website`
+[wikipedia](https://en.wikipedia.org/wiki/IRC) | `Website`
+[Guia uso IRC](https://youtu.be/ZA9NoLiIHCI?si=dSsAll3lBZSLPgP2) | `Youtube`
