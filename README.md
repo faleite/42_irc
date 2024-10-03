@@ -19,6 +19,20 @@
 * **[Study resources](#study-resources)**
 
 <details>
+  <summary><b>Workflow</b></summary>
+
+1. Fazer um servidor
+
+*Estrutura do projeto:*
+![image](./dcs/project_diagram.webp)
+
+*Diagrama do Algoritimo:*
+![image](./dcs/Algorithm_diagram.webp)
+
+
+</details>
+
+<details>
   <summary><b>See</b></summary>
 
 - <cstring> (c++) vs <string.h> (c)
@@ -152,6 +166,7 @@ Resource | Source
 ---------|:-----:
 [ircgod](https://ircgod.com/) | `Article`
 [Medium - B.R.O.L.Y](https://medium.com/@ridwaneelfilali/internet-relay-chat-da58a0e4d2ba) | `Article`
+[Network Programming](https://medium.com/@ridwaneelfilali/c-network-programming-5d89bd32cbb2) | `Article`
 [Medium - Talha Demir](https://medium.com/@talhadmr/ft-irc-server-92ffcd1d4338) | `Article`
 [Medium](https://medium.com/@afatir.ahmedfatir/small-irc-server-ft-irc-42-network-7cee848de6f9) | `Article`
 [ft_irc guide](https://reactive.so/post/42-a-comprehensive-guide-to-ft_irc/) | `Article`
