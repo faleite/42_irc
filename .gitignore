@@ -144,6 +144,7 @@ tags
 .ionide
 
 .bash_history
+.bashrc
 .vscode
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,macos,linux,cmake,visualstudiocode,vim
