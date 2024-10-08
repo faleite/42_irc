@@ -18,34 +18,7 @@
 * **[Mandatory part](#mandatory-part)**
 * **[Study resources](#study-resources)**
 
-<details>
-  <summary><b>Workflow</b></summary>
-
-1. Fazer um servidor
-
-*Estrutura do projeto:*
-![image](./dcs/project_diagram.webp)
-
-*Diagrama do Algoritimo:*
-![image](./dcs/Algorithm_diagram.webp)
-
-</details>
-
-<details>
-  <summary><b>See</b></summary>
-
-- <cstring> (c++) vs <string.h> (c)
-- **Boost libraries** (are forbidden).
-- file type *.ipp
-- optional configuration file
-- relacao e uso de: select(), kqueue() ou epoll().
-- Use o **wireshark**/um **proxy** personalizado etc. para inspecionar a\
-  comunicação entre seu servidor de referência (ou seu servidor) e você, seu cliente
-- [Project reference](https://github.com/RIDWANE-EL-FILALI/FT_IRC)
-
-</details>
-
-## Mandatory part
+### Mandatory part
 <details>
   <summary><b>External functs.</b></summary>
 
@@ -161,7 +134,48 @@ com^Dman^Dd
 
 </details>
 
-## Study resources
+### Workflow
+
+<details>
+  <summary><b>Timeline</b></summary>
+
+1. Fazer um servidor
+
+*Estrutura do projeto:*
+![image](./dcs/project_diagram.webp)
+
+*Diagrama do Algoritimo:*
+![image](./dcs/Algorithm_diagram.webp)
+
+</details>
+
+<details>
+  <summary><b>Take a look</b></summary>
+
+- \<cstring\> (c++) vs \<string.h\> (c)
+- **Boost libraries** (are forbidden).
+- file type *.ipp
+- optional configuration file
+- relacao e uso de: select(), kqueue() ou epoll().
+- Use o **wireshark**/um **proxy** personalizado etc. para inspecionar a\
+  comunicação entre seu servidor de referência (ou seu servidor) e você, seu cliente
+- [Project reference](https://github.com/RIDWANE-EL-FILALI/FT_IRC)
+- Servidores
+  - [BrasIRC](https://chat.brasirc.com.br)
+  - [PTnet](https://www.ptnet.org/)
+
+</details>
+
+<details>
+  <summary><b>RFC</b></summary>
+
+- `Servidores` são identificados exclusivamente pelo seu nome, que tem um comprimento máximo de 63 caracteres.
+- `Usuários` são identificados exclusivamente por um `nickname`, com um comprimento máximo de 9 caracteres. (os clientes DEVE aceitar strings mais longas, evoluções futuras do protocolo)
+- `Mensagens` Cada mensagem IRC pode consistir em até três partes principais: o prefixo (OPCIONAL), o comando e os parâmetros do comando (máximo 15). O prefixo, o comando e todos os parâmetros são separados por um caractere de espaço ASCII (0x20) cada.
+
+</details>
+
+### Study resources
 Article / Forum | Tutorial | Video | Documentation
 :------:|:--------:|:-----:|:-------------:
 [irc - wikipedia](https://en.wikipedia.org/wiki/IRC) | [ircgod](https://ircgod.com/) | [Creating TCP server](https://youtu.be/cNdlrbZSkyQ?si=jF6gYPAGYGEJVr_v) | [RFC1459](https://datatracker.ietf.org/doc/html/rfc1459)
