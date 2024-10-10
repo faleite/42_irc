@@ -6,7 +6,7 @@
 /*   By: faaraujo <faaraujo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 21:44:42 by faaraujo          #+#    #+#             */
-/*   Updated: 2024/10/09 22:20:21 by faaraujo         ###   ########.fr       */
+/*   Updated: 2024/10/10 20:22:58 by faaraujo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,14 @@
 #include <vector>
 #include <fcntl.h>
 #include <sys/types.h>
+#include <poll.h>
 
 class Server
 {
 	private:
 		int _port;
 		int _sockfd;
+		int _cliSocket;
 		// std::vector<Client> clients;
 		// std::vector<struct pollfd> fds;
 		// Server(const Server &copyObj);
@@ -38,8 +40,10 @@ class Server
 		Server();	
 		~Server();	
 		
-		int &getSocketfd();
+		int getSocketfd();
+		int getCliSocket();
 		void socketCreate();
+		void acceptClient();
 };
 
 Server::Server() {}
@@ -48,6 +52,7 @@ Server::Server(std::string port)
 {
 	this->_port = std::atoi(port.c_str());
 	socketCreate();
+	acceptClient();
 }
 
 Server::~Server() {}
@@ -67,8 +72,8 @@ void Server::socketCreate()
 	int optval = 1;
 	if (setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1)
 		throw std::runtime_error("Can't set socket options");
-	// if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) == -1)
-	// 	throw std::runtime_error("Can't set non_blocking");
+	if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) == -1)
+		throw std::runtime_error("Can't set non_blocking");
 	
 	sockaddr_in servAddr;
 	servAddr.sin_family = AF_INET;
@@ -79,8 +84,49 @@ void Server::socketCreate()
 		throw std::runtime_error("Can't be bind to IP/port");
 	if (listen(_sockfd, SOMAXCONN) == -1)
 		throw std::runtime_error("Can't listen");
+	
+	// close _sockfd
 }
 
-int &Server::getSocketfd() { return (this->_sockfd); }
+void Server::acceptClient()
+{
+	 // Aceitar a chamada
+	sockaddr_in client;
+	socklen_t cliSize = sizeof(client);
+
+	_cliSocket = accept(getSocketfd(), (sockaddr *)&client, &cliSize);
+	if (_cliSocket == -1)
+		throw std::runtime_error("Problem with client connecting");
+
+	// struct pollfd pfd[1];
+	// pfd[0].fd = _cliSocket;
+	// pfd[0].events = POLLIN;
+	// pfd[0].revents = 0;
+	
+	// poll(pfd, 1, 25000);
+	
+	// get host name com (gethostbyname ou getnameinfo ou outro)
+
+	// char host[NI_MAXHOST];
+	// char service[NI_MAXSERV];
+	// memset(host, 0, NI_MAXHOST);
+	// memset(service, 0, NI_MAXSERV);
+
+	// int result = getnameinfo((sockaddr *)&client, cliSize, 
+	// 							host, NI_MAXHOST, service, NI_MAXSERV, 0);
+	// if (result != 0)
+	// 	throw std::runtime_error("Can't get hostname");
+
+	//	std::cout << host << " connected on " << service << std::endl;
+	// else
+	// {
+	// 	inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST);
+	// 	std::cout << host << " connected on " << ntohs(client.sin_port) << std::endl;
+	// }
+}
+
+
+int Server::getSocketfd() { return (this->_sockfd); }
+int Server::getCliSocket() { return (this->_cliSocket); }
 
 #endif // SERVER_HPP
