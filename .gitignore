@@ -146,5 +146,6 @@ tags
 .bash_history
 .bashrc
 .vscode
+.python_history
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,macos,linux,cmake,visualstudiocode,vim

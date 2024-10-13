@@ -2,7 +2,7 @@
 
 int	main(void)
 {
-	Server server("54000");
+	Server server("6667");
 		
 	close(server.getSocketfd());
 	close(server.getCliSocket());

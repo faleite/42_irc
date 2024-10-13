@@ -6,7 +6,7 @@
 /*   By: faaraujo <faaraujo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 21:44:42 by faaraujo          #+#    #+#             */
-/*   Updated: 2024/10/11 20:40:23 by faaraujo         ###   ########.fr       */
+/*   Updated: 2024/10/13 10:13:55 by faaraujo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <poll.h>
+#include <cstdlib>
+
 
 class Server
 {
