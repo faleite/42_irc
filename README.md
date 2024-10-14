@@ -139,7 +139,7 @@ com^Dman^Dd
 <details>
   <summary><b>Timeline</b></summary>
 
-1. Fazer um servidor
+[*Project Management*](https://github.com/users/martinzx13/projects/1)
 
 *Estrutura do projeto:*
 ![image](./dcs/project_diagram.webp)

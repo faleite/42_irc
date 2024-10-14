@@ -6,7 +6,7 @@
 /*   By: faaraujo <faaraujo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 21:44:42 by faaraujo          #+#    #+#             */
-/*   Updated: 2024/10/13 10:13:55 by faaraujo         ###   ########.fr       */
+/*   Updated: 2024/10/14 20:54:02 by faaraujo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,28 +26,27 @@
 #include <poll.h>
 #include <cstdlib>
 
-
 class Server
 {
 	private:
 		int _port;
+		// int _pass;
 		int _sockfd;
-		int _clifd;
 		// std::vector<Client> clients;
 		std::vector<struct pollfd> _pfds;
 		// Server(const Server &copyObj);
 		// Server &operator=(const Server &assignCopy);
 	public:
-		Server(std::string port);
-		Server();	
+		Server(std::string port); // STRING PASS HOW SECOND PARAM
+		Server(); // how private?
 		~Server();	
 		
 		int getSocketfd();
-		int getCliSocket();
 		void socketCreate();
 		void acceptClient();
 		void initServer();
 		std::string getMessage(int fd);
+		// Create Method for close all fd
 
 };
 
@@ -73,7 +72,10 @@ void Server::socketCreate()
 {
 	_sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_sockfd == -1)
+	{
+		close(_sockfd);
 		throw std::runtime_error("Can't create a socket");
+	}
 	int optval = 1;
 	if (setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1)
 		throw std::runtime_error("Can't set socket options");
@@ -99,14 +101,15 @@ void Server::acceptClient()
 	sockaddr_in client;
 	socklen_t cliSize = sizeof(client);
 
-	_clifd = accept(_sockfd, (sockaddr *)&client, &cliSize);
-	if (_clifd == -1)
+	int clifd = accept(_sockfd, (sockaddr *)&client, &cliSize);
+	if (clifd == -1)
 		throw std::runtime_error("Problem with client connecting");
 	
-	pollfd pfd = {_clifd, POLLIN, 0};
+	pollfd pfd = {clifd, POLLIN, 0};
 	_pfds.push_back(pfd);
 	
-	//get host name
+	// FOR NOW::::::::::::FOR NOW
+	// HERE GET HOST NAME FOR NOW
 	char host[NI_MAXHOST];
 	char service[NI_MAXSERV];
 	memset(host, 0, NI_MAXHOST);
@@ -129,7 +132,7 @@ void Server::initServer()
 	pollfd pfd = {_sockfd, POLLIN, 0};
 	_pfds.push_back(pfd);
 
-	while(true)
+	while(true) // siganls
 	{
 		// timeout negativo espera para sempre
 		if (poll(_pfds.data(), _pfds.size(), -1) == -1)
@@ -144,8 +147,11 @@ void Server::initServer()
 					break ;
 				}
 				std::cout << getMessage(it->fd);
-				if (it->revents & POLLHUP)
+				if (it->revents & POLLHUP) // Make signal handle 
+				{
+					std::cout << "Break ---- " << std::endl;	
 					return ;
+				}
 			}
 		}
 	}
@@ -153,18 +159,21 @@ void Server::initServer()
 
 std::string Server::getMessage(int fd)
 {
-	char buffer[1024];
+	// limit 512 bytes incluindo (incluindo o comando, prefixo e os separadores (CRLF, "\r\n").  todos os cabeçalhos e espaços)
+	char buffer[1024]; 
 	std::string message;
 	
 	int bytesRecv = recv(fd, buffer, 1024, 0);
-	if (bytesRecv == - 1)
+	if (bytesRecv == - 1) 
 		throw std::runtime_error("There was a connection issue");
 	else
+	{
+		std::cout << "LEN: " << bytesRecv << "\n"; // put except for read bytes recive
 		message = std::string(buffer, bytesRecv);
+	}
 	return (message);
 }
 
 int Server::getSocketfd() { return (this->_sockfd); }
-int Server::getCliSocket() { return (this->_clifd); }
 
 #endif // SERVER_HPP
