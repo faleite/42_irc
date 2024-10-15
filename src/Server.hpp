@@ -6,7 +6,7 @@
 /*   By: faaraujo <faaraujo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 21:44:42 by faaraujo          #+#    #+#             */
-/*   Updated: 2024/10/14 20:54:02 by faaraujo         ###   ########.fr       */
+/*   Updated: 2024/10/15 20:33:06 by faaraujo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,7 @@ void Server::initServer()
 	}
 }
 
+// Use `Try catch`
 std::string Server::getMessage(int fd)
 {
 	// limit 512 bytes incluindo (incluindo o comando, prefixo e os separadores (CRLF, "\r\n").  todos os cabeçalhos e espaços)
@@ -164,11 +165,31 @@ std::string Server::getMessage(int fd)
 	std::string message;
 	
 	int bytesRecv = recv(fd, buffer, 1024, 0);
-	if (bytesRecv == - 1) 
-		throw std::runtime_error("There was a connection issue");
+	// if (bytesRecv == -1) //
+	// {
+	// 	std::cerr << "client gonne" << std::endl;
+	// 	throw std::runtime_error("There was a connection issue");
+	// }
+
+	// Fix obout close the last one
+	if (bytesRecv <= 0)
+	{
+		for (std::vector<pollfd>::iterator it = _pfds.begin(); it != _pfds.end();)
+		{
+			if (it->fd == fd)
+			{
+				std::cerr << "This is being Destroyed" << std::endl;
+				close(it->fd);
+				it = _pfds.erase(it);
+				return (message);
+			}
+			else
+				++it;
+		}
+	}
 	else
 	{
-		std::cout << "LEN: " << bytesRecv << "\n"; // put except for read bytes recive
+		std::cout << "LEN: " << bytesRecv << "\n"; // put except for read bytes receive
 		message = std::string(buffer, bytesRecv);
 	}
 	return (message);

@@ -181,6 +181,6 @@ Article / Forum | Tutorial | Video | Documentation
 [irc - wikipedia](https://en.wikipedia.org/wiki/IRC) | [ircgod](https://ircgod.com/) | [Creating TCP server](https://youtu.be/cNdlrbZSkyQ?si=jF6gYPAGYGEJVr_v) | [RFC1459](https://datatracker.ietf.org/doc/html/rfc1459)
 [ircdocs](https://ircdocs.horse/) | [ft_irc guide](https://reactive.so/post/42-a-comprehensive-guide-to-ft_irc/) | [User guide IRC](https://youtu.be/ZA9NoLiIHCI?si=dSsAll3lBZSLPgP2) | [RFC2812](https://datatracker.ietf.org/doc/html/rfc2812)
 [Using Internet Sockets](https://beej.us/guide/bgnet/html/split-wide/index.html) | [irc - broly](https://medium.com/@ridwaneelfilali/internet-relay-chat-da58a0e4d2ba) |   | [More links](https://stackoverflow.com/questions/24310/programming-a-simple-irc-internet-relay-chat-client)
-[IRC specifications](https://ircdocs.horse/specs/) | [Network - broly](https://medium.com/@ridwaneelfilali/c-network-programming-5d89bd32cbb2) |
+[IRC specifications](https://ircdocs.horse/specs/) | [Network - broly](https://medium.com/@ridwaneelfilali/c-network-programming-5d89bd32cbb2) |    | [irc numerics](https://www.alien.net.au/irc/irc2numerics.html)
 [Modern IRC](https://modern.ircdocs.horse/) | [irc -Talha Demir](https://medium.com/@talhadmr/ft-irc-server-92ffcd1d4338) |
 [ircv3](https://ircv3.net/) | [irc - afatir](https://medium.com/@afatir.ahmedfatir/small-irc-server-ft-irc-42-network-7cee848de6f9) |
