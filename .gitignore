@@ -23,6 +23,9 @@ test.cpp
 *.dylib
 *.dll.vscode/settings.json
 
+#nfs files.
+*.nfs*
+
 # Fortran module files
 *.mod
 *.smod
