@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "./server/Server.hpp"
 
 // 	MAKE THE FUNC AUX PARSE
 
