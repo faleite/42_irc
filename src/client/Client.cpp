@@ -1,9 +1,11 @@
 #include "Client.hpp"
 #include <string>
+#include <sys/socket.h>
+#include <unistd.h>
 
 // ________ Constructors ________
 Client::Client()
-    : _clientSocket(-1), _name("Default"), _nickName("Defaultinxz"),
+    : _clientSocket(-1), _name(""), _nickName(""),
       _isAuthenticated(false), _isOperator(false) {
   std::cout << "Default Client Constructor Called" << std::endl;
 }
@@ -51,4 +53,17 @@ void Client::setOperator(const bool _isOperator) {
 }
 void Client::setAuthenticated(const bool _pass) {
   this->_isAuthenticated = _pass;
+}
+
+// Handle Message.
+std::string Client::receiveMessage() {
+  char buffer[1024];
+  int bytesReceived = recv(_clientSocket, buffer, sizeof(buffer) - 1, 0);
+  if (bytesReceived <= 0) {
+    std::cerr << "Client Disconnected" << std::endl;
+  }
+}
+
+void const Client::sendMessage(std::string const &_message) {
+  send(_clientSocket, _message.c_str(), sizeof(_message), 0);
 }
