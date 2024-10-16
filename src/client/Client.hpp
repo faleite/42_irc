@@ -21,10 +21,8 @@ public:
   Client &operator=(const Client &_other);
 
   // Virtual Class functions.
-  void const sendMessage(void);
-  void const receiveMessage(void);
-  void const createConnection(void);
-  void const closeConnection(void);
+  void const sendMessage(std::string const &_message);
+  std::string receiveMessage(void);
 
   // Getters.
   int const getSocket(void);
