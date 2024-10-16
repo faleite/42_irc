@@ -5,8 +5,8 @@
 
 // ________ Constructors ________
 Client::Client()
-    : _clientSocket(-1), _name(""), _nickName(""),
-      _isAuthenticated(false), _isOperator(false) {
+    : _clientSocket(-1), _name(""), _nickName(""), _isAuthenticated(false),
+      _isOperator(false) {
   std::cout << "Default Client Constructor Called" << std::endl;
 }
 
@@ -59,8 +59,12 @@ void Client::setAuthenticated(const bool _pass) {
 std::string Client::receiveMessage() {
   char buffer[1024];
   int bytesReceived = recv(_clientSocket, buffer, sizeof(buffer) - 1, 0);
-  if (bytesReceived <= 0) {
+  if (bytesReceived == -1) {
     std::cerr << "Client Disconnected" << std::endl;
+    return ("");
+  } else if (bytesReceived == 0) {
+    std::cerr << "Client disconnected" << std::endl;
+    return "";
   }
 }
 
