@@ -16,14 +16,14 @@ private:
 public:
   // Canonical Form.
   Client();
-  Client(int _clientSoket, std::string const &name, std::string const &_nick);
-  Client(const Client &_other);
-  Client &operator=(const Client &_other);
+  Client(int _clientSoket);
 
+  // Function Create Client.
   // Virtual Class functions.
   void const sendMessage(std::string const &_message);
   std::string receiveMessage(void);
-
+  void const createConnection() {}
+  void const closeConnection() {}
   // Getters.
   int const getSocket(void);
   std::string const getName(void);
@@ -40,7 +40,13 @@ public:
   // Operating Functions.
   void const joinChanel(const std::string &_chanel);
   void const leaveChanel(const std::string &_chanel);
+
+  // Factory method
+
   // setters
-  ~Client(void);
+  ~Client(void) { std::cout << "Client Destroyed" << std::endl; };
 };
+
+Client *createRandomClient(int clientSocket);
+
 #endif
