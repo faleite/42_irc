@@ -65,8 +65,6 @@ void Server::acceptClient()
 	pollfd pfd = {clifd, POLLIN, 0};
 	_pfds.push_back(pfd);
 	
-	// FOR NOW::::::::::::FOR NOW
-	// HERE GET HOST NAME FOR NOW
 	char host[NI_MAXHOST];
 	char service[NI_MAXSERV];
 	memset(host, 0, NI_MAXHOST);
@@ -77,7 +75,11 @@ void Server::acceptClient()
 	if (result != 0)
 		throw std::runtime_error("Can't get hostname");	
 	else
-		std::cout << inet_ntoa(client.sin_addr) << " connected on " << ntohs(client.sin_port) << std::endl;
+		std::cout << inet_ntoa(client.sin_addr) << " connected on port " << ntohs(client.sin_port) << std::endl;
+	
+	// Client newClient = Client(clifd);
+	Client newClient = Client(clifd, inet_ntoa(client.sin_addr), ntohs(client.sin_port));
+	_clients.push_back(newClient);
 }
 
 void Server::initServer()
@@ -99,13 +101,10 @@ void Server::initServer()
 					acceptClient();
 					break ;
 				}
-				std::cout << getMessage(it->fd);
-				if (it->revents & POLLHUP) // Make signal handle 
-				{
-					std::cout << "Client has been disconnected" << std::endl;	
-					break ;
-				}
+				handleMessage(it->fd);
 			}
+			if (it->revents & POLLHUP) // Make signal handle 
+				break ;
 		}
 	}
 }
@@ -136,6 +135,7 @@ void Server::clientExit(int fd)
 		{
 			if (it->fd == fd)
 			{
+				std::cout << "Client has been disconnected" << std::endl;	
 				it = _pfds.erase(it);
 				close(fd);
 				break ;
@@ -148,4 +148,34 @@ void Server::clientExit(int fd)
 	{
 		throw std::runtime_error("Error in client exit");
 	}
+}
+// TEST CLIENT
+// Client::Client(int fd, std::string host, int port): _fd(fd) {}
+Client::Client(int fd, std::string host, int port): _fd(fd), _host(host), _port(port) {}
+
+void Client::sendMessage(std::string const &_message) 
+{
+  std::string msg = _message + "\r\n";
+  send(_fd, msg.c_str(), msg.size(), 0);
+}
+
+std::string Client::getHost() {return this->_host;}
+int Client::getPort() {return this->_port;}
+int Client::getFd() {return this->_fd;}
+// THE TEST END
+
+void Server::handleMessage(int fd)
+{
+	for (size_t i = 0; i < _clients.size(); ++i)
+	{
+		if (_clients[i].getFd() == fd)
+		{
+			std::cout <<  _clients[i].getHost() << " connected on port " << _clients[i].getPort() << std::endl;
+			break ;
+		}
+	}
+	std::cout << this->getMessage(fd);
+	// std::string userMessage;
+	// std::getline(std::cin, userMessage);
+	// _clients[0].sendMessage(userMessage);
 }

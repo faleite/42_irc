@@ -6,7 +6,7 @@
 /*   By: faaraujo <faaraujo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 21:44:42 by faaraujo          #+#    #+#             */
-/*   Updated: 2024/10/16 20:55:18 by faaraujo         ###   ########.fr       */
+/*   Updated: 2024/10/17 22:00:58 by faaraujo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,28 @@
 #include <string>
 #include <cstring>
 #include <vector>
+#include <map>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <poll.h>
 #include <cstdlib>
+
+class Client
+{
+	private:
+		int _fd;
+		std::string _host;
+		int _port;
+	public:
+		Client(int fd, std::string host, int port);
+		// Client(int fd);
+		Client();
+		void sendMessage(std::string const &_message);
+		std::string getHost();
+		int getPort();
+		int getFd();
+};
+
 
 /**
  * TODO
@@ -36,7 +54,7 @@ class Server
 		int _sockfd;
 		std::string _port;
 		std::string _pass;
-		// std::vector<Client> clients;
+		std::vector<Client> _clients;
 		std::vector<struct pollfd> _pfds;
 		Server();
 	public:
@@ -50,6 +68,7 @@ class Server
 		void initServer();
 		void clientExit(int fd);
 		std::string getMessage(int fd);
+		void handleMessage(int fd);
 };
 
 #endif // SERVER_HPP
