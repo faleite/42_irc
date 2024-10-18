@@ -1,22 +1,20 @@
-#ifndef CLIENT_HPP
-#define CLIENT_HPP
+#ifndef BOT_HPP
+#define BOT_HPP
 
 #include "../communicator/Communicator.hpp"
-#include <string>
 
-class Client : public Communicator {
+class Bot : public Communicator {
 private:
-  int _clientSocket;
+  int _botSocket;
   std::string _name;
   std::string _nickName;
-  bool _isAuthenticated;
   bool _isOperator;
   std::set<std::string> _channels; // structure to keeep track of the channels,
                                    // in and unorder set.
 public:
   // Canonical Form.
-  Client();
-  Client(int _clientSoket);
+  Bot();
+  Bot(int _botSoket);
 
   // Function Create Client.
   // Virtual Class functions.
@@ -44,9 +42,8 @@ public:
   // Factory method
 
   // setters
-  ~Client(void) { std::cout << "Client Destroyed" << std::endl; };
+  ~Bot(void) { std::cout << "Bot Destroyed" << std::endl; };
 };
 
-Client *createRandomClient(int clientSocket);
 
 #endif

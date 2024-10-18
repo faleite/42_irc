@@ -5,35 +5,15 @@
 
 // ________ Constructors ________
 Client::Client()
-    : _clientSocket(-1), _name(""), _nickName(""),
-      _isAuthenticated(false), _isOperator(false) {
+    : _clientSocket(-1), _name(""), _nickName(""), _isAuthenticated(false),
+      _isOperator(false) {
   std::cout << "Default Client Constructor Called" << std::endl;
 }
 
-Client::Client(int _clientSoket, std::string const &name,
-               std::string const &_nick)
-    : _clientSocket(_clientSoket), _name(name), _nickName(_nick),
-      _isOperator(false), _isAuthenticated(false) {
+Client::Client(int clientSoket)
+    : _clientSocket(clientSoket), _name(""), _nickName(""), _isOperator(false),
+      _isAuthenticated(false) {
   std::cout << "Client Socket Constructor Connected" << std::endl;
-}
-
-Client::Client(const Client &_other)
-    : _clientSocket(_other._clientSocket), _name(_other._name),
-      _nickName(_other._nickName), _isAuthenticated(_other._isAuthenticated),
-      _isOperator(_other._isOperator), _channels(_other._channels) {
-  std::cout << "Copy Constructor Called" << std::endl;
-}
-
-Client &Client::operator=(const Client &_other) {
-  if (this != &_other) {
-    this->_clientSocket = _other._clientSocket;
-    this->_name = _other._name;
-    this->_nickName = _other._nickName;
-    this->_isAuthenticated = _other._isAuthenticated;
-    this->_isOperator = _other._isOperator;
-    this->_channels = _other._channels;
-  }
-  return (*this);
 }
 
 // Getter.
@@ -59,9 +39,15 @@ void Client::setAuthenticated(const bool _pass) {
 std::string Client::receiveMessage() {
   char buffer[1024];
   int bytesReceived = recv(_clientSocket, buffer, sizeof(buffer) - 1, 0);
-  if (bytesReceived <= 0) {
+  if (bytesReceived == -1) {
     std::cerr << "Client Disconnected" << std::endl;
+    return ("");
+  } else if (bytesReceived == 0) {
+    std::cerr << "Client disconnected" << std::endl;
+    return "";
   }
+  std::cout << "Message received " << buffer << std::endl;
+  return (buffer);
 }
 
 void const Client::sendMessage(std::string const &_message) {
