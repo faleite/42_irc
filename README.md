@@ -172,6 +172,58 @@ com^Dman^Dd
 - `Servidores` são identificados exclusivamente pelo seu nome, que tem um comprimento máximo de 63 caracteres.
 - `Usuários` são identificados exclusivamente por um `nickname`, com um comprimento máximo de 9 caracteres. (os clientes DEVE aceitar strings mais longas, evoluções futuras do protocolo)
 - `Mensagens` Cada mensagem IRC pode consistir em até três partes principais: o prefixo (OPCIONAL), o comando e os parâmetros do comando (máximo 15). O prefixo, o comando e todos os parâmetros são separados por um caractere de espaço ASCII (0x20) cada.
+- `Canais` os nomes dos canais são strings (começando com '&', '#', '+' ou '!' caractere) de comprimento de até cinquenta (50) caracteres. Além deste requisito, a única restrição para um nome de canal é que ele NÃO DEVE conter quaisquer espaços (' '), um controle G (^G ou ASCII 7), uma vírgula (','). Espaço é usado como separador de parâmetros e o comando é usado como um item de lista. Dois pontos (':') também podem ser usados ​​como delimitador para a máscara do canal. Os nomes dos canais não diferenciam maiúsculas de minúsculas. Cada prefixo caracteriza um tipo de canal diferente.
+- **Devido à origem escandinava do IRC, os caracteres `{}|^` são
+   considerados os equivalentes minúsculos dos caracteres `[]\~`,
+   respectivamente. Esta é uma questão crítica ao determinar o
+   equivalência de dois apelidos ou nomes de canais.**
+- `Mensagens` Servidores e clientes enviam mensagens uns aos outros, que podem ou não
+   gerar uma resposta. Se a mensagem contiver um comando válido, como
+   descrito em seções posteriores, o cliente deve esperar uma resposta como
+   especificado, mas não é aconselhável esperar para sempre pela resposta;
+  - Cada mensagem IRC pode consistir em até três partes principais: o prefixo
+   (OPCIONAL), o comando e os parâmetros do comando (máximo de
+   quinze (15)). O prefixo, o comando e todos os parâmetros são separados
+   por um caractere de espaço ASCII (0x20) cada. 
+   O prefixo é usado pelos servidores para indicar o verdadeiro
+   origem da mensagem. Se o prefixo estiver faltando na mensagem, ele
+   presume-se que tenha se originado da conexão da qual foi
+   recebido de. Os clientes NÃO DEVEM usar um prefixo ao enviar um
+   mensagem; se eles usarem um, o único prefixo válido é o registrado
+   apelido associado ao cliente. O prefixo é (':', 0x3b)
+   O comando DEVE ser um comando IRC válido ou um comando de três (3) dígitos
+   número representado em texto ASCII.
+   - As mensagens IRC são sempre linhas de caracteres terminadas com CR-LF
+   (Retorno de carro - Alimentação de linha) par, e essas mensagens NÃO DEVEM
+   exceder 512 caracteres de comprimento, contando todos os caracteres, incluindo
+   o CR-LF final.
+  - Mensagens vazias são silenciosamente ignoradas
+- Formato de mensagem em BNF Aumentado. 
+  - A mensagem extraída é analisada nos componentes \<prefixo\>,
+   \<comando\> e lista de parâmetros (\<params\>).
+  ```
+    message    =  [ ":" prefix SPACE ] command [ params ] crlf
+    prefix     =  servername / ( nickname [ [ "!" user ] "@" host ] )
+    command    =  1*letter / 3digit
+    params     =  *14( SPACE middle ) [ SPACE ":" trailing ]
+               =/ 14( SPACE middle ) [ SPACE [ ":" ] trailing ]
+
+    nospcrlfcl =  %x01-09 / %x0B-0C / %x0E-1F / %x21-39 / %x3B-FF
+                    ; any octet except NUL, CR, LF, " " and ":"
+    middle     =  nospcrlfcl *( ":" / nospcrlfcl )
+    trailing   =  *( ":" / " " / nospcrlfcl )
+
+    SPACE      =  %x20        ; space character
+    crlf       =  %x0D %x0A   ; "carriage return" "linefeed"
+  ```
+- `Registro de conexão`  Um comando "PASS" não é necessário para que uma conexão de cliente seja
+   registrado, mas DEVE preceder o último do NICK/USER
+  ```
+  1. Pass message
+  2. Nick message / 2. Service message
+  3. User message
+  ```
+- [`Respsotas de comando`](https://datatracker.ietf.org/doc/html/rfc2812#section-5)
 
 </details>
 
