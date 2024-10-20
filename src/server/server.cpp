@@ -7,7 +7,7 @@ Server::Server(std::string port, std::string pass): _port(port), _pass(pass)
 	initServer();
 }
 
-Server::Server() {}
+Server::Server(): _sockfd(-1), _port(""), _pass("") {}
 
 Server::Server(const Server &copyObj)
 {
@@ -74,12 +74,14 @@ void Server::acceptClient()
 								host, NI_MAXHOST, service, NI_MAXSERV, 0);
 	if (result != 0)
 		throw std::runtime_error("Can't get hostname");	
-	else
-		std::cout << inet_ntoa(client.sin_addr) << " connected on port " << ntohs(client.sin_port) << std::endl;
-	
-	// Client newClient = Client(clifd);
+
 	Client newClient = Client(clifd, inet_ntoa(client.sin_addr), ntohs(client.sin_port));
 	_clients.push_back(newClient);
+
+	// TESTING
+	std::ostringstream oss;
+	oss << newClient.getPort();
+	newClient.sendMessage("The Server say: Hello port " + oss.str());
 }
 
 void Server::initServer()
@@ -92,7 +94,7 @@ void Server::initServer()
 		// negative timeout waits forever
 		if (poll(_pfds.data(), _pfds.size(), -1) == -1)
 			throw std::runtime_error("poll error");
-		for (std::vector<pollfd>::iterator it = _pfds.begin(); it != _pfds.end(); it++)
+		for (std::vector<pollfd>::iterator it = _pfds.begin(); it != _pfds.end(); ++it)
 		{
 			if (it->revents & POLLIN)
 			{
@@ -116,11 +118,15 @@ std::string Server::getMessage(int fd)
 	
 	int bytesRecv = recv(fd, buffer, 1024, 0);
 	if (bytesRecv <= 0)
+	{
 		clientExit(fd);
+		return ("");
+	}
 	else if (bytesRecv > 510) // check in RFC about close connection here
 	{
 		std::cerr << "Message exceeds 512 bytes limit. Closing connection." << std::endl;
         clientExit(fd);
+		return ("");
 	}
 	else
 		message = std::string(buffer, bytesRecv);
@@ -149,33 +155,18 @@ void Server::clientExit(int fd)
 		throw std::runtime_error("Error in client exit");
 	}
 }
-// TEST CLIENT
-// Client::Client(int fd, std::string host, int port): _fd(fd) {}
-Client::Client(int fd, std::string host, int port): _fd(fd), _host(host), _port(port) {}
-
-void Client::sendMessage(std::string const &_message) 
-{
-  std::string msg = _message + "\r\n";
-  send(_fd, msg.c_str(), msg.size(), 0);
-}
-
-std::string Client::getHost() {return this->_host;}
-int Client::getPort() {return this->_port;}
-int Client::getFd() {return this->_fd;}
-// THE TEST END
 
 void Server::handleMessage(int fd)
 {
+	// TESTING
 	for (size_t i = 0; i < _clients.size(); ++i)
 	{
-		if (_clients[i].getFd() == fd)
+		if (_clients[i].getClientSoket() == fd)
 		{
-			std::cout <<  _clients[i].getHost() << " connected on port " << _clients[i].getPort() << std::endl;
+			std::cout <<  _clients[i].getIp() << " connected on port " 
+			<< _clients[i].getPort() << std::endl;
 			break ;
 		}
 	}
 	std::cout << this->getMessage(fd);
-	// std::string userMessage;
-	// std::getline(std::cin, userMessage);
-	// _clients[0].sendMessage(userMessage);
 }

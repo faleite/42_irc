@@ -6,7 +6,7 @@
 /*   By: faaraujo <faaraujo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 21:44:42 by faaraujo          #+#    #+#             */
-/*   Updated: 2024/10/18 17:59:23 by faaraujo         ###   ########.fr       */
+/*   Updated: 2024/10/18 21:41:36 by faaraujo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,22 +26,8 @@
 #include <sys/types.h>
 #include <poll.h>
 #include <cstdlib>
-
-class Client
-{
-	private:
-		int _fd;
-		std::string _host;
-		int _port;
-	public:
-		Client(int fd, std::string host, int port);
-		// Client(int fd);
-		Client();
-		void sendMessage(std::string const &_message);
-		std::string getHost();
-		int getPort();
-		int getFd();
-};
+#include <sstream>
+#include "../client/Client.hpp"
 
 
 /**
@@ -57,10 +43,10 @@ class Server
 		std::vector<Client> _clients;
 		std::vector<struct pollfd> _pfds;
 		Server();
-	public:
-		Server(std::string port, std::string pass);
 		Server(const Server &copyObj);
 		Server &operator=(const Server &assignCopy);
+	public:
+		Server(std::string port, std::string pass);
 		~Server();	
 		
 		void createSocket();
