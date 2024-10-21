@@ -1,12 +1,17 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-#include "../communicator/Communicator.hpp"
+// #include "../communicator/Communicator.hpp"
 #include <string>
+#include <iostream>
+#include <set>
 
-class Client : public Communicator {
+// class Client : public Communicator {
+class Client {
 private:
   int _clientSocket;
+  std::string _ip;
+	int _port;
   std::string _name;
   std::string _nickName;
   bool _isAuthenticated;
@@ -16,20 +21,25 @@ private:
 public:
   // Canonical Form.
   Client();
-  Client(int _clientSoket);
+  Client(int _clientSoket, std::string ip, int port);
+  ~Client();
+  Client(const Client &copyObj);
+	Client &operator=(const Client &assignCopy);
 
   // Function Create Client.
   // Virtual Class functions.
-  void const sendMessage(std::string const &_message);
-  std::string receiveMessage(void);
-  void const createConnection() {}
-  void const closeConnection() {}
+  void sendMessage(std::string const &_message) const;
+  void createConnection() const {}
+  void closeConnection() const {}
   // Getters.
-  int const getSocket(void);
-  std::string const getName(void);
-  std::string const getNickName(void);
-  bool const getAuthenticator(void);
-  bool const getIsOperator(void);
+  int getSocket(void) const;
+  std::string const &getName(void) const;
+  std::string const &getNickName(void) const;
+  bool getAuthenticator(void) const;
+  bool getIsOperator(void) const;
+  std::string const &getIp() const;
+	int getPort() const;
+	int getClientSoket() const;
 
   // Setters.
   void setName(const std::string _name);
@@ -38,13 +48,13 @@ public:
   void setAuthenticated(bool _pass);
 
   // Operating Functions.
-  void const joinChanel(const std::string &_chanel);
-  void const leaveChanel(const std::string &_chanel);
+  void joinChanel(const std::string &_chanel) const;
+  void leaveChanel(const std::string &_chanel) const;
 
   // Factory method
 
   // setters
-  ~Client(void) { std::cout << "Client Destroyed" << std::endl; };
+
 };
 
 Client *createRandomClient(int clientSocket);
