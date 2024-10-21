@@ -6,7 +6,7 @@
 /*   By: faaraujo <faaraujo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 21:44:42 by faaraujo          #+#    #+#             */
-/*   Updated: 2024/10/18 21:41:36 by faaraujo         ###   ########.fr       */
+/*   Updated: 2024/10/21 21:04:44 by faaraujo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@
 #include <sstream>
 #include "../client/Client.hpp"
 
+#include <signal.h>
+
+
 
 /**
  * TODO
@@ -45,6 +48,9 @@ class Server
 		Server();
 		Server(const Server &copyObj);
 		Server &operator=(const Server &assignCopy);
+
+		bool _run;
+		
 	public:
 		Server(std::string port, std::string pass);
 		~Server();	
@@ -52,9 +58,13 @@ class Server
 		void createSocket();
 		void acceptClient();
 		void initServer();
-		void clientExit(int fd);
+		void clientExit();
+		void cleanClient(int fd);
 		std::string getMessage(int fd);
 		void handleMessage(int fd);
+
+		void stop(); 
+		void start();
 };
 
 #endif // SERVER_HPP
