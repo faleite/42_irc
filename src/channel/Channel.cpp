@@ -1,48 +1,64 @@
 #include "Channel.hpp"
 #include <vector>
 
+//_______________________________________: Constructor
+
 Channel::Channel(std::string const &name)
     : needInvitation(false), needVerification(false), restricTopic(false),
       active(true), _name(name), _topic("") {
   std::cout << "The Channel < " << name << " > was created" << std::endl;
 }
 
-bool Channel::searchClient(Client *client, int use) {
-  std::vector<Client *>::iterator iter;
-  if (use == 1) {
-    iter = std::find(channelUsers.begin(), channelUsers.end(), client);
-    if (iter == channelUsers.end())
-      return true;
-    else
-      return false;
-  } else {
-    iter = std::find(invitedList.begin(), invitedList.end(), client);
-    if (iter == invitedList.end())
-      return true;
-    else
-      return false;
-  }
-}
+//_______________________________________: Destructor
+
 Channel::~Channel() { std::cout << "Channel Destroyed" << std::endl; }
 
-// GETTERS
+//_______________________________________: Getter.
+
 std::string const &Channel::getName(void) const { return (_name); }
 std::string const &Channel::getTopic(void) const { return (_topic); }
+int const Channel::getLimit(void) const { return (limit); }
 
-// SETTER.
+//_______________________________________: Setter.
+
 void Channel::setTopic(std::string const &topic) { this->_topic = topic; }
 
-// ACTIONS.
+void Channel::setLimit(int limit) { this->limit = limit; }
+
+void Channel::setPrivilige(Client *client, bool enable) {
+  client->setOperator(enable);
+}
+
+//_______________________________________: Search.
+
+bool Channel::isOnList(Client *client) {
+  std::vector<Client *>::iterator iter;
+
+  iter = std::find(invitedList.begin(), invitedList.end(), client);
+  if (iter == invitedList.end())
+    return false;
+  return false;
+}
+
+bool Channel::isOnChannel(Client *client) {
+  std::vector<Client *>::iterator iter;
+
+  iter = std::find(channelUsers.begin(), channelUsers.end(), client);
+  if (iter == channelUsers.end())
+    return false;
+  return true;
+}
+//_______________________________________: Actions.
+
 void Channel::joinChannel(Client *newClient) {
   // Check if the client is already in the channel
-
-  if (searchClient(newClient, 1) == false) {
+  if (isOnChannel(newClient) == true) {
     std::cout << "The " << newClient->getName() << " Is already in the Channel"
               << std::endl;
     return;
   }
   // Check if the client is in the invite list
-  if (searchClient(newClient, 2) == false) {
+  if (isOnList(newClient) == true) {
     channelUsers.push_back(newClient);
     std::cout << " join the Channel " << newClient->getName() << std::endl;
     return;
@@ -62,6 +78,7 @@ void Channel::joinChannel(Client *newClient) {
   channelUsers.push_back(newClient);
   std::cout << newClient->getName() << " joined the Channel." << std::endl;
 }
+
 void Channel::leaveChannel(Client *client) {
   std::vector<Client *>::iterator it;
   it = std::find(channelUsers.begin(), channelUsers.end(), client);
@@ -80,9 +97,9 @@ void Channel::brodcastMessage(std::string &message) {
   }
 }
 
-// Commands perform by operators.
+//_______________________________________: Perform Operators.
 
-void Channel::cmdKick(Client *clientOperator, Client *clientUser) {
+void Channel::kick(Client *clientOperator, Client *clientUser) {
   if (clientOperator->getIsOperator() == true)
     leaveChannel(clientUser);
   else {
@@ -91,13 +108,22 @@ void Channel::cmdKick(Client *clientOperator, Client *clientUser) {
   }
 }
 
-void Channel::cmdInvite(Client *clientOperator, Client *clientInvited) {
+void Channel::changeTopic(Client *clientOperator, std::string const &topic) {
+  if (clientOperator->getIsOperator() == true)
+    setTopic(topic);
+  else {
+    std::cout << "Just the User Operator can perform this function"
+              << std::endl;
+  }
+}
+
+void Channel::invite(Client *clientOperator, Client *clientInvited) {
   if (clientOperator->getIsOperator() == true) {
-    if (searchClient(clientInvited, 1) == false) {
+    if (isOnChannel(clientInvited) == true) {
       std::cout << "Client already in the channel" << std::endl;
       return;
     }
-    if (searchClient(clientInvited, 2) == true) {
+    if (isOnList(clientInvited) == false) {
       invitedList.push_back(clientInvited);
       std::cout << "Client " << clientInvited << " has been invited"
                 << std::endl;
@@ -110,33 +136,40 @@ void Channel::cmdInvite(Client *clientOperator, Client *clientInvited) {
   }
 }
 
-void Channel::cmdTopic(Client *clientOperator, std::string const &topic) {
-  if (clientOperator->getIsOperator() == true)
-    setTopic(topic);
-  else {
-    std::cout << "Just the User Operator can perform this function"
-              << std::endl;
-  }
-}
+void Channel::modeLimit(int limit, bool enable)
+{
 
-void Channel::cmdMode(Client *clientOperator, char mode) {
-  switch (mode) {
-  case 'i':
-    needInvitation = !needInvitation;
-    break;
-  case 't':
-    restricTopic = !restricTopic;
-    break;
-  case 'k':
-    // TODO.
-    break;
-  case 'o': // give a privilege to and user, or remove
-    // TODO
-    break;
-  case 'l':
-    // TODO set max number.
-    break;
-  default:
-    std::cout << "Not mode command found " << std::endl;
+}
+void Channel::mode(Client *clientOperator, std::string const &modeCmd) {
+
+  bool enable;
+
+  if (clientOperator->getIsOperator() == false) {
+    std::cout << "Only operators can perform this funtion" << std::endl;
+    return;
+  }
+  modeCmd[0] == '+' ? enable = true : enable = false;
+
+  for (int i = 1; modeCmd[i]; ++i) {
+
+    switch (modeCmd[i]) {
+    case 'i':
+      needInvitation = !needInvitation;
+      break;
+    case 't':
+      restricTopic = !restricTopic;
+      break;
+    case 'k':
+      // TODO.
+      break;
+    case 'o': // give a privilege to and user, or remove
+      setPrivilige(clientOperator, enable);
+      break;
+    case 'l':
+      // modeLimit()
+      break;
+    default:
+      std::cout << "Not mode command found " << std::endl;
+    }
   }
 }
