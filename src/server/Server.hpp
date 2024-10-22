@@ -6,7 +6,7 @@
 /*   By: faaraujo <faaraujo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 21:44:42 by faaraujo          #+#    #+#             */
-/*   Updated: 2024/10/21 21:04:44 by faaraujo         ###   ########.fr       */
+/*   Updated: 2024/10/22 20:11:44 by faaraujo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,12 @@ class Server
 		std::string _pass;
 		std::vector<Client> _clients;
 		std::vector<struct pollfd> _pfds;
-		Server();
-		Server(const Server &copyObj);
-		Server &operator=(const Server &assignCopy);
-
 		bool _run;
 		
 	public:
+		Server();
+		Server(const Server &copyObj);
+		Server &operator=(const Server &assignCopy);
 		Server(std::string port, std::string pass);
 		~Server();	
 		

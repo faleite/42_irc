@@ -227,6 +227,28 @@ com^Dman^Dd
 
 </details>
 
+<details>
+  <summary><b>Run Program</b></summary>
+
+### Compilator
+```bash
+c++ -Wall -Wextra -Werror -std=c++98 ./server/Server.cpp ./client/Client.cpp main.cpp
+```
+
+### Compilator and Run
+```bash
+alias crun='c++ -Wall -Wextra -Werror -std=c++98 ./server/Server.cpp ./client/Client.cpp main.cpp && ./a.out'
+```
+
+### Valgrind Test
+```bash
+valgrind --leak-check=full --show-leak-kinds=all --fds=yes ./a.out
+```
+
+
+
+</details>
+
 ### Study resources
 Article / Forum | Tutorial | Video | Documentation
 :------:|:--------:|:-----:|:-------------:

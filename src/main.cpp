@@ -22,6 +22,6 @@ int	main(void)
 	server = new Server("6667", "1234");
 	signal(SIGINT, closeSignal);
 	server->initServer();
-	delete (server);
+	delete server;
 	return (0);
 }
