@@ -1,6 +1,8 @@
 #ifndef COMMUNICATOR_HPP
 #define COMMUNICATOR_HPP
 
+#include <vector>
+#include <algorithm> 
 #include <cstring> // for the memeset initialiation.
 #include <iostream>
 #include <netinet/in.h> // sockaddr_in structure.
