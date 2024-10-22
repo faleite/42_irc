@@ -9,6 +9,7 @@ class Channel {
 private:
   bool needInvitation;
   bool needVerification;
+  std::string _channelKey;
   bool restricTopic;
   bool active;
   int limit;
@@ -39,8 +40,9 @@ public:
 
   // Commands perform by operators.
   void kick(Client *clientOperator, Client *clientUser);
-  void mode(Client *clientOperator, std::string const &mode);
-  void modeLimit(int limit, bool enable);
+  void mode(Client *clientOperator, std::string const &mode,
+            std::vector<std::string> params);
+  // void modeLimit(int limit, bool enable, std::vector<std::string> params);
   void invite(Client *clientOperator, Client *ClientInvited);
   void setTopic(Client *clientOperator, std::string const &newTopic);
 };

@@ -1,11 +1,13 @@
 #include "Channel.hpp"
+#include <stdexcept>
+#include <string>
 #include <vector>
 
 //_______________________________________: Constructor
 
 Channel::Channel(std::string const &name)
-    : needInvitation(false), needVerification(false), restricTopic(false),
-      active(true), _name(name), _topic("") {
+    : needInvitation(false), needVerification(false), _channelKey(""),
+      restricTopic(false), active(true), _name(name), _topic("") {
   std::cout << "The Channel < " << name << " > was created" << std::endl;
 }
 
@@ -136,11 +138,9 @@ void Channel::invite(Client *clientOperator, Client *clientInvited) {
   }
 }
 
-void Channel::modeLimit(int limit, bool enable)
-{
-
-}
-void Channel::mode(Client *clientOperator, std::string const &modeCmd) {
+// void Channel::modeLimit(int limit, bool enable) {}
+void Channel::mode(Client *clientOperator, std::string const &modeCmd,
+                   std::vector<std::string> params) {
 
   bool enable;
 
@@ -149,24 +149,55 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd) {
     return;
   }
   modeCmd[0] == '+' ? enable = true : enable = false;
+  size_t modeParameters = 0;
 
   for (int i = 1; modeCmd[i]; ++i) {
 
     switch (modeCmd[i]) {
     case 'i':
-      needInvitation = !needInvitation;
+      needInvitation = enable;
+      std::cout << "Invite Only Mode" << (enable ? "Enable" : "Disable")
+                << std::endl;
       break;
     case 't':
-      restricTopic = !restricTopic;
+      restricTopic = enable;
+      std::cout << "Restricted Topic Mode " << (enable ? "Enable" : "Disable")
+                << std::endl;
       break;
-    case 'k':
+    case 'l':
+      if (enable) {
+        if (modeParameters < params.size()) {
+          try {
+            limit = std::stoi(params[modeParameters++]);
+            std::cout << "User limit set to: " << limit << std::endl;
+          } catch (std::invalid_argument &) {
+            std::cout << "Error: Invalid user limit parameter." << std::endl;
+          }
+        } else {
+          std::cout << "Error: Missing user limit parameter." << std::endl;
+        }
+      } else {
+        limit = -1;
+        std::cout << "Limit parameter Removed." << std::endl;
+      }
       // TODO.
       break;
     case 'o': // give a privilege to and user, or remove
       setPrivilige(clientOperator, enable);
       break;
-    case 'l':
-      // modeLimit()
+    case 'k':
+      needVerification = enable;
+      if (enable) {
+        if (modeParameters < params.size()) {
+          _channelKey = params[modeParameters++];
+          std::cout << "Channel key set to: " << _channelKey << std::endl;
+        } else {
+          std::cout << "Missing Channel key Parameter " << std::endl;
+        }
+      } else {
+        _channelKey.clear();
+        std::cout << "Channel key Removed " << std::endl;
+      }
       break;
     default:
       std::cout << "Not mode command found " << std::endl;
