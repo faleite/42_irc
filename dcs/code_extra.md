@@ -16,3 +16,29 @@ std::string Client::receiveMessage() {
   return (buffer);
 }
 ```
+
+## Delete Client from Server
+```cpp
+void Server::cleanClient(int fd)
+{
+	try
+	{
+		for (std::vector<Client>::iterator it = _clients.begin(); it != _clients.end();)
+		{
+			if (it->getClientSoket() == fd)
+			{
+				it = _clients.erase(it);
+				break;
+			}
+			else
+			{
+				++it;
+			}
+		}
+	}
+	catch (const std::exception &e)
+	{
+		throw std::runtime_error("Error clean Client");
+	}
+}
+```

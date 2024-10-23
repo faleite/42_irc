@@ -6,7 +6,7 @@
 /*   By: faaraujo <faaraujo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 21:44:42 by faaraujo          #+#    #+#             */
-/*   Updated: 2024/10/22 20:11:44 by faaraujo         ###   ########.fr       */
+/*   Updated: 2024/10/23 17:48:03 by faaraujo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ class Server
 		std::string _pass;
 		std::vector<Client> _clients;
 		std::vector<struct pollfd> _pfds;
-		bool _run;
+		bool _signal;
+		static Server *instance;
 		
 	public:
 		Server();
@@ -57,13 +58,12 @@ class Server
 		void createSocket();
 		void acceptClient();
 		void initServer();
-		void clientExit();
-		void cleanClient(int fd);
+		void closeFds();
 		std::string getMessage(int fd);
 		void handleMessage(int fd);
-
 		void stop(); 
-		void start();
+		static void closeSignal(int sig);
+		void registerSignalHandler();
 };
 
 #endif // SERVER_HPP
