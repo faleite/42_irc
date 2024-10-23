@@ -7,11 +7,11 @@
 class Channel {
 
 private:
-  bool needInvitation;
-  bool needVerification;
+  bool _needInvitation;
+  bool _needVerification;
   std::string _channelKey;
-  bool restricTopic;
-  bool active;
+  bool _restricTopic;
+  bool _active;
   int limit;
   std::string _name;
   std::string _topic;
@@ -31,7 +31,7 @@ public:
   void setPrivilige(Client *client, bool enable);
 
   // Actions.
-  void joinChannel(Client *newClient);
+  void joinChannel(Client *newClient, const std::string &password);
   void leaveChannel(Client *client);
   void brodcastMessage(std::string &message);
   bool isOnList(Client *client);

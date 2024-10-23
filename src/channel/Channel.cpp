@@ -6,8 +6,8 @@
 //_______________________________________: Constructor
 
 Channel::Channel(std::string const &name)
-    : needInvitation(false), needVerification(false), _channelKey(""),
-      restricTopic(false), active(true), _name(name), _topic("") {
+    : _needInvitation(false), _needVerification(false), _channelKey(""),
+      _restricTopic(false), _active(true), _name(name), _topic("") {
   std::cout << "The Channel < " << name << " > was created" << std::endl;
 }
 
@@ -52,27 +52,38 @@ bool Channel::isOnChannel(Client *client) {
 }
 //_______________________________________: Actions.
 
-void Channel::joinChannel(Client *newClient) {
+// Set up the password, and the authentication in the list of the client.
+
+void Channel::joinChannel(Client *newClient, const std::string &password = "") {
+  // Check if there is a limit.
+  if (limit > 0 && channelUsers.size() < limit) {
+    std::cout << "Cant Join to the Channel, max set user reached" << std::endl;
+  }
   // Check if the client is already in the channel
   if (isOnChannel(newClient) == true) {
     std::cout << "The " << newClient->getName() << " Is already in the Channel"
               << std::endl;
     return;
   }
-  // Check if the client is in the invite list
-  if (isOnList(newClient) == true) {
-    channelUsers.push_back(newClient);
-    std::cout << " join the Channel " << newClient->getName() << std::endl;
-    return;
-  }
-  // If the channel is invite-only, reject the join unless the client is an
-  // operator
-  if (needInvitation == true && newClient->getIsOperator() == false) {
+  // check if the channel is invite only.
+  if (_needInvitation == true && newClient->getIsOperator() == false &&
+      isOnList(newClient) == false) {
     std::cout << "Channel is invite-only. " << newClient->getName()
               << " cannot join." << std::endl;
     newClient->sendMessage("You cannot join the channel: invite-only.");
     return;
   }
+  // Check if the channel needs a password.
+  if (_needVerification == true) {
+    if (password.empty() == true || password != _channelKey) {
+      std::cout << "Channel Authentication Requered. " << newClient->getName()
+                << " cannot join." << std::endl;
+      newClient->sendMessage(
+          "You cannot join the channel: use correct password.");
+      return;
+    }
+  }
+
   if (channelUsers.empty()) {
     std::cout << "First client Ever, you are the boss." << std::endl;
     newClient->setOperator(true);
@@ -89,7 +100,7 @@ void Channel::leaveChannel(Client *client) {
     std::cout << client->getName() << " Has left the Channel" << std::endl;
   }
   if (channelUsers.empty())
-    active = false;
+    _active = false;
 }
 
 void Channel::brodcastMessage(std::string &message) {
@@ -155,12 +166,12 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
 
     switch (modeCmd[i]) {
     case 'i':
-      needInvitation = enable;
+      _needInvitation = enable;
       std::cout << "Invite Only Mode" << (enable ? "Enable" : "Disable")
                 << std::endl;
       break;
     case 't':
-      restricTopic = enable;
+      _restricTopic = enable;
       std::cout << "Restricted Topic Mode " << (enable ? "Enable" : "Disable")
                 << std::endl;
       break;
@@ -186,7 +197,7 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
       setPrivilige(clientOperator, enable);
       break;
     case 'k':
-      needVerification = enable;
+      _needVerification = enable;
       if (enable) {
         if (modeParameters < params.size()) {
           _channelKey = params[modeParameters++];
