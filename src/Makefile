@@ -1,0 +1,41 @@
+# Compiler and flags
+CPP := c++
+CPP_FLAGS := -Wall -Wextra -Werror -g -std=c++98
+
+# Source and Object files
+SRC := main.cpp \
+	  bot/Bot.cpp \
+	  channel/Channel.cpp \
+	  client/Client.cpp \
+	  file/File.cpp \
+	  server/Server.cpp
+
+OBJ := $(SRC:.cpp=.o)
+
+# Executable name
+NAME := irserver
+
+# Default rule
+all: $(NAME)
+
+# Linking rule: creating the executable from object files
+$(NAME): $(OBJ)
+	$(CPP) $(CPP_FLAGS) $(OBJ) -o $(NAME)
+
+# Compiling .cpp files into .o files
+%.o: %.cpp
+	$(CPP) $(CPP_FLAGS) -c $< -o $@
+
+# Clean up object files
+clean:
+	rm -f $(OBJ)
+
+# Clean up object files and the executable
+fclean: clean
+	rm -f $(NAME)
+
+# Rebuild the project from scratch
+re: fclean all
+
+# .PHONY rule: make targets that aren't filenames
+.PHONY: all clean fclean re
