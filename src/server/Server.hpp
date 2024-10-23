@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Server.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: faaraujo <faaraujo@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/08 21:44:42 by faaraujo          #+#    #+#             */
-/*   Updated: 2024/10/23 17:48:03 by faaraujo         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
@@ -27,16 +15,9 @@
 #include <poll.h>
 #include <cstdlib>
 #include <sstream>
+#include <signal.h>
 #include "../client/Client.hpp"
 
-#include <signal.h>
-
-
-
-/**
- * TODO
- * - Create Method for close all fds
- */
 class Server
 {
 	private:
