@@ -2,16 +2,18 @@
 #define CLIENT_HPP
 
 // #include "../communicator/Communicator.hpp"
-#include <string>
+#include <algorithm>
 #include <iostream>
 #include <set>
+#include <string>
+#include <vector>
 
 // class Client : public Communicator {
 class Client {
 private:
   int _clientSocket;
   std::string _ip;
-	int _port;
+  int _port;
   std::string _name;
   std::string _nickName;
   bool _isAuthenticated;
@@ -24,7 +26,7 @@ public:
   Client(int _clientSoket, std::string ip, int port);
   ~Client();
   Client(const Client &copyObj);
-	Client &operator=(const Client &assignCopy);
+  Client &operator=(const Client &assignCopy);
 
   // Function Create Client.
   // Virtual Class functions.
@@ -38,8 +40,8 @@ public:
   bool getAuthenticator(void) const;
   bool getIsOperator(void) const;
   std::string const &getIp() const;
-	int getPort() const;
-	int getClientSoket() const;
+  int getPort() const;
+  int getClientSoket() const;
 
   // Setters.
   void setName(const std::string _name);
@@ -48,13 +50,13 @@ public:
   void setAuthenticated(bool _pass);
 
   // Operating Functions.
-  void joinChanel(const std::string &_chanel) const;
+  void joinChanel(const std::string &_chanel,
+                  const std::string &password) const;
   void leaveChanel(const std::string &_chanel) const;
 
   // Factory method
 
   // setters
-
 };
 
 Client *createRandomClient(int clientSocket);
