@@ -3,6 +3,7 @@
 
 #include "../client/Client.hpp"
 #include <string>
+#include <sstream>
 
 class Channel {
 
@@ -24,7 +25,7 @@ public:
   // getters.
   std::string const &getName(void) const;
   std::string const &getTopic(void) const;
-  int const getLimit(void) const;
+  int  getLimit(void) ;
   // Setter.
   void setTopic(std::string const &topic);
   void setLimit(int limit);

@@ -19,7 +19,7 @@ Channel::~Channel() { std::cout << "Channel Destroyed" << std::endl; }
 
 std::string const &Channel::getName(void) const { return (_name); }
 std::string const &Channel::getTopic(void) const { return (_topic); }
-int const Channel::getLimit(void) const { return (limit); }
+int Channel::getLimit(void) { return (limit); }
 
 //_______________________________________: Setter.
 
@@ -50,13 +50,21 @@ bool Channel::isOnChannel(Client *client) {
     return false;
   return true;
 }
+
+int stringToInt(const std::string &str) {
+  std::stringstream ss(str);
+  int result;
+  ss >> result;
+  return result;
+}
+
 //_______________________________________: Actions.
 
 // Set up the password, and the authentication in the list of the client.
 
 void Channel::joinChannel(Client *newClient, const std::string &password = "") {
   // Check if there is a limit.
-  if (limit > 0 && channelUsers.size() < limit) {
+  if (limit > 0 && limit == static_cast<int>(channelUsers.size())) {
     std::cout << "Cant Join to the Channel, max set user reached" << std::endl;
   }
   // Check if the client is already in the channel
@@ -179,7 +187,7 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
       if (enable) {
         if (modeParameters < params.size()) {
           try {
-            limit = std::stoi(params[modeParameters++]);
+            limit = stringToInt(params[modeParameters++]);
             std::cout << "User limit set to: " << limit << std::endl;
           } catch (std::invalid_argument &) {
             std::cout << "Error: Invalid user limit parameter." << std::endl;
