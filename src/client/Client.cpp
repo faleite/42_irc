@@ -65,9 +65,10 @@ void Client::sendMessage(std::string const &_message) const {
 void Client::joinChanel(const std::string &_chanel,
                         const std::string &password = "") const {
   std::string command;
-  command = "JOIN" + _chanel;
+  command = "JOIN " + _chanel;
   if (password.empty() == false) {
     command += " " + password;
   }
   sendMessage(command);
 }
+
