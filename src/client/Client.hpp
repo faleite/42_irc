@@ -10,7 +10,7 @@
 
 // class Client : public Communicator {
 class Client {
-private:
+protected:
   int _clientSocket;
   std::string _ip;
   int _port;
