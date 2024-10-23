@@ -45,6 +45,10 @@ class Server
 		void stop(); 
 		static void closeSignal(int sig);
 		void registerSignalHandler();
+
+		std::string const &getPass() const;
+		bool checkAuthenticator(Client &client, std::string &command);
+		int  parseHandler(Client &client, std::string &message);
 };
 
 #endif // SERVER_HPP

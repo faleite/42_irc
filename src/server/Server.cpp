@@ -29,6 +29,13 @@ Server &Server::operator=(const Server &assignCopy)
 
 Server::~Server() {}
 
+std::string const &Server::getPass() const
+{
+	return (_pass);
+}
+
+// Handle Signals
+
 Server *Server::instance = NULL;
 
 void Server ::stop() { this->_signal = false; }
@@ -52,6 +59,8 @@ void Server::registerSignalHandler()
 	signal(SIGINT, closeSignal);
 	signal(SIGQUIT, closeSignal);
 }
+
+// Handle Server
 
 void Server::createSocket()
 {
@@ -169,18 +178,63 @@ void Server::closeFds()
 	}
 }
 
+////////////////////////////////////
+
+bool Server::checkAuthenticator(Client &client, std::string &command) {
+  std::istringstream stream(command);
+  std::string password;
+  stream >> password;
+  if (password == getPass()) 
+  {
+    client.setAuthenticated(true);
+    std::cout << "Correct Password: " << client.getAuthenticator() << std::endl;
+    return true;
+  } 
+  else
+	client.sendMessage("ERROR :Invalid password");
+  return false;
+}
+
+/**
+ * Utils:
+ * std::cout << "Name cannot be empty" << std::endl;
+ * std::cout << "Nickname cannot be empty" << std::endl;
+ */
+int Server::parseHandler(Client &client, std::string &message) 
+{
+	std::string cmd;
+	std::istringstream stream(message);
+	stream >> cmd;
+
+    if (cmd == "USER") 
+	{
+      std::string name;
+      stream >> name;
+      if (!name.empty()) 
+        client.setName(name);
+    } 
+	if (cmd == "NICK") 
+	{
+      std::string nickName;
+      stream >> nickName;
+      if (!nickName.empty())
+        client.setNickName(nickName);
+    }
+  	if (cmd == "PASS")
+	{
+    	  std::string password;
+    	  stream >> password;
+		  if (!password.empty())
+	    	  client.setAuthenticated(checkAuthenticator(client, password));
+  	}
+	return 0;
+}
+
+//////////////////////////////////////
+
 void Server::handleMessage(int fd)
 {
-	// for (size_t i = 0; i < _clients.size(); ++i)
-	// {
-	// 	if (_clients[i].getClientSoket() == fd)
-	// 	{
-	// 		std::cout <<  _clients[i].getIp() << " connected on port "
-	// 		<< _clients[i].getPort() << std::endl;
-	// 		break ;
-	// 	}
-	// }
 	std::string message = this->getMessage(fd);
-	// parseHandler(_clients[0], message);
+	parseHandler(_clients[0], message);
 	std::cout << message;
 }
