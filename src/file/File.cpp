@@ -13,7 +13,7 @@ File::File(std::string const &filePath, int chunkSize)
 
 bool File::openFile(void) {
   // Open the file in binary mode.
-  _inputFileStream.open(_filePath, std::ios::in | std::ios::binary);
+  _inputFileStream.open(_filePath.c_str(), std::ios::in | std::ios::binary);
   if (_inputFileStream.is_open() == false) {
     std::cout << "Problem with openin the file " << std::endl;
     return false;
