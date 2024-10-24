@@ -49,6 +49,7 @@ public:
   void registerSignalHandler();
   // Create channels
   void createChannel(std::string const &name);
+  bool findChannel(std::string const &channelName);
 };
 
 #endif // SERVER_HPP

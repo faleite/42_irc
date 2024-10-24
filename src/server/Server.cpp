@@ -203,6 +203,12 @@ void Server::createChannel(std::string const &name) {
   _channels[name] = Channel(name);
 }
 
+bool Server::findChannel(std::string const &channelName) {
+  std::map<std::string, Channel>::iterator it;
+  it = _channels.find(channelName);
+  return (it != _channels.end() ? true : false);
+}
+
 // #___________________________________________UTILIIES.
 
 void Server::sendWelcomeMessage(Client newClient) {
