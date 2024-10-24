@@ -44,7 +44,7 @@ public:
   std::string const &getIp() const;
   int getPort() const;
   int getClientSoket() const;
-
+  bool getIsBot(void) const;
   // Setters.
   void setName(const std::string _name);
   void setNickName(const std::string _nick);
