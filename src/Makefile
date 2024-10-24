@@ -37,5 +37,8 @@ fclean: clean
 # Rebuild the project from scratch
 re: fclean all
 
+val: re
+	valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes ./$(NAME) 6667 1234
+
 # .PHONY rule: make targets that aren't filenames
 .PHONY: all clean fclean re
