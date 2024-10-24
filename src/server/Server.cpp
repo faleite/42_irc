@@ -30,6 +30,13 @@ Server &Server::operator=(const Server &assignCopy) {
 
 Server::~Server() {}
 
+std::string const &Server::getPass() const
+{
+	return (_pass);
+}
+
+// Handle Signals
+
 Server *Server::instance = NULL;
 
 void Server ::stop() { this->_signal = false; }
@@ -50,17 +57,19 @@ void Server::registerSignalHandler() {
   signal(SIGQUIT, closeSignal);
 }
 
-void Server::createSocket() {
-  this->_signal = true;
-  _sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  if (_sockfd == -1)
-    throw std::runtime_error("Can't create a socket");
-  int optval = 1;
-  if (setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) ==
-      -1)
-    throw std::runtime_error("Can't set socket options");
-  if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) == -1)
-    throw std::runtime_error("Can't set non_blocking");
+// Handle Server
+
+void Server::createSocket()
+{
+	this->_signal = true;
+	_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	if (_sockfd == -1)
+		throw std::runtime_error("Can't create a socket");
+	int optval = 1;
+	if (setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1)
+		throw std::runtime_error("Can't set socket options");
+	if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) == -1)
+		throw std::runtime_error("Can't set non_blocking");
 
   sockaddr_in servAddr;
   servAddr.sin_family = AF_INET;
@@ -159,18 +168,27 @@ void Server::initServer() {
   }
 }
 
-std::string Server::getMessage(int fd) {
-  char buffer[1024];
-  std::string message;
-  int bytesRecv = recv(fd, buffer, 1024, 0);
-  if (bytesRecv == -1)
-    throw std::runtime_error("");
-  else if (bytesRecv > 510) // check in RFC about close connection here
-    throw std::runtime_error(
-        "Message exceeds 512 bytes limit. Closing connection.");
-  else
-    message = std::string(buffer, bytesRecv);
-  return (message);
+std::string Server::getMessage(int fd)
+{
+	char buffer[1024];
+	std::string message;
+	int bytesRecv = recv(fd, buffer, 1024, 0);
+	if (bytesRecv == -1)
+	{
+		// cleanClient(fd);
+		throw std::runtime_error("");
+	}
+	// if (bytesRecv == 0)
+	// {
+	// 	// close(fd);
+	// 	std::cout << "Close one client\n";
+	// 	// throw std::runtime_error("Close client");
+	// }
+	else if (bytesRecv > 510) // check in RFC about close connection here
+		throw std::runtime_error("Message exceeds 512 bytes limit. Closing connection.");
+	else
+		message = std::string(buffer, bytesRecv);
+	return (message);
 }
 
 void Server::closeFds() {
@@ -182,21 +200,6 @@ void Server::closeFds() {
   } catch (const std::exception &e) {
     throw std::runtime_error("Error delete poll");
   }
-}
-
-void Server::handleMessage(int fd) {
-  // for (size_t i = 0; i < _clients.size(); ++i)
-  // {
-  // 	if (_clients[i].getClientSoket() == fd)
-  // 	{
-  // 		std::cout <<  _clients[i].getIp() << " connected on port "
-  // 		<< _clients[i].getPort() << std::endl;
-  // 		break ;
-  // 	}
-  // }
-  std::string message = this->getMessage(fd);
-  // parseHandler(_clients[0], message);
-  std::cout << message;
 }
 
 void Server::createChannel(std::string const &name) {
@@ -251,4 +254,104 @@ void Server::sendWelcomeMessage(Client newClient) {
 
   std::string welcomeMessage = oss.str();
   newClient.sendMessage(welcomeMessage);
+}
+
+// THIS
+// void Server::cleanClient()
+// {
+// 	try
+// 	{
+// 		for (std::vector<Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+// 		{
+// 			if (it->_isDisconnected())
+// 			{
+// 				close(it->getClientSoket());
+// 				it = _clients.erase(it);
+// 			}
+// 			else
+// 			{
+// 				++it;
+// 			}
+// 		}
+// 	}
+// 	catch (const std::exception &e)
+// 	{
+// 		throw std::runtime_error("Error clean Client");
+// 	}
+// }
+
+////////////////////////////////////
+
+bool Server::checkAuthenticator(Client &client, std::string &command) {
+  std::istringstream stream(command);
+  std::string password;
+  stream >> password;
+  if (password == getPass()) 
+  {
+    client.setAuthenticated(true);
+    std::cout << "Correct Password: " << client.getAuthenticator() << std::endl;
+    return true;
+  } 
+//   else
+// 	client.sendMessage("ERROR :Invalid password");
+  return false;
+}
+
+/**
+ * Utils:
+ * std::cout << "Name cannot be empty" << std::endl;
+ * std::cout << "Nickname cannot be empty" << std::endl;
+ */
+int Server::parseHandler(Client &client, std::string &message) 
+{
+	std::string cmd;
+	std::istringstream stream(message);
+	stream >> cmd;
+
+    if (cmd == "USER") 
+	{
+      std::string name;
+      stream >> name;
+      if (!name.empty())
+	  {
+        client.setName(name);
+		// std::cout << "NAME :: " << client.getName() << std::endl;
+	  }
+    } 
+	if (cmd == "NICK") 
+	{
+      std::string nickName;
+      stream >> nickName;
+      if (!nickName.empty())
+	  {
+		// if (client.getNickName().empty())
+		// 	client.sendMessage(":" + nickName + "!@localhost NICK :" + nickName);
+		// else
+		// 	client.sendMessage(":" + client.getNickName() + "!@localhost NICK :" + nickName);
+        client.setNickName(nickName);
+	  }
+    }
+  	if (cmd == "PASS")
+	{
+    	  std::string password;
+    	  stream >> password;
+		  if (!password.empty())
+	    	  client.setAuthenticated(checkAuthenticator(client, password));
+  	}
+	return 0;
+}
+
+//////////////////////////////////////
+
+void Server::handleMessage(int fd)
+{
+	std::string message = this->getMessage(fd);
+	// size_t i = 0;
+	// while (!_clients.empty() && i <_clients.size())
+	// {
+		parseHandler(_clients[0], message);
+		// std::cout << "PORT :: " << _clients[0].getPort() << std::endl;
+		// i++;
+	// }
+	std::cout << message;
 }
