@@ -1,6 +1,7 @@
 #include "./server/Server.hpp"
 #include <sstream>
 
+<<<<<<< HEAD
 Server *server = NULL;
 
 // 	MAKE THE FUNC AUX PARSE
@@ -40,4 +41,19 @@ int main(int argc, char *argv[]) {
   server->initServer();
   delete server;
   return (0);
+=======
+int	main(void)
+{
+	try
+	{
+		Server server("6667", "1234");
+		server.registerSignalHandler();
+		server.initServer();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
+	return (0);
+>>>>>>> 689ed9326491ccf2e4888c98c12273628bc8793a
 }
