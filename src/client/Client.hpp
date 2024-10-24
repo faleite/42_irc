@@ -18,11 +18,13 @@ protected:
   std::string _nickName;
   bool _isAuthenticated;
   bool _isOperator;
+  bool _isBot;
   std::set<std::string> _channels; // structure to keeep track of the channels,
                                    // in and unorder set.
 public:
   // Canonical Form.
   Client();
+  Client(int _clientSocket, std::string const &name);
   Client(int _clientSoket, std::string ip, int port);
   ~Client();
   Client(const Client &copyObj);
@@ -48,7 +50,7 @@ public:
   void setNickName(const std::string _nick);
   void setOperator(bool _isOperator);
   void setAuthenticated(bool _pass);
-
+  void setIsBot(bool isBot);
   // Operating Functions.
   void joinChanel(const std::string &_chanel,
                   const std::string &password) const;

@@ -41,7 +41,7 @@ class Server
 {
 	private:
 		int _sockfd;
-		std::string _port;
+		int _port;
 		std::string _pass;
 		std::vector<Client> _clients;
 		std::vector<struct pollfd> _pfds;
@@ -51,7 +51,7 @@ class Server
 		Server();
 		Server(const Server &copyObj);
 		Server &operator=(const Server &assignCopy);
-		Server(std::string port, std::string pass);
+		Server(int const &port, std::string pass);
 		~Server();	
 		
 		void createSocket();
