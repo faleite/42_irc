@@ -1,8 +1,10 @@
 #include "Server.hpp"
 #include <cstdlib>
+#include <iostream>
 
-Server::Server(int const &port, std::string pass)
-    : _port(port), _pass(pass) {
+//_______________________________________: Constructor
+
+Server::Server(int const &port, std::string pass) : _port(port), _pass(pass) {
   this->_sockfd = -1;
   createSocket();
   // initServer();
@@ -23,6 +25,8 @@ Server &Server::operator=(const Server &assignCopy) {
   }
   return *this;
 }
+
+//_______________________________________: Destructor
 
 Server::~Server() {}
 
@@ -68,6 +72,7 @@ void Server::createSocket() {
     throw std::runtime_error("Can't be bind to IP/port");
   if (listen(_sockfd, SOMAXCONN) == -1)
     throw std::runtime_error("Can't listen");
+  std::cout << "Server Running on Port : " << _port << std::endl;
 }
 
 void Server::acceptClient() {
@@ -96,14 +101,38 @@ void Server::acceptClient() {
   _clients.push_back(newClient);
 
   // TESTING
-  std::ostringstream oss;
-  oss << newClient.getPort();
-  newClient.sendMessage("The Server say: Hello port " + oss.str());
+  sendWelcomeMessage(newClient);
 }
 
 void Server::initServer() {
   pollfd pfd = {_sockfd, POLLIN, 0};
   _pfds.push_back(pfd);
+
+  //___________________________________SET CHANNELS
+  createChannel("#general");
+  createChannel("#news");
+  createChannel("#random");
+
+  //___________________________________SET BOT
+  Client faleiteBot(-1, "FaleiteLegend");
+  Client juanBot(-1, "MasterTinxzYoda");
+  juanBot.setIsBot(true);
+  faleiteBot.setIsBot(true);
+  juanBot.setOperator(true);
+  faleiteBot.setOperator(true);
+  _clients.push_back(juanBot);
+  _clients.push_back(faleiteBot);
+  std::cout << "Bot :::: " << juanBot.getName() << std::endl;
+  std::cout << "Bot :::: " << faleiteBot.getName() << std::endl;
+
+  //___________________________________SET CHANNELS BOTS.
+  _channels["#general"].joinChannel(&juanBot, "");
+  _channels["#random"].joinChannel(&juanBot, "");
+  _channels["#news"].joinChannel(&juanBot, "");
+
+  _channels["#general"].joinChannel(&faleiteBot, "");
+  _channels["#random"].joinChannel(&faleiteBot, "");
+  _channels["#news"].joinChannel(&faleiteBot, "");
 
   while (this->_signal) // siganls
   {
@@ -168,4 +197,52 @@ void Server::handleMessage(int fd) {
   std::string message = this->getMessage(fd);
   // parseHandler(_clients[0], message);
   std::cout << message;
+}
+
+void Server::createChannel(std::string const &name) {
+  _channels[name] = Channel(name);
+}
+
+// #___________________________________________UTILIIES.
+
+void Server::sendWelcomeMessage(Client newClient) {
+  std::ostringstream oss;
+  oss << "////////////////////////////////////////////////////////////////////"
+         "\n"
+      << "//                                                                "
+         "//\n"
+      << "//                              WELCOME                           "
+         "//\n"
+      << "//                                TO                              "
+         "//\n"
+      << "//                            /// SERVER ///                      "
+         "//\n"
+      << "//                                                                "
+         "//\n"
+      << "////////////////////////////////////////////////////////////////////"
+         "\n"
+      << "\n"
+      << "Hello, " << newClient.getName() << "!\n"
+      << "\n"
+      << "Welcome to the **best IRC Server** around. We're thrilled to have "
+         "you join our community!\n"
+      << "\n"
+      << "To get started, please set your name and nickname:\n"
+      << "- Use `USER <YourName> <ip> <host> <surname>` to set your real "
+         "data.\n"
+      << "- Use `NICK <YourNickname>` to choose a nickname.\n"
+      << "\n"
+      << "Once you're all set, feel free to jump into our channels:\n"
+      << "- **#general**: For general discussion and announcements.\n"
+      << "- **#help**: For support and troubleshooting.\n"
+      << "- **#random**: For casual conversation and fun.\n"
+      << "\n"
+      << "Enjoy your stay and reach out if you need any assistance. Let’s make "
+         "this a great place together!\n"
+      << "\n"
+      << "Best,\n"
+      << "The 42_IRC Team\n";
+
+  std::string welcomeMessage = oss.str();
+  newClient.sendMessage(welcomeMessage);
 }
