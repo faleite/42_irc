@@ -156,7 +156,16 @@ std::string Server::getMessage(int fd)
 	std::string message;
 	int bytesRecv = recv(fd, buffer, 1024, 0);
 	if (bytesRecv == -1)
+	{
+		// cleanClient(fd);
 		throw std::runtime_error("");
+	}
+	// if (bytesRecv == 0)
+	// {
+	// 	// close(fd);
+	// 	std::cout << "Close one client\n";
+	// 	// throw std::runtime_error("Close client");
+	// }
 	else if (bytesRecv > 510) // check in RFC about close connection here
 		throw std::runtime_error("Message exceeds 512 bytes limit. Closing connection.");
 	else
@@ -178,6 +187,31 @@ void Server::closeFds()
 	}
 }
 
+
+// THIS
+// void Server::cleanClient()
+// {
+// 	try
+// 	{
+// 		for (std::vector<Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+// 		{
+// 			if (it->_isDisconnected())
+// 			{
+// 				close(it->getClientSoket());
+// 				it = _clients.erase(it);
+// 			}
+// 			else
+// 			{
+// 				++it;
+// 			}
+// 		}
+// 	}
+// 	catch (const std::exception &e)
+// 	{
+// 		throw std::runtime_error("Error clean Client");
+// 	}
+// }
+
 ////////////////////////////////////
 
 bool Server::checkAuthenticator(Client &client, std::string &command) {
@@ -190,8 +224,8 @@ bool Server::checkAuthenticator(Client &client, std::string &command) {
     std::cout << "Correct Password: " << client.getAuthenticator() << std::endl;
     return true;
   } 
-  else
-	client.sendMessage("ERROR :Invalid password");
+//   else
+// 	client.sendMessage("ERROR :Invalid password");
   return false;
 }
 
@@ -210,15 +244,24 @@ int Server::parseHandler(Client &client, std::string &message)
 	{
       std::string name;
       stream >> name;
-      if (!name.empty()) 
+      if (!name.empty())
+	  {
         client.setName(name);
+		// std::cout << "NAME :: " << client.getName() << std::endl;
+	  }
     } 
 	if (cmd == "NICK") 
 	{
       std::string nickName;
       stream >> nickName;
       if (!nickName.empty())
+	  {
+		// if (client.getNickName().empty())
+		// 	client.sendMessage(":" + nickName + "!@localhost NICK :" + nickName);
+		// else
+		// 	client.sendMessage(":" + client.getNickName() + "!@localhost NICK :" + nickName);
         client.setNickName(nickName);
+	  }
     }
   	if (cmd == "PASS")
 	{
@@ -235,6 +278,12 @@ int Server::parseHandler(Client &client, std::string &message)
 void Server::handleMessage(int fd)
 {
 	std::string message = this->getMessage(fd);
-	parseHandler(_clients[0], message);
+	// size_t i = 0;
+	// while (!_clients.empty() && i <_clients.size())
+	// {
+		parseHandler(_clients[0], message);
+		// std::cout << "PORT :: " << _clients[0].getPort() << std::endl;
+		// i++;
+	// }
 	std::cout << message;
 }

@@ -40,6 +40,7 @@ class Server
 		void acceptClient();
 		void initServer();
 		void closeFds();
+		void cleanClient(int fd);
 		std::string getMessage(int fd);
 		void handleMessage(int fd);
 		void stop(); 
