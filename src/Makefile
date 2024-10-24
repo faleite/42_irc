@@ -13,7 +13,7 @@ SRC := main.cpp \
 OBJ := $(SRC:.cpp=.o)
 
 # Executable name
-NAME := irserver
+NAME := ircserv
 
 # Default rule
 all: $(NAME)

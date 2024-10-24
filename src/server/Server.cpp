@@ -308,6 +308,13 @@ int Server::parseHandler(Client &client, std::string &message)
 	std::istringstream stream(message);
 	stream >> cmd;
 
+	if (cmd == "JOIN")
+	{
+		std::string channel;
+		stream >> channel;
+		std::cout << ":::::: CHANEL " << channel << std::endl;
+		_channels[channel].joinChannel(&client, "");
+	}
     if (cmd == "USER") 
 	{
       std::string name;
@@ -315,7 +322,7 @@ int Server::parseHandler(Client &client, std::string &message)
       if (!name.empty())
 	  {
         client.setName(name);
-		// std::cout << "NAME :: " << client.getName() << std::endl;
+		std::cout << "NAME :: " << client.getName() << std::endl;
 	  }
     } 
 	if (cmd == "NICK") 
@@ -324,10 +331,10 @@ int Server::parseHandler(Client &client, std::string &message)
       stream >> nickName;
       if (!nickName.empty())
 	  {
-		// if (client.getNickName().empty())
-		// 	client.sendMessage(":" + nickName + "!@localhost NICK :" + nickName);
-		// else
-		// 	client.sendMessage(":" + client.getNickName() + "!@localhost NICK :" + nickName);
+		if (client.getNickName().empty())
+			client.sendMessage(":" + nickName + "!@localhost NICK :" + nickName);
+		else
+			client.sendMessage(":" + client.getNickName() + "!@localhost NICK :" + nickName);
         client.setNickName(nickName);
 	  }
     }
@@ -349,7 +356,7 @@ void Server::handleMessage(int fd)
 	// size_t i = 0;
 	// while (!_clients.empty() && i <_clients.size())
 	// {
-		parseHandler(_clients[0], message);
+		parseHandler(_clients[2], message);
 		// std::cout << "PORT :: " << _clients[0].getPort() << std::endl;
 		// i++;
 	// }
