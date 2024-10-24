@@ -1,52 +1,53 @@
 #include "Server.hpp"
+#include <cstdlib>
 
-<<<<<<< HEAD
-Server::Server(int const &port, std::string pass) : _port(port), _pass(pass) {
+Server::Server(int const &port, std::string pass)
+    : _port(port), _pass(pass) {
   this->_sockfd = -1;
   createSocket();
   // initServer();
-=======
-Server::Server(std::string port, std::string pass) : _port(port), _pass(pass)
-{
-	this->_sockfd = -1;
-	createSocket();
->>>>>>> 689ed9326491ccf2e4888c98c12273628bc8793a
 }
 
 Server::Server() : _sockfd(-1), _port(0), _pass("") {}
 
 Server::Server(const Server &copyObj) { *this = copyObj; }
 
-<<<<<<< HEAD
 Server &Server::operator=(const Server &assignCopy) {
   if (this != &assignCopy) {
     this->_port = assignCopy._port;
     this->_pass = assignCopy._pass;
     this->_pfds = assignCopy._pfds;
     this->_sockfd = assignCopy._sockfd;
+    this->_signal = assignCopy._signal;
+    this->instance = assignCopy.instance;
   }
   return *this;
-=======
-Server &Server::operator=(const Server &assignCopy)
-{
-	if (this != &assignCopy)
-	{
-		this->_port = assignCopy._port;
-		this->_pass = assignCopy._pass;
-		this->_pfds = assignCopy._pfds;
-		this->_sockfd = assignCopy._sockfd;
-		this->_signal = assignCopy._signal;
-		this->instance = assignCopy.instance;
-	}
-	return *this;
->>>>>>> 689ed9326491ccf2e4888c98c12273628bc8793a
 }
 
 Server::~Server() {}
 
-<<<<<<< HEAD
+Server *Server::instance = NULL;
+
+void Server ::stop() { this->_signal = false; }
+
+void Server::closeSignal(int sig) {
+  if (instance == NULL) {
+    std::cout << "No server to Shut Down" << std::endl;
+    return;
+  }
+  if (sig == SIGINT || sig == SIGQUIT) {
+    instance->closeFds();
+    instance->stop();
+  }
+}
+void Server::registerSignalHandler() {
+  instance = this;
+  signal(SIGINT, closeSignal);
+  signal(SIGQUIT, closeSignal);
+}
+
 void Server::createSocket() {
-  this->_run = true;
+  this->_signal = true;
   _sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (_sockfd == -1)
     throw std::runtime_error("Can't create a socket");
@@ -56,49 +57,12 @@ void Server::createSocket() {
     throw std::runtime_error("Can't set socket options");
   if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) == -1)
     throw std::runtime_error("Can't set non_blocking");
-=======
-Server *Server::instance = NULL;
-
-void Server ::stop() { this->_signal = false; }
-
-void Server::closeSignal(int sig)
-{
-	if (instance == NULL)
-	{
-		std::cout << "No server to Shut Down" << std::endl;
-        return;
-	}
-	if (sig == SIGINT || sig == SIGQUIT)
-	{
-		instance->closeFds();
-		instance->stop();
-	}
-}
-void Server::registerSignalHandler()
-{
-	instance = this;
-	signal(SIGINT, closeSignal);
-	signal(SIGQUIT, closeSignal);
-}
-
-void Server::createSocket()
-{
-	this->_signal = true;
-	_sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (_sockfd == -1)
-		throw std::runtime_error("Can't create a socket");
-	int optval = 1;
-	if (setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1)
-		throw std::runtime_error("Can't set socket options");
-	if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) == -1)
-		throw std::runtime_error("Can't set non_blocking");
->>>>>>> 689ed9326491ccf2e4888c98c12273628bc8793a
 
   sockaddr_in servAddr;
   servAddr.sin_family = AF_INET;
   servAddr.sin_addr.s_addr =
       INADDR_ANY; // Accepts connections on any network interface
-  servAddr.sin_port = htons((_port));
+  servAddr.sin_port = htons(_port);
 
   if (bind(_sockfd, (struct sockaddr *)&servAddr, sizeof(servAddr)) == -1)
     throw std::runtime_error("Can't be bind to IP/port");
@@ -141,8 +105,7 @@ void Server::initServer() {
   pollfd pfd = {_sockfd, POLLIN, 0};
   _pfds.push_back(pfd);
 
-<<<<<<< HEAD
-  while (this->_run) // siganls
+  while (this->_signal) // siganls
   {
     // negative timeout waits forever
     int events = poll(_pfds.data(), _pfds.size(), -1);
@@ -170,10 +133,9 @@ void Server::initServer() {
 std::string Server::getMessage(int fd) {
   char buffer[1024];
   std::string message;
-
   int bytesRecv = recv(fd, buffer, 1024, 0);
   if (bytesRecv == -1)
-    throw std::runtime_error("can't read message");
+    throw std::runtime_error("");
   else if (bytesRecv > 510) // check in RFC about close connection here
     throw std::runtime_error(
         "Message exceeds 512 bytes limit. Closing connection.");
@@ -182,117 +144,28 @@ std::string Server::getMessage(int fd) {
   return (message);
 }
 
-void Server::clientExit() {
+void Server::closeFds() {
   try {
     for (std::vector<pollfd>::iterator it = _pfds.begin(); it != _pfds.end();
          it++)
       close(it->fd);
-=======
-	while (this->_signal) // siganls
-	{
-		// negative timeout waits forever
-		int events = poll(_pfds.data(), _pfds.size(), -1);
-		if (events == -1)
-		{
-			std::cout << "\nStop\n";
-			close(pfd.fd);
-			break;
-		}
-		for (std::vector<pollfd>::iterator it = _pfds.begin(); it != _pfds.end(); it++)
-		{
-			if (it->revents & POLLIN)
-			{
-				if (it->fd == _sockfd)
-				{
-					acceptClient();
-					break;
-				}
-				handleMessage(it->fd);
-			}
-			if (it->revents & POLLHUP)
-			{
-				break;
-			}
-		}
-	}
-}
-
-std::string Server::getMessage(int fd)
-{
-	char buffer[1024];
-	std::string message;
-	int bytesRecv = recv(fd, buffer, 1024, 0);
-	if (bytesRecv == -1)
-		throw std::runtime_error("");
-	else if (bytesRecv > 510) // check in RFC about close connection here
-		throw std::runtime_error("Message exceeds 512 bytes limit. Closing connection.");
-	else
-		message = std::string(buffer, bytesRecv);
-	return (message);
-}
-
-void Server::closeFds()
-{
-	try
-	{
-		for (std::vector<pollfd>::iterator it = _pfds.begin(); it != _pfds.end(); it++)
-			close(it->fd);
->>>>>>> 689ed9326491ccf2e4888c98c12273628bc8793a
 
   } catch (const std::exception &e) {
     throw std::runtime_error("Error delete poll");
   }
 }
 
-<<<<<<< HEAD
-void Server::cleanClient(int fd) {
-  try {
-    for (std::vector<Client>::iterator it = _clients.begin();
-         it != _clients.end();) {
-      if (it->getClientSoket() == fd) {
-        it = _clients.erase(it);
-        break;
-      } else {
-        ++it;
-      }
-    }
-  } catch (const std::exception &e) {
-    throw std::runtime_error("Error clean Client");
-  }
-}
-
 void Server::handleMessage(int fd) {
-  try {
-    // for (size_t i = 0; i < _clients.size(); ++i)
-    // {
-    // 	if (_clients[i].getClientSoket() == fd)
-    // 	{
-    // 		std::cout <<  _clients[i].getIp() << " connected on port "
-    // 		<< _clients[i].getPort() << std::endl;
-    // 		break ;
-    // 	}
-    // }
-    std::string message = this->getMessage(fd);
-    // parseHandler(_clients[0], message);
-    std::cout << message;
-  } catch (const std::exception &e) {
-    std::cout << e.what() << std::endl;
-    throw std::runtime_error("error handling message");
-  }
-=======
-void Server::handleMessage(int fd)
-{
-	// for (size_t i = 0; i < _clients.size(); ++i)
-	// {
-	// 	if (_clients[i].getClientSoket() == fd)
-	// 	{
-	// 		std::cout <<  _clients[i].getIp() << " connected on port "
-	// 		<< _clients[i].getPort() << std::endl;
-	// 		break ;
-	// 	}
-	// }
-	std::string message = this->getMessage(fd);
-	// parseHandler(_clients[0], message);
-	std::cout << message;
->>>>>>> 689ed9326491ccf2e4888c98c12273628bc8793a
+  // for (size_t i = 0; i < _clients.size(); ++i)
+  // {
+  // 	if (_clients[i].getClientSoket() == fd)
+  // 	{
+  // 		std::cout <<  _clients[i].getIp() << " connected on port "
+  // 		<< _clients[i].getPort() << std::endl;
+  // 		break ;
+  // 	}
+  // }
+  std::string message = this->getMessage(fd);
+  // parseHandler(_clients[0], message);
+  std::cout << message;
 }
