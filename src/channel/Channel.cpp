@@ -69,8 +69,9 @@ void Channel::joinChannel(Client *newClient, const std::string &password = "") {
   }
   // Check if the client is already in the channel
   if (isOnChannel(newClient) == true) {
-    std::cout << "The " << newClient->getName() << " Is already in the Channel"
-              << std::endl;
+    // std::cout << "The " << newClient->getName() << " Is already in the Channel"
+    //           << std::endl;
+    newClient->sendMessage("Is already in the Channel");
     return;
   }
   // check if the channel is invite only.
@@ -98,6 +99,7 @@ void Channel::joinChannel(Client *newClient, const std::string &password = "") {
   }
   channelUsers.push_back(newClient);
   std::cout << newClient->getName() << " joined the Channel." << std::endl;
+  newClient->sendMessage("JOINED TO THE CHANNEL : # ");
 }
 
 void Channel::leaveChannel(Client *client) {
