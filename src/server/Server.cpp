@@ -108,7 +108,7 @@ void Server::initServer() {
   pollfd pfd = {_sockfd, POLLIN, 0};
   _pfds.push_back(pfd);
 
-  //___________________________________SET CHANNELS
+  //___________________________________SET BASE SERVER CHANNELS
   createChannel("#general");
   createChannel("#news");
   createChannel("#random");
