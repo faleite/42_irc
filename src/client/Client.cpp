@@ -18,7 +18,7 @@ Client::Client(int clientSocket, std::string const &name)
 }
 Client::Client(int clientSoket, std::string ip, int port)
     : _clientSocket(clientSoket), _ip(ip), _port(port), _name("New Born"),
-      _nickName(""), _isAuthenticated(false), _isOperator(false) {
+      _nickName(""), _isAuthenticated(false), _isOperator(false){
   // std::cout << "Client Socket Constructor Connected" << std::endl; // Tolk
   // about it
 }
@@ -49,7 +49,6 @@ bool Client::getAuthenticator(void) const { return (_isAuthenticated); }
 bool Client::getIsOperator(void) const { return (_isOperator); }
 std::string const &Client::getIp() const { return this->_ip; }
 int Client::getPort() const { return this->_port; }
-int Client::getClientSoket() const { return this->_clientSocket; }
 bool Client::getIsBot(void) const { return this->_isBot; }
 // Setter.
 
@@ -78,3 +77,4 @@ void Client::joinChanel(const std::string &_chanel,
   }
   sendMessage(command);
 }
+

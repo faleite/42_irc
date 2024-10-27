@@ -4,18 +4,19 @@
 
 //_______________________________________: Constructor
 
-Server::Server(int const &port, std::string pass) : _port(port), _pass(pass) {
+Server::Server(int const &port, std::string pass) : _port(port), _pass(pass)
+{
   this->_sockfd = -1;
-  createSocket();
-  // initServer();
 }
 
 Server::Server() : _sockfd(-1), _port(0), _pass("") {}
 
 Server::Server(const Server &copyObj) { *this = copyObj; }
 
-Server &Server::operator=(const Server &assignCopy) {
-  if (this != &assignCopy) {
+Server &Server::operator=(const Server &assignCopy)
+{
+  if (this != &assignCopy)
+  {
     this->_port = assignCopy._port;
     this->_pass = assignCopy._pass;
     this->_pfds = assignCopy._pfds;
@@ -32,26 +33,29 @@ Server::~Server() {}
 
 std::string const &Server::getPass() const
 {
-	return (_pass);
+  return (_pass);
 }
 
 // Handle Signals
 
 Server *Server::instance = NULL;
 
-void Server ::stop() { this->_signal = false; }
+void Server ::stop() { this->_signal = true; }
 
-void Server::closeSignal(int sig) {
-  if (instance == NULL) {
+void Server::closeSignal(int sig)
+{
+  if (instance == NULL)
+  {
     std::cout << "No server to Shut Down" << std::endl;
     return;
   }
-  if (sig == SIGINT || sig == SIGQUIT) {
-    instance->closeFds();
+  if (sig == SIGINT || sig == SIGQUIT)
+  {
     instance->stop();
   }
 }
-void Server::registerSignalHandler() {
+void Server::registerSignalHandler()
+{
   instance = this;
   signal(SIGINT, closeSignal);
   signal(SIGQUIT, closeSignal);
@@ -61,36 +65,44 @@ void Server::registerSignalHandler() {
 
 void Server::createSocket()
 {
-	this->_signal = true;
-	_sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (_sockfd == -1)
-		throw std::runtime_error("Can't create a socket");
-	int optval = 1;
-	if (setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1)
-		throw std::runtime_error("Can't set socket options");
-	if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) == -1)
-		throw std::runtime_error("Can't set non_blocking");
+  this->_signal = false;
+  int optval = 1;
 
   sockaddr_in servAddr;
   servAddr.sin_family = AF_INET;
   servAddr.sin_addr.s_addr =
       INADDR_ANY; // Accepts connections on any network interface
   servAddr.sin_port = htons(_port);
+  
+  _sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  if (_sockfd == -1)
+    throw std::runtime_error("Can't create a socket");
+  if (setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1)
+    throw std::runtime_error("Can't set socket options");
+  if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) == -1)
+    throw std::runtime_error("Can't set non_blocking");
+
 
   if (bind(_sockfd, (struct sockaddr *)&servAddr, sizeof(servAddr)) == -1)
     throw std::runtime_error("Can't be bind to IP/port");
   if (listen(_sockfd, SOMAXCONN) == -1)
     throw std::runtime_error("Can't listen");
   std::cout << "Server Running on Port : " << _port << std::endl;
+ 
+  pollfd pfd = {_sockfd, POLLIN, 0};
+  _pfds.push_back(pfd);
 }
 
-void Server::acceptClient() {
+void Server::acceptClient()
+{
   sockaddr_in client;
   socklen_t cliSize = sizeof(client);
 
   int clifd = accept(_sockfd, (sockaddr *)&client, &cliSize);
   if (clifd == -1)
     throw std::runtime_error("Problem with client connecting");
+  if (fcntl(clifd, F_SETFL, O_NONBLOCK) == -1)
+    throw std::runtime_error("Can't set non_blocking");
 
   pollfd pfd = {clifd, POLLIN, 0};
   _pfds.push_back(pfd);
@@ -113,10 +125,10 @@ void Server::acceptClient() {
   sendWelcomeMessage(newClient);
 }
 
-void Server::initServer() {
-  pollfd pfd = {_sockfd, POLLIN, 0};
-  _pfds.push_back(pfd);
-
+void Server::initServer()
+{
+  this->createSocket();
+ 
   //___________________________________SET CHANNELS
   createChannel("#general");
   createChannel("#news");
@@ -143,70 +155,94 @@ void Server::initServer() {
   _channels["#random"].joinChannel(&faleiteBot, "");
   _channels["#news"].joinChannel(&faleiteBot, "");
 
-  while (this->_signal) // siganls
+  while (!this->_signal)
   {
     // negative timeout waits forever
-    int events = poll(_pfds.data(), _pfds.size(), -1);
-    if (events == -1) {
+    int events = poll(&_pfds[0], _pfds.size(), -1);
+    if (events == -1)
+    {
       std::cout << "\nStop\n";
-      close(pfd.fd);
+      close(_pfds[0].fd);
       break;
     }
-    for (std::vector<pollfd>::iterator it = _pfds.begin(); it != _pfds.end();
-         it++) {
-      if (it->revents & POLLIN) {
-        if (it->fd == _sockfd) {
-          acceptClient();
-          break;
-        }
-        handleMessage(it->fd);
-      }
-      if (it->revents & POLLHUP) {
-        break;
+    for (size_t i = 0; i < _pfds.size(); i++)
+    {
+      if (_pfds[i].revents & POLLIN)
+      {
+        if (_pfds[i].fd == _sockfd)
+          this->acceptClient();
+        else
+          this->handleMessage(_pfds[i].fd);
       }
     }
   }
+  closeFds();
 }
 
 std::string Server::getMessage(int fd)
 {
-	char buffer[1024];
-	std::string message;
-	int bytesRecv = recv(fd, buffer, 1024, 0);
-	if (bytesRecv == -1)
-	{
-		// cleanClient(fd);
-		throw std::runtime_error("");
-	}
-	// if (bytesRecv == 0)
-	// {
-	// 	// close(fd);
-	// 	std::cout << "Close one client\n";
-	// 	// throw std::runtime_error("Close client");
-	// }
-	else if (bytesRecv > 510) // check in RFC about close connection here
-		throw std::runtime_error("Message exceeds 512 bytes limit. Closing connection.");
-	else
-		message = std::string(buffer, bytesRecv);
-	return (message);
+  char buffer[1024];
+  memset(buffer, 0, sizeof(buffer));
+  std::string message;
+  int bytesRecv = recv(fd, buffer, 1024, 0);
+  if (bytesRecv <= 0 || bytesRecv > 510)
+  {
+    std::cout << "Client on fd: " << fd << " Disconnected" << std::endl;
+    for (std::vector<Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+    {
+      cleanClient(fd);
+      close(fd);
+    }
+  }
+  else
+    message = std::string(buffer, bytesRecv);
+  return (message);
 }
 
-void Server::closeFds() {
-  try {
-    for (std::vector<pollfd>::iterator it = _pfds.begin(); it != _pfds.end();
-         it++)
-      close(it->fd);
-
-  } catch (const std::exception &e) {
-    throw std::runtime_error("Error delete poll");
+void Server::closeFds()
+{
+  for (std::vector<Client>::iterator it = _clients.begin(); it != _clients.end(); it++)
+  {
+    if (it->getSocket() != -1)
+    {
+      std::cout << "Client on fd: " << it->getSocket() << " Disconnected" << std::endl;
+      close(it->getSocket());
+    }
+  }
+  if (_sockfd != -1)
+  {
+    std::cout << "Server on fd: " << _sockfd << " Disconnected" << std::endl;
+    close(_sockfd);
   }
 }
 
-void Server::createChannel(std::string const &name) {
+void Server::cleanClient(int fd)
+{
+  for (std::vector<Client>::iterator it = _clients.begin(); it != _clients.end(); it++)
+  {
+    if (it->getSocket() == fd)
+		{
+      it = _clients.erase(it);
+      break ;
+    }
+  }
+	for (std::vector<pollfd>::iterator it = _pfds.begin(); it != _pfds.end(); it++)
+	{
+		if (it->fd == fd)
+		{
+			it = _pfds.erase(it);
+			return ;
+		}
+	}
+}
+
+void Server::createChannel(std::string const &name)
+{
   _channels[name] = Channel(name);
 }
 
-bool Server::findChannel(std::string const &channelName) {
+bool Server::findChannel(std::string const &channelName)
+{
   std::map<std::string, Channel>::iterator it;
   it = _channels.find(channelName);
   return (it != _channels.end() ? true : false);
@@ -214,7 +250,8 @@ bool Server::findChannel(std::string const &channelName) {
 
 // #___________________________________________UTILIIES.
 
-void Server::sendWelcomeMessage(Client newClient) {
+void Server::sendWelcomeMessage(Client newClient)
+{
   std::ostringstream oss;
   oss << "////////////////////////////////////////////////////////////////////"
          "\n"
@@ -256,44 +293,21 @@ void Server::sendWelcomeMessage(Client newClient) {
   newClient.sendMessage(welcomeMessage);
 }
 
-// THIS
-// void Server::cleanClient()
-// {
-// 	try
-// 	{
-// 		for (std::vector<Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
-// 		{
-// 			if (it->_isDisconnected())
-// 			{
-// 				close(it->getClientSoket());
-// 				it = _clients.erase(it);
-// 			}
-// 			else
-// 			{
-// 				++it;
-// 			}
-// 		}
-// 	}
-// 	catch (const std::exception &e)
-// 	{
-// 		throw std::runtime_error("Error clean Client");
-// 	}
-// }
-
 ////////////////////////////////////
 
-bool Server::checkAuthenticator(Client &client, std::string &command) {
+bool Server::checkAuthenticator(Client &client, std::string &command)
+{
   std::istringstream stream(command);
   std::string password;
   stream >> password;
-  if (password == getPass()) 
+  if (password == getPass())
   {
     client.setAuthenticated(true);
     std::cout << "Correct Password: " << client.getAuthenticator() << std::endl;
     return true;
-  } 
-//   else
-// 	client.sendMessage("ERROR :Invalid password");
+  }
+  //   else
+  // 	client.sendMessage("ERROR :Invalid password");
   return false;
 }
 
@@ -302,63 +316,63 @@ bool Server::checkAuthenticator(Client &client, std::string &command) {
  * std::cout << "Name cannot be empty" << std::endl;
  * std::cout << "Nickname cannot be empty" << std::endl;
  */
-int Server::parseHandler(Client &client, std::string &message) 
+int Server::parseHandler(Client &client, std::string &message)
 {
-	std::string cmd;
-	std::istringstream stream(message);
-	stream >> cmd;
+  std::string cmd;
+  std::istringstream stream(message);
+  stream >> cmd;
 
-	if (cmd == "JOIN")
-	{
-		std::string channel;
-		stream >> channel;
-		std::cout << ":::::: CHANEL " << channel << std::endl;
-		_channels[channel].joinChannel(&client, "");
-	}
-    if (cmd == "USER") 
-	{
-      std::string name;
-      stream >> name;
-      if (!name.empty())
-	  {
-        client.setName(name);
-		std::cout << "NAME :: " << client.getName() << std::endl;
-	  }
-    } 
-	if (cmd == "NICK") 
-	{
-      std::string nickName;
-      stream >> nickName;
-      if (!nickName.empty())
-	  {
-		if (client.getNickName().empty())
-			client.sendMessage(":" + nickName + "!@localhost NICK :" + nickName);
-		else
-			client.sendMessage(":" + client.getNickName() + "!@localhost NICK :" + nickName);
-        client.setNickName(nickName);
-	  }
+  if (cmd == "JOIN")
+  {
+    std::string channel;
+    stream >> channel;
+    std::cout << ":::::: CHANEL " << channel << std::endl;
+    _channels[channel].joinChannel(&client, "");
+  }
+  if (cmd == "USER")
+  {
+    std::string name;
+    stream >> name;
+    if (!name.empty())
+    {
+      client.setName(name);
+      std::cout << "NAME :: " << client.getName() << std::endl;
     }
-  	if (cmd == "PASS")
-	{
-    	  std::string password;
-    	  stream >> password;
-		  if (!password.empty())
-	    	  client.setAuthenticated(checkAuthenticator(client, password));
-  	}
-	return 0;
+  }
+  if (cmd == "NICK")
+  {
+    std::string nickName;
+    stream >> nickName;
+    if (!nickName.empty())
+    {
+      if (client.getNickName().empty())
+        client.sendMessage(":" + nickName + "!@localhost NICK :" + nickName);
+      else
+        client.sendMessage(":" + client.getNickName() + "!@localhost NICK :" + nickName);
+      client.setNickName(nickName);
+    }
+  }
+  if (cmd == "PASS")
+  {
+    std::string password;
+    stream >> password;
+    if (!password.empty())
+      client.setAuthenticated(checkAuthenticator(client, password));
+  }
+  return 0;
 }
 
 //////////////////////////////////////
 
 void Server::handleMessage(int fd)
 {
-	std::string message = this->getMessage(fd);
-	// size_t i = 0;
-	// while (!_clients.empty() && i <_clients.size())
-	// {
-		parseHandler(_clients[2], message);
-		// std::cout << "PORT :: " << _clients[0].getPort() << std::endl;
-		// i++;
-	// }
-	std::cout << message;
+  std::string message = this->getMessage(fd);
+  // // size_t i = 0;
+  // // while (!_clients.empty() && i <_clients.size())
+  // // {
+        parseHandler(_clients[0], message);
+  // // std::cout << "PORT :: " << _clients[0].getPort() << std::endl;
+  // // i++;
+  // // }
+  std::cout << message;
 }

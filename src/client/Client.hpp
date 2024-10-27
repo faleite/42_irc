@@ -43,7 +43,6 @@ public:
   bool getIsOperator(void) const;
   std::string const &getIp() const;
   int getPort() const;
-  int getClientSoket() const;
   bool getIsBot(void) const;
   // Setters.
   void setName(const std::string _name);
