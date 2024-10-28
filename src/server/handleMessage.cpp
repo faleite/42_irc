@@ -42,7 +42,7 @@ void Server::sendWelcomeMessage(Client newClient)
       << "The 42_IRC Team\n";
 
   std::string welcomeMessage = oss.str();
-  newClient.sendMessage(welcomeMessage);
+  newClient.getMessage(welcomeMessage);
 }
 
 std::string Server::getMessage(int fd)

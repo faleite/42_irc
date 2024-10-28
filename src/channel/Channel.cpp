@@ -71,7 +71,7 @@ void Channel::joinChannel(Client *newClient, const std::string &password = "") {
   if (isOnChannel(newClient) == true) {
     // std::cout << "The " << newClient->getName() << " Is already in the Channel"
     //           << std::endl;
-    newClient->sendMessage("Is already in the Channel");
+    newClient->getMessage("Is already in the Channel");
     return;
   }
   // check if the channel is invite only.
@@ -79,7 +79,7 @@ void Channel::joinChannel(Client *newClient, const std::string &password = "") {
       isOnList(newClient) == false) {
     std::cout << "Channel is invite-only. " << newClient->getName()
               << " cannot join." << std::endl;
-    newClient->sendMessage("You cannot join the channel: invite-only.");
+    newClient->getMessage("You cannot join the channel: invite-only.");
     return;
   }
   // Check if the channel needs a password.
@@ -87,7 +87,7 @@ void Channel::joinChannel(Client *newClient, const std::string &password = "") {
     if (password.empty() == true || password != _channelKey) {
       std::cout << "Channel Authentication Requered. " << newClient->getName()
                 << " cannot join." << std::endl;
-      newClient->sendMessage(
+      newClient->getMessage(
           "You cannot join the channel: use correct password.");
       return;
     }
@@ -99,7 +99,7 @@ void Channel::joinChannel(Client *newClient, const std::string &password = "") {
   }
   channelUsers.push_back(newClient);
   std::cout << newClient->getName() << " joined the Channel." << std::endl;
-  newClient->sendMessage("JOINED TO THE CHANNEL : # ");
+  newClient->getMessage("JOINED TO THE CHANNEL : # ");
 }
 
 void Channel::leaveChannel(Client *client) {
@@ -116,7 +116,7 @@ void Channel::leaveChannel(Client *client) {
 void Channel::brodcastMessage(std::string &message) {
   for (std::vector<Client *>::iterator it = channelUsers.begin();
        it != channelUsers.end(); ++it) {
-    (*it)->sendMessage(message);
+    (*it)->getMessage(message);
   }
 }
 

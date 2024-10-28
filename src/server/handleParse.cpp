@@ -35,9 +35,9 @@ int Server::parseHandler(Client &client, std::string &message)
     if (!nickName.empty())
     {
       if (client.getNickName().empty())
-        client.sendMessage(":" + nickName + "!@localhost NICK :" + nickName);
+        client.getMessage(":" + nickName + "!@localhost NICK :" + nickName);
       else
-        client.sendMessage(":" + client.getNickName() + "!@localhost NICK :" + nickName);
+        client.getMessage(":" + client.getNickName() + "!@localhost NICK :" + nickName);
       client.setNickName(nickName);
     }
   }

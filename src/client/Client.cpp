@@ -63,7 +63,7 @@ void Client::setAuthenticated(const bool _pass) {
 
 void Client::setIsBot(bool isBot) { this->_isBot = isBot; }
 
-void Client::sendMessage(std::string const &_message) const {
+void Client::getMessage(std::string const &_message) const {
   std::string msg = _message + "\r\n";             // Update
   send(_clientSocket, msg.c_str(), msg.size(), 0); // Update
 }
@@ -75,6 +75,6 @@ void Client::joinChanel(const std::string &_chanel,
   if (password.empty() == false) {
     command += " " + password;
   }
-  sendMessage(command);
+  getMessage(command);
 }
 

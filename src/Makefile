@@ -4,7 +4,6 @@ CPP_FLAGS := -Wall -Wextra -Werror -g -std=c++98
 
 # Source and Object files
 SRC := main.cpp \
-	  bot/Bot.cpp \
 	  channel/Channel.cpp \
 	  client/Client.cpp \
 	  file/File.cpp \

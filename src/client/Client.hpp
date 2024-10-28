@@ -32,7 +32,7 @@ public:
 
   // Function Create Client.
   // Virtual Class functions.
-  void sendMessage(std::string const &_message) const;
+  void getMessage(std::string const &_message) const;
   void createConnection() const {}
   void closeConnection() const {}
   // Getters.
