@@ -8,7 +8,8 @@ SRC := main.cpp \
 	  channel/Channel.cpp \
 	  client/Client.cpp \
 	  file/File.cpp \
-	  server/Server.cpp
+	  server/Server.cpp server/handleMessage.cpp\
+	  server/handleParse.cpp \
 
 OBJ := $(SRC:.cpp=.o)
 
