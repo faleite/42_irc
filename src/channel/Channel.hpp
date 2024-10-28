@@ -2,8 +2,8 @@
 #define CHANNEL_HPP
 
 #include "../client/Client.hpp"
-#include <string>
 #include <sstream>
+#include <string>
 
 class Channel {
 
@@ -20,12 +20,13 @@ private:
   std::vector<Client *> invitedList;
 
 public:
+  Channel(){};
   Channel(std::string const &name);
   ~Channel();
   // getters.
   std::string const &getName(void) const;
   std::string const &getTopic(void) const;
-  int  getLimit(void) ;
+  int getLimit(void);
   // Setter.
   void setTopic(std::string const &topic);
   void setLimit(int limit);

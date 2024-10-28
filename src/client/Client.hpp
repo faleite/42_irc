@@ -18,11 +18,13 @@ protected:
   std::string _nickName;
   bool _isAuthenticated;
   bool _isOperator;
+  bool _isBot;
   std::set<std::string> _channels; // structure to keeep track of the channels,
                                    // in and unorder set.
 public:
   // Canonical Form.
   Client();
+  Client(int _clientSocket, std::string const &name);
   Client(int _clientSoket, std::string ip, int port);
   ~Client();
   Client(const Client &copyObj);
@@ -30,7 +32,7 @@ public:
 
   // Function Create Client.
   // Virtual Class functions.
-  void sendMessage(std::string const &_message) const;
+  void getMessage(std::string const &_message) const;
   void createConnection() const {}
   void closeConnection() const {}
   // Getters.
@@ -41,14 +43,13 @@ public:
   bool getIsOperator(void) const;
   std::string const &getIp() const;
   int getPort() const;
-  int getClientSoket() const;
-
+  bool getIsBot(void) const;
   // Setters.
   void setName(const std::string _name);
   void setNickName(const std::string _nick);
   void setOperator(bool _isOperator);
   void setAuthenticated(bool _pass);
-
+  void setIsBot(bool isBot);
   // Operating Functions.
   void joinChanel(const std::string &_chanel,
                   const std::string &password) const;

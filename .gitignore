@@ -147,7 +147,7 @@ tags
 .ionide
 
 .bash_history
-.bashrc
+# .bashrc
 .vscode
 .python_history
 

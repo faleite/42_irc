@@ -4,16 +4,16 @@ CPP_FLAGS := -Wall -Wextra -Werror -g -std=c++98
 
 # Source and Object files
 SRC := main.cpp \
-	  bot/Bot.cpp \
 	  channel/Channel.cpp \
 	  client/Client.cpp \
 	  file/File.cpp \
-	  server/Server.cpp
+	  server/Server.cpp server/handleMessage.cpp\
+	  server/handleParse.cpp \
 
 OBJ := $(SRC:.cpp=.o)
 
 # Executable name
-NAME := irserver
+NAME := ircserv
 
 # Default rule
 all: $(NAME)
@@ -36,6 +36,9 @@ fclean: clean
 
 # Rebuild the project from scratch
 re: fclean all
+
+val: re
+	valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes ./$(NAME) 6667 1234
 
 # .PHONY rule: make targets that aren't filenames
 .PHONY: all clean fclean re
