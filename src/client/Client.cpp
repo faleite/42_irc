@@ -5,15 +5,20 @@
 
 // ________ Constructors ________
 Client::Client()
-    : _clientSocket(-1), _ip(""), _port(0), _name(""), _nickName(""),
-      _isAuthenticated(false), _isOperator(false) {
-  // std::cout << "Default Client Constructor Called" << std::endl; // Tolk
+    : _clientSocket(-1), _ip(""), _port(0), _name("New Born"), _nickName(""),
+      _isAuthenticated(false), _isOperator(false), _isBot(false) {
+  std::cout << "Default Client Constructor Called" << std::endl; // Tolk
   // about it
 }
 
+Client::Client(int clientSocket, std::string const &name)
+    : _clientSocket(clientSocket), _ip(""), _port(0), _name(name),
+      _nickName(name), _isOperator(true), _isBot(false) {
+  std::cout << "Name Client Constructor Called" << std::endl; // Tolk
+}
 Client::Client(int clientSoket, std::string ip, int port)
-    : _clientSocket(clientSoket), _ip(ip), _port(port), _name(""),
-      _nickName(""), _isAuthenticated(false), _isOperator(false) {
+    : _clientSocket(clientSoket), _ip(ip), _port(port), _name("New Born"),
+      _nickName(""), _isAuthenticated(false), _isOperator(false){
   // std::cout << "Client Socket Constructor Connected" << std::endl; // Tolk
   // about it
 }
@@ -44,8 +49,7 @@ bool Client::getAuthenticator(void) const { return (_isAuthenticated); }
 bool Client::getIsOperator(void) const { return (_isOperator); }
 std::string const &Client::getIp() const { return this->_ip; }
 int Client::getPort() const { return this->_port; }
-int Client::getClientSoket() const { return this->_clientSocket; }
-
+bool Client::getIsBot(void) const { return this->_isBot; }
 // Setter.
 
 void Client::setName(const std::string _name) { this->_name = _name; }
@@ -56,6 +60,8 @@ void Client::setOperator(const bool _isOperator) {
 void Client::setAuthenticated(const bool _pass) {
   this->_isAuthenticated = _pass;
 }
+
+void Client::setIsBot(bool isBot) { this->_isBot = isBot; }
 
 void Client::sendMessage(std::string const &_message) const {
   std::string msg = _message + "\r\n";             // Update

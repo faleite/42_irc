@@ -1,69 +1,61 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Server.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: faaraujo <faaraujo@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/08 21:44:42 by faaraujo          #+#    #+#             */
-/*   Updated: 2024/10/22 20:11:44 by faaraujo         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef SERVER_HPP
-# define SERVER_HPP
+#define SERVER_HPP
 
-#include <iostream>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <string>
-#include <cstring>
-#include <vector>
-#include <map>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <poll.h>
-#include <cstdlib>
-#include <sstream>
+#include "../channel/Channel.hpp"
 #include "../client/Client.hpp"
-
+#include <arpa/inet.h>
+#include <cstdlib>
+#include <cstring>
+#include <fcntl.h>
+#include <iostream>
+#include <map>
+#include <netdb.h>
+#include <poll.h>
 #include <signal.h>
+#include <sstream>
+#include <string>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <vector>
 
-
-
-/**
- * TODO
- * - Create Method for close all fds
- */
 class Server
 {
 	private:
 		int _sockfd;
-		std::string _port;
+		int _port;
 		std::string _pass;
 		std::vector<Client> _clients;
 		std::vector<struct pollfd> _pfds;
-		bool _run;
+		static Server *instance;
+		bool _signal;
+		std::map<std::string, Channel> _channels; // structure to keeep track of the channels,
 		
 	public:
 		Server();
 		Server(const Server &copyObj);
 		Server &operator=(const Server &assignCopy);
-		Server(std::string port, std::string pass);
+		Server(int const &port, std::string pass);
 		~Server();	
 		
+  		void sendWelcomeMessage(Client newClient);
 		void createSocket();
 		void acceptClient();
 		void initServer();
-		void clientExit();
+		void closeFds();
 		void cleanClient(int fd);
 		std::string getMessage(int fd);
 		void handleMessage(int fd);
-
 		void stop(); 
-		void start();
+		static void closeSignal(int sig);
+		void registerSignalHandler();
+		// Create channels
+  		void createChannel(std::string const &name);
+ 		bool findChannel(std::string const &channelName);
+
+		std::string const &getPass() const;
+		bool checkAuthenticator(Client &client, std::string &command);
+		int  parseHandler(Client &client, std::string &message);
 };
 
 #endif // SERVER_HPP
