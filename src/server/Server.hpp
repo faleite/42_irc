@@ -3,6 +3,7 @@
 
 #include "../channel/Channel.hpp"
 #include "../client/Client.hpp"
+#include "../file/File.hpp"
 #include <arpa/inet.h>
 #include <cstdlib>
 #include <cstring>
@@ -19,6 +20,7 @@
 #include <unistd.h>
 #include <vector>
 
+#define BUFFER_SIZE 1024
 class Server
 {
 	private:
@@ -53,6 +55,8 @@ class Server
   		void sendWelcomeMessage(Client newClient);
 		std::string getMessage(int fd);
 		void handleMessage(int fd);
+		//_________________________ File transfer
+		void fileTransfer(int const &clienteFd, std::string const &paht);
 
 		// ________________________ CHANNEL MESSAGE.
 		void channelManager(Client *client, std::string &channelName);
