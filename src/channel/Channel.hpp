@@ -31,7 +31,7 @@ public:
   void setTopic(std::string const &topic);
   void setLimit(int limit);
   void setPrivilige(Client *client, bool enable);
-
+  bool getVerification();
   // Actions.
   void joinChannel(Client *newClient, const std::string &password);
   void leaveChannel(Client *client);
