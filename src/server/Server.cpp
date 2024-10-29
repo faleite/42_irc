@@ -123,6 +123,7 @@ void Server::acceptClient()
 
   // TESTING
   sendWelcomeMessage(newClient);
+  brodcastMessage(newClient.getName() + " Has Join to the server" );
 }
 
 void Server::initServer()
@@ -218,7 +219,7 @@ void Server::cleanClient(int fd)
 
 void Server::createChannel(std::string const &name)
 {
-  _channels[name] = Channel(name);
+  _channels[name.substr(1)] = Channel(name.substr(1));
 }
 
 bool Server::findChannel(std::string const &channelName)

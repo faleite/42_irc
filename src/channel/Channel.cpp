@@ -62,6 +62,7 @@ int stringToInt(const std::string &str) {
 
 // Set up the password, and the authentication in the list of the client.
 
+bool Channel::getVerification(){return (_needVerification);}
 void Channel::joinChannel(Client *newClient, const std::string &password = "") {
   // Check if there is a limit.
   if (limit > 0 && limit == static_cast<int>(channelUsers.size())) {

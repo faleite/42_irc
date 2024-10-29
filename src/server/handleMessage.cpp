@@ -65,15 +65,92 @@ std::string Server::getMessage(int fd)
   return (message);
 }
 
+void Server::brodcastMessage(std::string const &message){
+
+    for(std::vector<Client>::iterator it = _clients.begin(); it != _clients.end(); it++)
+    {
+        it->getMessage(message);
+    }
+}
+
+void Server::comunicationManager(Client *client, std::string message)
+{
+    std::string cmd;
+    std::stringstream ss(message);
+
+    ss >> cmd;
+    if (cmd == "MSG")
+    {
+        std::string channel;
+        ss >> channel;
+        std::map<std::string, Channel>::iterator it = _channels.find(channel.substr(1));
+        if (it != _channels.end())
+        {
+            std::string mess;
+
+            std::getline(ss, mess);
+            std::cout << "siuuui" << client->getName() << std::endl;
+            it->second.brodcastMessage(mess);
+        }
+    }
+    else if (cmd == "PRIVMSG")
+    {
+        std::string clientNick;
+        ss >> clientNick;
+
+        std::string mess;
+        std::getline(ss, mess);
+        for(std::vector<Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+        {
+            if (it->getNickName() == clientNick)
+            {
+                it->getMessage(client->getNickName() + "send you a message");
+                it->getMessage(mess);
+                break;
+            }
+        }
+    }
+    else if (cmd == "LIST")
+    {
+        // list all the channels.
+    }
+
+}
+
 void Server::handleMessage(int fd)
 {
   std::string message = this->getMessage(fd);
-  // // size_t i = 0;
-  // // while (!_clients.empty() && i <_clients.size())
-  // // {
-        parseHandler(_clients[0], message);
-  // // std::cout << "PORT :: " << _clients[0].getPort() << std::endl;
-  // // i++;
-  // // }
+    for(size_t i = 0; i < _clients.size(); i++)
+    {
+        if (_clients[i].getSocket() == fd)
+        {
+            std::string mess;
+            parseHandler(_clients[i], message);
+            comunicationManager(&_clients[i], message);
+        }
+    }
+    // brodcastMessage(message);
   std::cout << message;
+}
+
+void Server::channelManager(Client *client, std::string &channelName)
+{
+    std::string channNa;
+
+    channNa = channelName.substr(1);
+    std::map<std::string, Channel>::iterator it = _channels.find(channNa);
+    std::cout << ":::::::: >>>>>> " << it->first << std::endl;
+    if (it != _channels.end())
+    {
+        std::cout << "Channel found " << std::endl;
+        std::cout << client->getName() << " will join to this channel" << std::cout;
+        if (it->second.getVerification() == false)
+            it->second.joinChannel(client, "");
+    }else {
+        std::cout << "Channel created" << std::endl;
+        createChannel(channNa);
+        it = _channels.find(channNa);
+        it->second.joinChannel(client, "");
+    }
+
 }
