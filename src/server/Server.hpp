@@ -27,8 +27,8 @@ class Server
 		std::string _pass;
 		std::vector<Client> _clients;
 		std::vector<struct pollfd> _pfds;
-		bool _signal;
 		static Server *instance;
+		bool _signal;
 		std::map<std::string, Channel> _channels; // structure to keeep track of the channels,
 		
 	public:
@@ -43,7 +43,7 @@ class Server
 		void acceptClient();
 		void initServer();
 		void closeFds();
-		// void cleanClient(int fd);
+		void cleanClient(int fd);
 		std::string getMessage(int fd);
 		void handleMessage(int fd);
 		void stop(); 

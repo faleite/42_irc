@@ -32,7 +32,7 @@ public:
 
   // Function Create Client.
   // Virtual Class functions.
-  void sendMessage(std::string const &_message) const;
+  void getMessage(std::string const &_message) const;
   void createConnection() const {}
   void closeConnection() const {}
   // Getters.
@@ -43,7 +43,6 @@ public:
   bool getIsOperator(void) const;
   std::string const &getIp() const;
   int getPort() const;
-  int getClientSoket() const;
   bool getIsBot(void) const;
   // Setters.
   void setName(const std::string _name);
