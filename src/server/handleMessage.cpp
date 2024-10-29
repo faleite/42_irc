@@ -56,7 +56,7 @@ std::string Server::getMessage(int fd)
     std::cout << "Client on fd: " << fd << " Disconnected" << std::endl;
     for (std::vector<Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
     {
-      cleanClient(fd);
+      // cleanClient
       close(fd);
     }
   }
@@ -143,7 +143,7 @@ void Server::channelManager(Client *client, std::string &channelName)
     if (it != _channels.end())
     {
         std::cout << "Channel found " << std::endl;
-        std::cout << client->getName() << " will join to this channel" << std::cout;
+        std::cout << client->getName() << " will join to this channel" << std::endl;
         if (it->second.getVerification() == false)
             it->second.joinChannel(client, "");
     }else {

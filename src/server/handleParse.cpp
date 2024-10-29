@@ -1,5 +1,24 @@
 #include "Server.hpp"
 
+std::vector<std::vector<std::string> > tokenization(const std::string &message) 
+{
+    std::vector<std::vector<std::string> > allTokens;
+    std::istringstream iss(message);
+    std::string line;
+
+    while (getline(iss, line, '\n')) {
+        std::vector<std::string> tokens;
+        std::istringstream lineStream(line);
+        std::string token;
+
+        while (getline(lineStream, token, ' ')) {
+            tokens.push_back(token);
+        }
+        allTokens.push_back(tokens);
+    }
+    return allTokens;
+}
+
 /**
  * Utils:
  * std::cout << "Name cannot be empty" << std::endl;
@@ -7,46 +26,51 @@
  */
 int Server::parseHandler(Client &client, std::string &message)
 {
-  std::string cmd;
-  std::istringstream stream(message);
-  stream >> cmd;
+    std::string msg = message;
+    if (msg.empty() || msg == ".\r\n") 
+        return 1;
 
-  if (cmd == "JOIN")
-  {
-    std::string channel;
-    stream >> channel;
-    std::cout << ":::::: CHANEL " << channel << std::endl;
-    channelManager(&client, channel);
-  }
-  if (cmd == "USER")
-  {
-    std::string name;
-    stream >> name;
-    if (!name.empty())
+    msg.erase(remove(msg.begin(), msg.end(), '\r'), msg.end());
+    std::vector<std::vector<std::string> > allTokens = tokenization(msg);
+
+    for (size_t i = 0; i < allTokens.size(); ++i) 
     {
-      client.setName(name);
-      std::cout << "NAME :: " << client.getName() << std::endl;
+      std::vector<std::string> tokens = allTokens[i];
+
+      std::cout << "Line " << i << ":" << std::endl;
+      for (size_t j = 0; j < tokens.size(); ++j) 
+        std::cout << "  Token " << j << ": " << tokens[j] << std::endl;
+
+      if (tokens.empty())
+        continue;
+
+      std::string command = tokens[0];
+      std::vector<std::string> param(tokens.begin() + 1, tokens.end());
+
+      if (command == "NICK")
+      {
+        if (client.getNickName().empty())
+          client.getMessage(":" + param[0] + "!@localhost NICK :" + param[0]);
+        else
+          client.getMessage(":" + client.getNickName() + "!@localhost NICK :" + param[0]);
+        client.setNickName(param[0]);
+      }
+      if (command == "USER")
+        client.setName(param[0]);
+      if (command == "PASS")
+      {
+        if (param[0] == getPass())
+          client.setAuthenticated(true);
+        else
+          client.getMessage("ERROR :Invalid password");
+      }
+      if (command == "JOIN")
+      {
+        std::cout << ":::::: CHANEL " << param[0] << std::endl;
+        _channels[param[0]].joinChannel(&client, "");
+      }
     }
-  }
-  if (cmd == "NICK")
-  {
-    std::string nickName;
-    stream >> nickName;
-    if (!nickName.empty())
-    {
-      if (client.getNickName().empty())
-        client.getMessage(":" + nickName + "!@localhost NICK :" + nickName);
-      else
-        client.getMessage(":" + client.getNickName() + "!@localhost NICK :" + nickName);
-      client.setNickName(nickName);
-    }
-  }
-  if (cmd == "PASS")
-  {
-    std::string password;
-    stream >> password;
-    if (!password.empty())
-      client.setAuthenticated(checkAuthenticator(client, password));
-  }
-  return 0;
+    // if (_clients[0].getAuthenticator())
+    //   _clients[0].getMessage("Welcome " + _clients[0].getNickName() + "!" + _clients[0].getName() + "@localhost");
+    return 0;
 }

@@ -77,4 +77,3 @@ void Client::joinChanel(const std::string &_chanel,
   }
   getMessage(command);
 }
-
