@@ -54,7 +54,6 @@ class Server
  		bool findChannel(std::string const &channelName);
 
 		std::string const &getPass() const;
-		bool checkAuthenticator(Client &client, std::string &command);
 		int  parseHandler(Client &client, std::string &message);
 };
 

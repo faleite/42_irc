@@ -56,7 +56,7 @@ std::string Server::getMessage(int fd)
     std::cout << "Client on fd: " << fd << " Disconnected" << std::endl;
     for (std::vector<Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
     {
-      cleanClient(fd);
+      // cleanClient
       close(fd);
     }
   }
@@ -75,5 +75,5 @@ void Server::handleMessage(int fd)
   // // std::cout << "PORT :: " << _clients[0].getPort() << std::endl;
   // // i++;
   // // }
-  std::cout << message;
+//   std::cout << message;
 }
