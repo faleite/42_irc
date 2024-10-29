@@ -36,23 +36,32 @@ class Server
 		Server(const Server &copyObj);
 		Server &operator=(const Server &assignCopy);
 		Server(int const &port, std::string pass);
-		~Server();	
-		
-  		void sendWelcomeMessage(Client newClient);
+		~Server();
+
+		// ________________________ CONNECTION HANDLER
 		void createSocket();
 		void acceptClient();
 		void initServer();
-		void closeFds();
 		void cleanClient(int fd);
+		void closeFds();
+		void stop();
+		void registerSignalHandler();
+		static void closeSignal(int sig);
+
+		// ________________________ MSG HANDLER.
+		void brodcastMessage(std::string const &messge);
+  		void sendWelcomeMessage(Client newClient);
 		std::string getMessage(int fd);
 		void handleMessage(int fd);
-		void stop(); 
-		static void closeSignal(int sig);
-		void registerSignalHandler();
-		// Create channels
+
+		// ________________________ CHANNEL MESSAGE.
+		void channelManager(Client *client, std::string &channelName);
+		void comunicationManager(Client *client, std::string messge);
   		void createChannel(std::string const &name);
  		bool findChannel(std::string const &channelName);
 
+
+		// ________________________ AUTHENTICATION.
 		std::string const &getPass() const;
 		bool checkAuthenticator(Client &client, std::string &command);
 		int  parseHandler(Client &client, std::string &message);

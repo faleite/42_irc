@@ -16,7 +16,7 @@ int Server::parseHandler(Client &client, std::string &message)
     std::string channel;
     stream >> channel;
     std::cout << ":::::: CHANEL " << channel << std::endl;
-    _channels[channel].joinChannel(&client, "");
+    channelManager(&client, channel);
   }
   if (cmd == "USER")
   {
