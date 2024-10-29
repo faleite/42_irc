@@ -2,7 +2,7 @@
 #include <string>
 #include <sys/socket.h>
 #include <unistd.h>
-
+#define BUFFER_SIZE 1024
 // ________ Constructors ________
 Client::Client()
     : _clientSocket(-1), _ip(""), _port(0), _name("New Born"), _nickName(""),
@@ -18,7 +18,7 @@ Client::Client(int clientSocket, std::string const &name)
 }
 Client::Client(int clientSoket, std::string ip, int port)
     : _clientSocket(clientSoket), _ip(ip), _port(port), _name("New Born"),
-      _nickName(""), _isAuthenticated(false), _isOperator(false){
+      _nickName(""), _isAuthenticated(false), _isOperator(false) {
   // std::cout << "Client Socket Constructor Connected" << std::endl; // Tolk
   // about it
 }
@@ -64,17 +64,37 @@ void Client::setAuthenticated(const bool _pass) {
 void Client::setIsBot(bool isBot) { this->_isBot = isBot; }
 
 void Client::getMessage(std::string const &_message) const {
-  std::string msg = _message + "\r\n";             // Update
+  std::string msg = _message + "\r\n"; // Update
+  // file modification.
   send(_clientSocket, msg.c_str(), msg.size(), 0); // Update
 }
 
+void Client::getFile(int serverSocket, std::string const &outputFilePath) {
+  std::ofstream outputFile(outputFilePath.c_str(), std::ios::binary);
+  if (!outputFile.is_open()) {
+    std::cout << "Error with the output file" << std::endl;
+    return;
+  }
+  char buffer[BUFFER_SIZE];
+  while (true) {
+    int bytesRead = recv(serverSocket, buffer, sizeof(buffer), 0);
+    if (bytesRead <= 0) {
+      return;
+    }
+    outputFile.write(buffer, bytesRead);
+    int sendMessage = send(serverSocket, "ACK", 3, 0);
+    if (sendMessage == -1) {
+      std::cout << "Failed to send the ACK " << std::endl;
+      return;
+    }
+  }
+}
 void Client::joinChanel(const std::string &_chanel,
                         const std::string &password = "") const {
   std::string command;
-  command = "JOIN " +  _chanel;
+  command = "JOIN " + _chanel;
   if (password.empty() == false) {
     command += " " + password;
   }
   getMessage(command);
 }
-
