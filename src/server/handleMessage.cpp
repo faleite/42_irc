@@ -79,7 +79,7 @@ void Server::comunicationManager(Client *client, std::string message)
     std::stringstream ss(message);
 
     ss >> cmd;
-    if (cmd == "MSG")
+    if (cmd == "MSG") // <comand > < msgm>
     {
         std::string channel;
         ss >> channel;
@@ -93,7 +93,7 @@ void Server::comunicationManager(Client *client, std::string message)
             it->second.brodcastMessage(mess);
         }
     }
-    else if (cmd == "PRIVMSG")
+    else if (cmd == "PRIVMSG") 
     {
         std::string clientNick;
         ss >> clientNick;
@@ -124,9 +124,19 @@ void Server::handleMessage(int fd)
     {
         if (_clients[i].getSocket() == fd)
         {
-            std::string mess;
-            parseHandler(_clients[i], message);
-            comunicationManager(&_clients[i], message);
+            // verificao passe.
+            
+            //isAuthencated == true.
+            if (_clients[i].getAuthenticator() == true)
+            {
+               std::string mess;
+               parseHandler(_clients[i], message);
+               comunicationManager(&_clients[i], message);
+            }
+            else
+            {
+               _clients[i].getMessage("<command> :<reason>");
+            }
         }
     }
     // brodcastMessage(message);

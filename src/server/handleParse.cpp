@@ -47,7 +47,8 @@ int Server::parseHandler(Client &client, std::string &message)
       std::string command = tokens[0];
       std::vector<std::string> param(tokens.begin() + 1, tokens.end());
 
-      if (command == "NICK")
+      // func(comnd, param)
+      if (command == "NICK") // <NIck name>
       {
         if (client.getNickName().empty())
           client.getMessage(":" + param[0] + "!@localhost NICK :" + param[0]);
@@ -55,16 +56,16 @@ int Server::parseHandler(Client &client, std::string &message)
           client.getMessage(":" + client.getNickName() + "!@localhost NICK :" + param[0]);
         client.setNickName(param[0]);
       }
-      if (command == "USER")
+      if (command == "USER") // <userName> < host> <port> < surname>
         client.setName(param[0]);
-      if (command == "PASS")
+      if (command == "PASS") // <pass>
       {
         if (param[0] == getPass())
           client.setAuthenticated(true);
         else
           client.getMessage("ERROR :Invalid password");
       }
-      if (command == "JOIN")
+      if (command == "JOIN") // <channel>
       {
         std::cout << ":::::: CHANEL " << param[0] << std::endl;
         _channels[param[0]].joinChannel(&client, "");
