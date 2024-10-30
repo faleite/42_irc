@@ -3,6 +3,7 @@
 
 // #include "../communicator/Communicator.hpp"
 #include <algorithm>
+#include <fstream>
 #include <iostream>
 #include <set>
 #include <string>
@@ -41,6 +42,7 @@ public:
   std::string const &getNickName(void) const;
   bool getAuthenticator(void) const;
   bool getIsOperator(void) const;
+  void getFile(int serverSocket, std::string const &outputFile);
   std::string const &getIp() const;
   int getPort() const;
   bool getIsBot(void) const;

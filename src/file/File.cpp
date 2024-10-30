@@ -1,43 +1,40 @@
 #include "File.hpp"
+#include <ios>
+#include <stdexcept>
 
-File::File() : _filePath(""), _chunckSize(0) {
-  std::cout << "Default File Constructor called." << std::endl;
+File::File() : _filePath("")  {
+  std::cout << "Default file constructor called" << std::endl;
 }
 
-File::File(std::string const &filePath, int chunkSize)
-    : _filePath(filePath), _chunckSize(chunkSize) {
-  std::cout << "File created " << std::endl;
+File::File(std::string const &filePath)
+    : _filePath(filePath) {
+  std::cout << "File Constructor Set Up" << std::endl;
+  openFile();
 }
 
-//____________________________ FILE OPERATION.
-
-bool File::openFile(void) {
-  // Open the file in binary mode.
+void File::openFile() {
   _inputFileStream.open(_filePath.c_str(), std::ios::in | std::ios::binary);
-  if (_inputFileStream.is_open() == false) {
-    std::cout << "Problem with openin the file " << std::endl;
-    return false;
-  }
-  return true;
+  if (_inputFileStream.is_open() == false)
+    throw(std::runtime_error("Could not open the file"));
 }
 
-int File::readChunkFile(char *buffer, int bufferSize) {
+int File::readChunkFile(char *buffer, int const &bufferSize) {
   if (_inputFileStream.is_open() == false)
-    return (0);
+    throw(std::runtime_error("File not available"));
   _inputFileStream.read(buffer, bufferSize);
   return (_inputFileStream.gcount());
 }
+bool File::sendFileTransfer(int const &clientFd, char *buffer, int bufferSize) {
+  int byteSend;
+  byteSend = send(clientFd, buffer, bufferSize, 0);
+  if (byteSend == -1)
+    throw(std::runtime_error("Problem with the file transfer"));
+  return true;
+}
 
 void File::closeFile() {
-  if (_inputFileStream.is_open() == true)
+  if (_inputFileStream.is_open())
     _inputFileStream.close();
 }
 
-bool File::sendFileTransfer(const int &clientSocket, char *buffer, int size) {
-  int byteSend = send(clientSocket, buffer, size, 0);
-  if (byteSend == -1) {
-    std::cout << "Problem with the file transfer" << std::endl;
-    return (false);
-  }
-  return (true);
-}
+File::~File() { closeFile(); }
