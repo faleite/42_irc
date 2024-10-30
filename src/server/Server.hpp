@@ -55,6 +55,16 @@ class Server
   		void sendWelcomeMessage(Client newClient);
 		std::string getMessage(int fd);
 		void handleMessage(int fd);
+
+		// ________________________ COMMANDS HANDLER.
+		void pass(Client &client, const std::vector<std::string>&param);
+		void nick(Client &client, const std::vector<std::string>&param);
+		void user(Client &client, const std::vector<std::string>&param);
+		void join(Client &client, const std::vector<std::string>&param);
+
+		typedef void (Server::*CommandFunc)(Client&, const std::vector<std::string>&);
+    	std::map<std::string, CommandFunc> commandMap;
+
 		//_________________________ File transfer
 		void fileTransfer(int const &clienteFd, std::string const &paht);
 

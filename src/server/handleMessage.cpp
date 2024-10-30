@@ -55,7 +55,6 @@ std::string Server::getMessage(int fd) {
     std::cout << "Client on fd: " << fd << " Disconnected" << std::endl;
     for (std::vector<Client>::iterator it = _clients.begin();
          it != _clients.end(); ++it) {
-      cleanClient(fd);
       close(fd);
     }
   } else
@@ -117,6 +116,7 @@ void Server::comunicationManager(Client *client, std::string message) {
     }
   }
 }
+
 void Server::handleMessage(int fd) {
   std::string message = this->getMessage(fd);
   for (size_t i = 0; i < _clients.size(); i++) {
