@@ -6,25 +6,26 @@
 
 void Server::sendWelcomeMessage(Client newClient) {
   std::ostringstream oss;
-  oss << "////////////////////////////////////////////////////////////////////"
-         "\n"
-      << "//                                                                "
-         "//\n"
-      << "//                              WELCOME                           "
-         "//\n"
-      << "//                                TO                              "
-         "//\n"
-      << "//                            /// SERVER ///                      "
-         "//\n"
-      << "//                                                                "
-         "//\n"
-      << "////////////////////////////////////////////////////////////////////"
-         "\n"
-      << "\n"
-      << "Hello, " << newClient.getName() << "!\n"
-      << "\n"
-      << "Welcome to the **best IRC Server** around. We're thrilled to have "
-         "you join our community!\n"
+  const std::string blue = "\033[34m";
+  const std::string reset = "\033[0m";
+
+  oss <<"\nHello, " << newClient.getName() << "!\n"
+      << "Welcome to the **best IRC Server** around.\n"
+      << blue
+      <<"\n"
+      <<"                       ▪  ▄▄▄   ▄▄·                     \n"
+      <<"                       ██ ▀▄ █·▐█ ▌▪                    \n"
+      <<"                       ▐█·▐▀▀▄ ██ ▄▄                    \n"
+      <<"                       ▐█▌▐█•█▌▐███▌                    \n"
+      <<"                       ▀▀▀.▀  ▀·▀▀▀                     \n"
+      <<"               .▄▄ · ▄▄▄ .▄▄▄   ▌ ▐·▄▄▄ .▄▄▄            \n"
+      <<"               ▐█ ▀. ▀▄.▀·▀▄ █·▪█·█▌▀▄.▀·▀▄ █·          \n"
+      <<"               ▄▀▀▀█▄▐▀▀▪▄▐▀▀▄ ▐█▐█•▐▀▀▪▄▐▀▀▄           \n"
+      <<"               ▐█▄▪▐█▐█▄▄▌▐█•█▌ ███ ▐█▄▄▌▐█•█▌          \n"
+      <<"                ▀▀▀▀  ▀▀▀ .▀  ▀. ▀   ▀▀▀ .▀  ▀          \n"
+      <<"\n"
+      << reset
+      << "We're thrilled to have you join our community!\n"
       << "\n"
       << "To get started, please set your name and nickname:\n"
       << "- Use `USER <YourName> <ip> <host> <surname>` to set your real "
@@ -120,7 +121,7 @@ void Server::handleMessage(int fd) {
   for (size_t i = 0; i < _clients.size(); i++) {
     if (_clients[i].getSocket() == fd) {
       std::string mess;
-      parseHandler(_clients[i], message);
+      parseHandler(_clients[i], message); // this func return 0 or 1 to error
       comunicationManager(&_clients[i], message);
     }
   }

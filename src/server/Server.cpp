@@ -132,8 +132,8 @@ void Server::acceptClient()
   _clients.push_back(newClient);
 
   // TESTING
-  sendWelcomeMessage(newClient);
-  brodcastMessage(newClient.getName() + " Has Join to the server" );
+  // sendWelcomeMessage(newClient);
+  // brodcastMessage(newClient.getName() + " Has Join to the server" );
 }
 
 void Server::initServer()
