@@ -53,12 +53,10 @@ std::string Server::getMessage(int fd) {
   int bytesRecv = recv(fd, buffer, 1024, 0);
   if (bytesRecv <= 0 || bytesRecv > 510) {
     std::cout << "Client on fd: " << fd << " Disconnected" << std::endl;
-    for (std::vector<Client>::iterator it = _clients.begin();
-         it != _clients.end(); ++it) {
-      close(fd);
-    }
+    cleanClient(fd);
+    close(fd);
   } else
-    message = std::string(buffer, bytesRecv);
+      message = std::string(buffer, bytesRecv);
   return (message);
 }
 
