@@ -25,3 +25,19 @@
 
 ### NICK
 - [ ] `NICK` pode ser enviado a qualquer momento.
+
+### USER
+[*RFC protocol*](https://datatracker.ietf.org/doc/html/rfc2812#section-3.1.3)\
+Comando: `USER`\
+Parâmetros: `<username> <mode> <unused> <realname>`\
+Exemplo: `USER guest 0 * :Ronnie Reagan`
+- [ ] `USER` deve ter 4 parâmetros. O quarto parâmetro pode ter espaços.
+- [ ] Mensagem de erro: `461 * USER :Not enough parameters`
+
+### Other Commands
+- `JOIN`, `KICK`, `INVITE`, `TOPIC`, `MODE`, `PRIVMSG`, `OPER`,
+> [!NOTE]
+> This commands are not used in the registration process.
+> In this case, send message: `451 * :You need to register before you can use that command`
+
+<!-- `PART`,  `NAMES`, `LIST`,   `NOTICE`, `MOTD`, `LUSERS`, `VERSION`, `STATS`, `LINKS`, `TIME`, `CONNECT`, `TRACE`, `ADMIN`, `INFO`, `SERVLIST`, `SQUERY`, `WHO`, `WHOIS`, `WHOWAS`, `ISON` -->

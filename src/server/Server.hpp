@@ -78,6 +78,8 @@ class Server
 		// ________________________ AUTHENTICATION.
 		std::string const &getPass() const;
 		int  parseHandler(Client &client, std::string &message);
+		void connectionRegister(Client &client, const std::string &cmd, const std::vector<std::string> &param);
+
 };
 
 #endif // SERVER_HPP
