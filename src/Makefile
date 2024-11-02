@@ -9,7 +9,9 @@ SRC := main.cpp \
 	  file/File.cpp \
 	  server/Server.cpp \
 	  server/handleMessage.cpp\
-	  server/handleParse.cpp \
+	  server/connectRegister.cpp \
+	  server/commands.cpp \
+	  replies/Replies.cpp \
 
 OBJ := $(SRC:.cpp=.o)
 

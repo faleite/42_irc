@@ -9,40 +9,34 @@ void Server::sendWelcomeMessage(Client newClient) {
   const std::string blue = "\033[34m";
   const std::string reset = "\033[0m";
 
-  oss <<"\nHello, " << newClient.getName() << "!\n"
+  oss <<"\nHello, " << newClient.getNickName() << "!\n"
       << "Welcome to the **best IRC Server** around.\n"
       << blue
       <<"\n"
-      <<"                       ▪  ▄▄▄   ▄▄·                     \n"
-      <<"                       ██ ▀▄ █·▐█ ▌▪                    \n"
-      <<"                       ▐█·▐▀▀▄ ██ ▄▄                    \n"
-      <<"                       ▐█▌▐█•█▌▐███▌                    \n"
-      <<"                       ▀▀▀.▀  ▀·▀▀▀                     \n"
-      <<"               .▄▄ · ▄▄▄ .▄▄▄   ▌ ▐·▄▄▄ .▄▄▄            \n"
-      <<"               ▐█ ▀. ▀▄.▀·▀▄ █·▪█·█▌▀▄.▀·▀▄ █·          \n"
-      <<"               ▄▀▀▀█▄▐▀▀▪▄▐▀▀▄ ▐█▐█•▐▀▀▪▄▐▀▀▄           \n"
-      <<"               ▐█▄▪▐█▐█▄▄▌▐█•█▌ ███ ▐█▄▄▌▐█•█▌          \n"
-      <<"                ▀▀▀▀  ▀▀▀ .▀  ▀. ▀   ▀▀▀ .▀  ▀          \n"
+      <<"               ▐▄▄▄·▄▄▄   ▪  ▄▄▄   ▄▄·             \n"
+      <<"                ·██▐▄▄·   ██ ▀▄ █·▐█ ▌▪            \n"
+      <<"              ▪▄ ████▪    ▐█·▐▀▀▄ ██ ▄▄            \n"
+      <<"              ▐▌▐█▌██▌.   ▐█▌▐█•█▌▐███▌            \n"
+      <<"            ▀  ▀▀▀•▀▀▀  ▀ ▀▀▀.▀  ▀·▀▀▀  ▀          \n"
+      <<"           .▄▄ · ▄▄▄ .▄▄▄   ▌ ▐·▄▄▄ .▄▄▄           \n"
+      <<"           ▐█ ▀. ▀▄.▀·▀▄ █·▪█·█▌▀▄.▀·▀▄ █·         \n"
+      <<"           ▄▀▀▀█▄▐▀▀▪▄▐▀▀▄ ▐█▐█•▐▀▀▪▄▐▀▀▄          \n"
+      <<"           ▐█▄▪▐█▐█▄▄▌▐█•█▌ ███ ▐█▄▄▌▐█•█▌         \n"
+      <<"            ▀▀▀▀  ▀▀▀ .▀  ▀. ▀   ▀▀▀ .▀  ▀         \n"
       <<"\n"
       << reset
       << "We're thrilled to have you join our community!\n"
       << "\n"
-      // << "To get started, please set your name and nickname:\n"
-      // << "- Use `USER <YourName> <ip> <host> <surname>` to set your real "
-      //    "data.\n"
-      // << "- Use `NICK <YourNickname>` to choose a nickname.\n"
-      // << "\n"
-      // << "Once you're all set, feel free to jump into our channels:\n"
       << "Feel free to jump into our channels:\n"
       << "- **#general**: For general discussion and announcements.\n"
       << "- **#help**: For support and troubleshooting.\n"
       << "- **#random**: For casual conversation and fun.\n"
       << "\n"
-      << "Enjoy your stay and reach out if you need any assistance. Let’s make "
-         "this a great place together!\n"
+      << "Enjoy your stay and reach out if you need any assistance.\n"
+      << "Let’s make this a great place together!\n"
       << "\n"
       << "Best,\n"
-      << "The 42_IRC Team\n";
+      << "The JF.IRC Team, at 42 School Lisbon\n";
 
   std::string welcomeMessage = oss.str();
   newClient.getMessage(welcomeMessage);
@@ -54,7 +48,7 @@ std::string Server::getMessage(int fd) {
   std::string message;
   int bytesRecv = recv(fd, buffer, 1024, 0);
   if (bytesRecv <= 0 || bytesRecv > 510) {
-    std::cout << "Client on fd: " << fd << " Disconnected" << std::endl;
+    std::cout << "Client has been disconnected :fd: " << fd << std::endl;
     cleanClient(fd);
     close(fd);
   } else
@@ -121,13 +115,16 @@ void Server::handleMessage(int fd) {
   std::string message = this->getMessage(fd);
   for (size_t i = 0; i < _clients.size(); i++) {
     if (_clients[i].getSocket() == fd) {
-      std::string mess;
-      parseHandler(_clients[i], message); // this func return 0 or 1 to error
-      comunicationManager(&_clients[i], message);
+      if (!_clients[i].getRegistered()) {
+        connectionRegistration(_clients[i], message);
+      } else {
+        commands(_clients[i], message);
+        comunicationManager(&_clients[i], message);
+      }
     }
   }
   // brodcastMessage(message);
-  std::cout << message;
+  // std::cout << message;
 }
 
 void Server::channelManager(Client *client, std::string &channelName) {

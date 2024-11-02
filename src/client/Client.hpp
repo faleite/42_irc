@@ -20,6 +20,7 @@ protected:
   std::string _nickName;
   bool _authAttempted;
   bool _isAuthenticated;
+  bool _isRegistered;
   bool _isOperator;
   bool _isBot;
   std::set<std::string> _channels; // structure to keeep track of the channels,
@@ -44,6 +45,7 @@ public:
   std::string const &getNickName(void) const;
   bool getAuthAttempted() const;
   bool getAuthenticator(void) const;
+  bool getRegistered() const;
   bool getIsOperator(void) const;
   void getFile(int serverSocket, std::string const &outputFile);
   std::string const &getIp() const;
@@ -56,6 +58,8 @@ public:
   void setAuthAttempted(bool _attempted);
   void setAuthenticated(bool _pass);
   void setIsBot(bool isBot);
+  void setRegistered(const bool _register);
+
   // Operating Functions.
   void joinChanel(const std::string &_chanel,
                   const std::string &password) const;

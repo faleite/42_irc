@@ -11,6 +11,7 @@ Server::Server(int const &port, std::string pass) : _port(port), _pass(pass)
   commandMap["USER"] = &Server::user;
   commandMap["PASS"] = &Server::pass;
   commandMap["JOIN"] = &Server::join;
+  commandMap["QUIT"] = &Server::quit;
 }
 
 Server::Server() : _sockfd(-1), _port(0), _pass("") 
@@ -19,6 +20,7 @@ Server::Server() : _sockfd(-1), _port(0), _pass("")
   commandMap["USER"] = &Server::user;
   commandMap["PASS"] = &Server::pass;
   commandMap["JOIN"] = &Server::join;
+  commandMap["QUIT"] = &Server::quit;
 }
 
 Server::Server(const Server &copyObj) { *this = copyObj; }
@@ -131,9 +133,11 @@ void Server::acceptClient()
       Client(clifd, inet_ntoa(client.sin_addr), ntohs(client.sin_port));
   _clients.push_back(newClient);
 
-  // TESTING
-  // sendWelcomeMessage(newClient);
-  // brodcastMessage(newClient.getName() + " Has Join to the server" );
+  std::cout << "Client connected :fd: " << clifd << " port: " << ntohs(client.sin_port) << std::endl;
+  newClient.getMessage("To get started, please set your pass, name and nickname:\n \
+   - Use `PASS <ServerPass>` to set the server irc pass.\n \
+   - Use `USER <YourName> <ip> <host> <surname>` to set your real data.\n \
+   - Use `NICK <YourNickname>` to choose a nickname.\n");
 }
 
 void Server::initServer()
@@ -196,13 +200,13 @@ void Server::closeFds()
   {
     if (it->getSocket() != -1)
     {
-      std::cout << "Client on fd: " << it->getSocket() << " Disconnected" << std::endl;
+      std::cout << "Client has been disconnected :fd: " << it->getSocket() << std::endl;
       close(it->getSocket());
     }
   }
   if (_sockfd != -1)
   {
-    std::cout << "Server on fd: " << _sockfd << " Disconnected" << std::endl;
+    std::cout << "Server has been disconnected :fd: " << _sockfd << std::endl;
     close(_sockfd);
   }
 }

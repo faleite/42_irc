@@ -6,8 +6,8 @@
 
 // ________ Constructors ________
 Client::Client()
-    : _clientSocket(-1), _ip(""), _port(0), _name(""), _nickName(""),
-      _authAttempted(false), _isAuthenticated(false), _isOperator(false), _isBot(false) {
+    : _clientSocket(-1), _ip(""), _port(0), _name(""), _nickName(""), _authAttempted(false), 
+    _isAuthenticated(false), _isRegistered(false), _isOperator(false), _isBot(false) {
   std::cout << "Default Client Constructor Called" << std::endl; // Tolk
   // about it
 }
@@ -18,8 +18,8 @@ Client::Client(int clientSocket, std::string const &name)
   std::cout << "Name Client Constructor Called" << std::endl; // Tolk
 }
 Client::Client(int clientSoket, std::string ip, int port)
-    : _clientSocket(clientSoket), _ip(ip), _port(port), _name(""),
-      _nickName(""), _authAttempted(false), _isAuthenticated(false), _isOperator(false) {
+    : _clientSocket(clientSoket), _ip(ip), _port(port), _name(""), _nickName(""), 
+    _authAttempted(false), _isAuthenticated(false),_isRegistered(false), _isOperator(false) {
   // std::cout << "Client Socket Constructor Connected" << std::endl; // Tolk
   // about it
 }
@@ -34,6 +34,7 @@ Client &Client::operator=(const Client &assignCopy) {
     this->_nickName = assignCopy._nickName;
     this->_authAttempted = assignCopy._authAttempted;
     this->_isAuthenticated = assignCopy._isAuthenticated;
+    this->_isRegistered = assignCopy._isRegistered;
     this->_isOperator = assignCopy._isOperator;
   }
   return *this;
@@ -48,6 +49,8 @@ int Client::getSocket(void) const { return (_clientSocket); }
 std::string const &Client::getName(void) const { return (_name); }
 std::string const &Client::getNickName(void) const { return (_nickName); }
 bool Client::getAuthenticator(void) const { return (_isAuthenticated); }
+bool Client::getAuthAttempted() const { return _authAttempted; }
+bool Client::getRegistered() const { return _isRegistered; }
 bool Client::getIsOperator(void) const { return (_isOperator); }
 std::string const &Client::getIp() const { return this->_ip; }
 int Client::getPort() const { return this->_port; }
@@ -59,10 +62,14 @@ void Client::setNickName(const std::string _nick) { this->_nickName = _nick; }
 void Client::setOperator(const bool _isOperator) {
   this->_isOperator = _isOperator;
 }
-bool Client::getAuthAttempted() const { return _authAttempted; }
-void Client::setAuthAttempted(bool _attempted) { _authAttempted = _attempted; }
+void Client::setAuthAttempted(bool _attempted) { 
+  this->_authAttempted = _attempted; 
+}
 void Client::setAuthenticated(const bool _pass) {
   this->_isAuthenticated = _pass;
+}
+void Client::setRegistered(const bool _register) {
+  this->_isRegistered = _register;
 }
 
 void Client::setIsBot(bool isBot) { this->_isBot = isBot; }

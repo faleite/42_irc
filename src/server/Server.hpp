@@ -4,6 +4,7 @@
 #include "../channel/Channel.hpp"
 #include "../client/Client.hpp"
 #include "../file/File.hpp"
+#include "../replies/Replies.hpp"
 #include <arpa/inet.h>
 #include <cstdlib>
 #include <cstring>
@@ -55,12 +56,16 @@ class Server
   		void sendWelcomeMessage(Client newClient);
 		std::string getMessage(int fd);
 		void handleMessage(int fd);
+		std::vector<std::vector<std::string> > tokenization(const std::string &message);
+		bool removeWhitespaceParams(std::vector<std::string> &params);
+
 
 		// ________________________ COMMANDS HANDLER.
 		void pass(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void nick(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void user(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void join(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		void quit(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 
 		typedef void (Server::*CommandFunc)(Client&, const std::string &, const std::vector<std::string>&);
     	std::map<std::string, CommandFunc> commandMap;
@@ -77,8 +82,9 @@ class Server
 
 		// ________________________ AUTHENTICATION.
 		std::string const &getPass() const;
-		int  parseHandler(Client &client, std::string &message);
-		void connectionRegister(Client &client, const std::string &cmd, const std::vector<std::string> &param);
+		int  connectionRegistration(Client &client, std::string &message);
+		void registerNewUser(Client &client, const std::string &cmd, const std::vector<std::string> &param);
+		int  commands(Client &client, std::string &message);
 
 };
 
