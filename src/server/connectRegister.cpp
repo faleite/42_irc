@@ -44,11 +44,11 @@ int Server::connectionRegistration(Client &client, std::string &message)
 int checkInvalidCommand(const std::string &cmd)
 {
   // See if exist others commands already
-  if (cmd == "JOIN" || cmd == "KICK" || cmd == "INVITE" 
-      || cmd == "TOPIC" || cmd == "MODE" || cmd == "PRIVMSG")
+  if (cmd == JOIN || cmd == KICK || cmd == INVITE || cmd == LIST
+      || cmd == MODE || cmd == PRIVMSG || cmd == PRIVMSG)
     return (1);
-  else if (cmd != "PASS" && cmd != "NICK" 
-            && cmd != "USER" && cmd != "QUIT")
+  else if (cmd != PASS && cmd != NICK 
+            && cmd != USER && cmd != QUIT)
     return (2);
   return (0);
 }
@@ -64,14 +64,14 @@ void Server::registerNewUser(Client &client, const std::string &cmd, const std::
       client.getMessage(Replies::ERR_UNKNOWNCOMMAND(cmd));
     return ;
   }
-  if (cmd == "QUIT")
+  if (cmd == QUIT)
     this->quit(client, cmd, param);
   if (param.empty())
   {
     client.getMessage(Replies::ERR_NEEDMOREPARAMS(cmd));
     return ;
   }
-  if (cmd == "PASS")
+  if (cmd == PASS)
   {
     if (!client.getAuthAttempted())
     {
@@ -82,7 +82,7 @@ void Server::registerNewUser(Client &client, const std::string &cmd, const std::
         client.setAuthenticated(false);
     }
   }
-  else if (cmd == "NICK")
+  else if (cmd == NICK)
   {
     	for (size_t i = 0; i < _clients.size(); ++i)
 	    {
@@ -94,7 +94,7 @@ void Server::registerNewUser(Client &client, const std::string &cmd, const std::
 	    }
       client.setNickName(param[0]);
   }
-  else if (cmd == "USER")
+  else if (cmd == USER)
   {
     if (param.size() < 4)
     {

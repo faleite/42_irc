@@ -69,7 +69,7 @@ void Server::comunicationManager(Client *client, std::string message) {
   std::stringstream ss(message);
 
   ss >> cmd;
-  if (cmd == "MSG") {
+  if (cmd == MSG) {
     std::string channel;
     ss >> channel;
     std::map<std::string, Channel>::iterator it =
@@ -81,7 +81,7 @@ void Server::comunicationManager(Client *client, std::string message) {
       std::cout << "siuuui" << client->getName() << std::endl;
       it->second.brodcastMessage(mess);
     }
-  } else if (cmd == "PRIVMSG") {
+  } else if (cmd == PRIVMSG) {
     std::string clientNick;
     ss >> clientNick;
 
@@ -95,9 +95,9 @@ void Server::comunicationManager(Client *client, std::string message) {
         break;
       }
     }
-  } else if (cmd == "LIST") {
+  } else if (cmd == LIST) {
     // list all the channels.
-  } else if (cmd == "SEND") {
+  } else if (cmd == SEND) {
     std::string filePath;
     std::string clientNick;
     ss >> clientNick;

@@ -4,10 +4,22 @@
 // #include "../communicator/Communicator.hpp"
 #include <algorithm>
 #include <fstream>
+#include <arpa/inet.h>
+#include <cstdlib>
+#include <cstring>
+#include <fcntl.h>
 #include <iostream>
-#include <set>
+#include <netdb.h>
+#include <poll.h>
+#include <signal.h>
+#include <sstream>
 #include <string>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <vector>
+#include <map>
+#include <set>
 
 // class Client : public Communicator {
 class Client

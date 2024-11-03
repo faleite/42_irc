@@ -5,21 +5,20 @@
 #include "../client/Client.hpp"
 #include "../file/File.hpp"
 #include "../replies/Replies.hpp"
-#include <arpa/inet.h>
-#include <cstdlib>
-#include <cstring>
-#include <fcntl.h>
-#include <iostream>
-#include <map>
-#include <netdb.h>
-#include <poll.h>
-#include <signal.h>
-#include <sstream>
-#include <string>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <vector>
+
+#define JOIN "JOIN"
+#define KICK "KICK"
+#define INVITE "INVITE"     
+#define TOPIC "TOPIC"
+#define MODE "MODE"
+#define MSG "MSG"
+#define SEND "SEND"
+#define LIST "LIST"
+#define PRIVMSG "PRIVMSG"
+#define PASS "PASS"
+#define NICK "NICK" 
+#define USER "USER"
+#define QUIT "QUIT"
 
 #define BUFFER_SIZE 1024
 class Server
