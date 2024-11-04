@@ -4,10 +4,22 @@
 // #include "../communicator/Communicator.hpp"
 #include <algorithm>
 #include <fstream>
+#include <arpa/inet.h>
+#include <cstdlib>
+#include <cstring>
+#include <fcntl.h>
 #include <iostream>
-#include <set>
+#include <netdb.h>
+#include <poll.h>
+#include <signal.h>
+#include <sstream>
 #include <string>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <vector>
+#include <map>
+#include <set>
 
 // class Client : public Communicator {
 class Client {
@@ -20,6 +32,7 @@ protected:
   std::string _nickName;
   bool _authAttempted;
   bool _isAuthenticated;
+  bool _isRegistered;
   bool _isOperator;
   bool _isBot;
   std::set<std::string> _channels; // structure to keeep track of the channels,
@@ -44,6 +57,7 @@ public:
   std::string const &getNickName(void) const;
   bool getAuthAttempted() const;
   bool getAuthenticator(void) const;
+  bool getRegistered() const;
   bool getIsOperator(void) const;
   void getFile(int serverSocket, std::string const &outputFile);
   std::string const &getIp() const;
@@ -58,6 +72,8 @@ public:
   void setAuthenticated(bool _pass);
   void setIsWelcome(bool welcome);
   void setIsBot(bool isBot);
+  void setRegistered(const bool _register);
+
   // Operating Functions.
   void joinChanel(const std::string &_chanel,
                   const std::string &password) const;

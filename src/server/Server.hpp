@@ -4,22 +4,22 @@
 #include "../channel/Channel.hpp"
 #include "../client/Client.hpp"
 #include "../file/File.hpp"
-#include <arpa/inet.h>
-#include <cstdlib>
-#include <cstring>
-#include <fcntl.h>
-#include <iostream>
-#include <map>
-#include <netdb.h>
-#include <poll.h>
-#include <signal.h>
-#include <sstream>
-#include <string>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <vector>
 #include "../client/HTTPClient.hpp"
+#include "../replies/Replies.hpp"
+
+#define JOIN "JOIN"
+#define KICK "KICK"
+#define INVITE "INVITE"     
+#define TOPIC "TOPIC"
+#define MODE "MODE"
+#define MSG "MSG"
+#define SEND "SEND"
+#define LIST "LIST"
+#define PRIVMSG "PRIVMSG"
+#define PASS "PASS"
+#define NICK "NICK" 
+#define USER "USER"
+#define QUIT "QUIT"
 
 #define BUFFER_SIZE 1024
 class Server
@@ -61,12 +61,16 @@ class Server
 		void privateMessage(Client *client, std::stringstream &commands);
 		// File Message Logic.
 		// Bot Message Logic.
+		std::vector<std::vector<std::string> > tokenization(const std::string &message);
+		bool removeWhitespaceParams(std::vector<std::string> &params);
+
 
 		// ________________________ COMMANDS HANDLER.
 		void pass(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void nick(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void user(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void join(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		void quit(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 
 		typedef void (Server::*CommandFunc)(Client&, const std::string &, const std::vector<std::string>&);
     	std::map<std::string, CommandFunc> commandMap;
@@ -83,7 +87,10 @@ class Server
 
 		// ________________________ AUTHENTICATION.
 		std::string const &getPass() const;
-		int  parseHandler(Client &client, std::string &message);
+		int  connectionRegistration(Client &client, std::string &message);
+		void registerNewUser(Client &client, const std::string &cmd, const std::vector<std::string> &param);
+		int  commands(Client &client, std::string &message);
+
 };
 
 #endif // SERVER_HPP

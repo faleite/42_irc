@@ -8,8 +8,12 @@ SRC := main.cpp \
 	  client/Client.cpp client/HTTPClient.cpp\
 	  file/File.cpp \
 	  server/Server.cpp \
-	  server/handleMessage.cpp server/messageUtils.cpp\
+	  server/messageUtils.cpp\
 	  server/handleParse.cpp \
+	  server/handleMessage.cpp\
+	  server/connectRegister.cpp \
+	  server/commands.cpp \
+	  replies/Replies.cpp \
 
 OBJ := $(SRC:.cpp=.o)
 
