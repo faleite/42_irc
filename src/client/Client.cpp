@@ -6,20 +6,22 @@
 
 // ________ Constructors ________
 Client::Client()
-    : _clientSocket(-1), _ip(""), _port(0), _name(""), _nickName(""),
-      _authAttempted(false), _isAuthenticated(false), _isOperator(false), _isBot(false) {
+    : isWelcome(false), _clientSocket(-1), _ip(""), _port(0), _name(""),
+      _nickName(""), _authAttempted(false), _isAuthenticated(false),
+      _isOperator(false), _isBot(false) {
   std::cout << "Default Client Constructor Called" << std::endl; // Tolk
   // about it
 }
 
 Client::Client(int clientSocket, std::string const &name)
-    : _clientSocket(clientSocket), _ip(""), _port(0), _name(name),
-      _nickName(name), _isOperator(true), _isBot(false) {
+    : isWelcome(false), _clientSocket(clientSocket), _ip(""), _port(0),
+      _name(name), _nickName(name), _isOperator(true), _isBot(false) {
   std::cout << "Name Client Constructor Called" << std::endl; // Tolk
 }
 Client::Client(int clientSoket, std::string ip, int port)
-    : _clientSocket(clientSoket), _ip(ip), _port(port), _name(""),
-      _nickName(""), _authAttempted(false), _isAuthenticated(false), _isOperator(false) {
+    : isWelcome(false), _clientSocket(clientSoket), _ip(ip), _port(port),
+      _name(""), _nickName(""), _authAttempted(false), _isAuthenticated(false),
+      _isOperator(false) {
   // std::cout << "Client Socket Constructor Connected" << std::endl; // Tolk
   // about it
 }
@@ -27,6 +29,7 @@ Client::Client(int clientSoket, std::string ip, int port)
 Client::Client(const Client &copyObj) { *this = copyObj; }
 Client &Client::operator=(const Client &assignCopy) {
   if (this != &assignCopy) {
+    this->isWelcome = assignCopy._isOperator;
     this->_clientSocket = assignCopy._clientSocket;
     this->_ip = assignCopy._ip;
     this->_port = assignCopy._port;
@@ -59,11 +62,14 @@ void Client::setNickName(const std::string _nick) { this->_nickName = _nick; }
 void Client::setOperator(const bool _isOperator) {
   this->_isOperator = _isOperator;
 }
+
+bool Client::getIsWelcome() const {return isWelcome;}
 bool Client::getAuthAttempted() const { return _authAttempted; }
 void Client::setAuthAttempted(bool _attempted) { _authAttempted = _attempted; }
 void Client::setAuthenticated(const bool _pass) {
   this->_isAuthenticated = _pass;
 }
+void Client::setIsWelcome(bool welcome) { this->isWelcome = welcome; }
 
 void Client::setIsBot(bool isBot) { this->_isBot = isBot; }
 
