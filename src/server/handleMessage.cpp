@@ -119,21 +119,3 @@ void Server::channelManager(Client *client, std::string &channelName) {
     it->second.joinChannel(client, "");
   }
 }
-
-void Server::fileTransfer(int const &clientFd, std::string const &paht) {
-  try {
-    File file(paht);
-    char buffer[BUFFER_SIZE];
-    while (int bytesRead = file.readChunkFile(buffer, sizeof(buffer))) {
-      if (!file.sendFileTransfer(clientFd, buffer, bytesRead))
-        break;
-
-      char ack[3]; // acknowledgement.
-      int ackbytesRead = recv(clientFd, ack, sizeof(ack), 0);
-      if (ackbytesRead <= 0 || std::strncmp(ack, "AKC", 3) != 0)
-        break;
-    }
-  } catch (const std::exception &e) {
-    std::cout << "Error during the file transfer " << e.what() << std::endl;
-  }
-}

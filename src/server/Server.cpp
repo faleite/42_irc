@@ -146,16 +146,18 @@ void Server::initServer()
   // createChannel("#random");
 
   // //___________________________________SET BOT
-  // Client faleiteBot(-1, "FaleiteLegend");
-  // Client juanBot(-1, "MasterTinxzYoda");
-  // juanBot.setIsBot(true);
-  // faleiteBot.setIsBot(true);
-  // juanBot.setOperator(true);
-  // faleiteBot.setOperator(true);
-  // _clients.push_back(juanBot);
-  // _clients.push_back(faleiteBot);
-  // std::cout << "Bot :::: " << juanBot.getName() << std::endl;
-  // std::cout << "Bot :::: " << faleiteBot.getName() << std::endl;
+  Client faleiteBot(-1, "FaleiteLegend");
+  faleiteBot.setNickName("bot1");
+  Client juanBot(-1, "MasterTinxzYoda");
+  juanBot.setIsBot(true);
+  juanBot.setNickName("bot2");
+  faleiteBot.setIsBot(true);
+  juanBot.setOperator(true);
+  faleiteBot.setOperator(true);
+  _clients.push_back(juanBot);
+  _clients.push_back(faleiteBot);
+  std::cout << "Bot :::: " << juanBot.getName() << std::endl;
+  std::cout << "Bot :::: " << faleiteBot.getName() << std::endl;
 
   // //___________________________________SET CHANNELS BOTS.
   // _channels["#general"].joinChannel(&juanBot, "");

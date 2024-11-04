@@ -19,6 +19,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <vector>
+#include "../client/HTTPClient.hpp"
 
 #define BUFFER_SIZE 1024
 class Server

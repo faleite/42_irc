@@ -5,7 +5,7 @@ CPP_FLAGS := -Wall -Wextra -Werror -g -std=c++98
 # Source and Object files
 SRC := main.cpp \
 	  channel/Channel.cpp \
-	  client/Client.cpp \
+	  client/Client.cpp client/HTTPClient.cpp\
 	  file/File.cpp \
 	  server/Server.cpp \
 	  server/handleMessage.cpp server/messageUtils.cpp\

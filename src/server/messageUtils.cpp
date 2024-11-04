@@ -13,15 +13,44 @@ void Server::privateMessage(Client *client, std::stringstream &commands) {
   std::getline(commands, mess);
   for (std::vector<Client>::iterator it = _clients.begin();
        it != _clients.end(); ++it) {
-    if (it->getNickName() == clientNick) {
-      it->getMessage(client->getNickName() + " send you a private message: " + mess);
+    if (it->getNickName() == clientNick && client->getIsBot() == false) {
+      it->getMessage(client->getNickName() +
+                     " send you a private message: " + mess);
       found = true;
       break;
+    } else if (it->getNickName() == clientNick && client->getIsBot() == true) {
+      std::string cmdBot;
+      commands >> cmdBot;
+      if (cmdBot == "JOKE") {
+        HTTPClient httpClient;
+        std::string joke =
+            httpClient.get("http://official-joke-api.appspot.com/jokes/random");
+        it->getMessage("Here's a joke for you: " + joke);
+        found = true;
+      }
     }
   }
-  if (found == false)
-  {
+  if (found == false) {
     client->getMessage("Error:  ⚠️ " + clientNick + " not found.");
+  }
+}
+
+void Server::fileTransfer(int const &clientFd, std::string const &paht) {
+  try {
+    File file(paht);
+    char buffer[BUFFER_SIZE];
+    while (int bytesRead = file.readChunkFile(buffer, sizeof(buffer))) {
+      if (!file.sendFileTransfer(clientFd, buffer, bytesRead))
+        break;
+
+      std::string ackbytesRead;
+      ackbytesRead = this->getMessage(clientFd);
+      if (ackbytesRead.empty() || ackbytesRead == "AKC" != 0)
+        break;
+    }
+    std::cout << "FILE TRANSFERED SUCCESSFULLY" << std::endl;
+  } catch (const std::exception &e) {
+    std::cout << "Error during the file transfer " << e.what() << std::endl;
   }
 }
 
