@@ -1,6 +1,7 @@
 #ifndef FILE_HPP
 #define FILE_HPP
 
+#include "../client/Client.hpp"
 #include <fstream>
 #include <iostream>
 #include <string.h>
@@ -11,20 +12,22 @@ private:
   std::string _filePath;
   std::ifstream _inputFileStream;
   std::ifstream _outFileStream;
-  int _chunckSize;
 
 public:
+  //________________ Constructor and Destructor.
   File();
-  File(std::string const &filePath, int chunkSize = 1024);
+  File(std::string const &filePath);
   ~File();
 
-  // File Operations.
-  bool openFile();
-  int readChunkFile(char *buffer, int bufferSize);
+  //________________ File Operations.
+  void openFile();
   void closeFile();
 
-  // SendFile
-  bool sendFileTransfer(int const &clientSocket, char *buffer, int bufferSize);
+  //_______________ Size of the chunk.
+  int readChunkFile(char *buffer, int const &bufferSize);
+
+  //_______________ Control Operation.
+  bool sendFileTransfer(int const &clientFd, char *buffer, int bufferSize);
   // TODO
   //  Receiving and Writing File Chunks
 };

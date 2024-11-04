@@ -2,23 +2,26 @@
 #include <string>
 #include <sys/socket.h>
 #include <unistd.h>
+#define BUFFER_SIZE 1024
 
 // ________ Constructors ________
 Client::Client()
-    : _clientSocket(-1), _ip(""), _port(0), _name("New Born"), _nickName(""),
-      _isAuthenticated(false), _isOperator(false), _isBot(false) {
+    : isWelcome(false), _clientSocket(-1), _ip(""), _port(0), _name(""),
+      _nickName(""), _authAttempted(false), _isAuthenticated(false),
+      _isOperator(false), _isBot(false) {
   std::cout << "Default Client Constructor Called" << std::endl; // Tolk
   // about it
 }
 
 Client::Client(int clientSocket, std::string const &name)
-    : _clientSocket(clientSocket), _ip(""), _port(0), _name(name),
-      _nickName(name), _isOperator(true), _isBot(false) {
+    : isWelcome(false), _clientSocket(clientSocket), _ip(""), _port(0),
+      _name(name), _nickName(name), _isOperator(true), _isBot(false) {
   std::cout << "Name Client Constructor Called" << std::endl; // Tolk
 }
 Client::Client(int clientSoket, std::string ip, int port)
-    : _clientSocket(clientSoket), _ip(ip), _port(port), _name("New Born"),
-      _nickName(""), _isAuthenticated(false), _isOperator(false){
+    : isWelcome(false), _clientSocket(clientSoket), _ip(ip), _port(port),
+      _name(""), _nickName(""), _authAttempted(false), _isAuthenticated(false),
+      _isOperator(false) {
   // std::cout << "Client Socket Constructor Connected" << std::endl; // Tolk
   // about it
 }
@@ -26,11 +29,13 @@ Client::Client(int clientSoket, std::string ip, int port)
 Client::Client(const Client &copyObj) { *this = copyObj; }
 Client &Client::operator=(const Client &assignCopy) {
   if (this != &assignCopy) {
+    this->isWelcome = assignCopy._isOperator;
     this->_clientSocket = assignCopy._clientSocket;
     this->_ip = assignCopy._ip;
     this->_port = assignCopy._port;
     this->_name = assignCopy._name;
     this->_nickName = assignCopy._nickName;
+    this->_authAttempted = assignCopy._authAttempted;
     this->_isAuthenticated = assignCopy._isAuthenticated;
     this->_isOperator = assignCopy._isOperator;
   }
@@ -57,24 +62,49 @@ void Client::setNickName(const std::string _nick) { this->_nickName = _nick; }
 void Client::setOperator(const bool _isOperator) {
   this->_isOperator = _isOperator;
 }
+
+bool Client::getIsWelcome() const {return isWelcome;}
+bool Client::getAuthAttempted() const { return _authAttempted; }
+void Client::setAuthAttempted(bool _attempted) { _authAttempted = _attempted; }
 void Client::setAuthenticated(const bool _pass) {
   this->_isAuthenticated = _pass;
 }
+void Client::setIsWelcome(bool welcome) { this->isWelcome = welcome; }
 
 void Client::setIsBot(bool isBot) { this->_isBot = isBot; }
 
 void Client::getMessage(std::string const &_message) const {
-  std::string msg = _message + "\r\n";             // Update
+  std::string msg = _message + "\r\n"; // Update
+  // file modification.
   send(_clientSocket, msg.c_str(), msg.size(), 0); // Update
 }
 
+void Client::getFile(int serverSocket, std::string const &outputFilePath) {
+  std::ofstream outputFile(outputFilePath.c_str(), std::ios::binary);
+  if (!outputFile.is_open()) {
+    std::cout << "Error with the output file" << std::endl;
+    return;
+  }
+  char buffer[BUFFER_SIZE];
+  while (true) {
+    int bytesRead = recv(serverSocket, buffer, sizeof(buffer), 0);
+    if (bytesRead <= 0) {
+      return;
+    }
+    outputFile.write(buffer, bytesRead);
+    int sendMessage = send(serverSocket, "ACK", 3, 0);
+    if (sendMessage == -1) {
+      std::cout << "Failed to send the ACK " << std::endl;
+      return;
+    }
+  }
+}
 void Client::joinChanel(const std::string &_chanel,
                         const std::string &password = "") const {
   std::string command;
-  command = "JOIN " +  _chanel;
+  command = "JOIN " + _chanel;
   if (password.empty() == false) {
     command += " " + password;
   }
   getMessage(command);
 }
-

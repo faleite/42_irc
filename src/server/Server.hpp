@@ -3,6 +3,7 @@
 
 #include "../channel/Channel.hpp"
 #include "../client/Client.hpp"
+#include "../file/File.hpp"
 #include <arpa/inet.h>
 #include <cstdlib>
 #include <cstring>
@@ -18,7 +19,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <vector>
+#include "../client/HTTPClient.hpp"
 
+#define BUFFER_SIZE 1024
 class Server
 {
 	private:
@@ -53,6 +56,23 @@ class Server
   		void sendWelcomeMessage(Client newClient);
 		std::string getMessage(int fd);
 		void handleMessage(int fd);
+		
+		// Private Messagge Logic.
+		void privateMessage(Client *client, std::stringstream &commands);
+		// File Message Logic.
+		// Bot Message Logic.
+
+		// ________________________ COMMANDS HANDLER.
+		void pass(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		void nick(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		void user(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		void join(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+
+		typedef void (Server::*CommandFunc)(Client&, const std::string &, const std::vector<std::string>&);
+    	std::map<std::string, CommandFunc> commandMap;
+
+		//_________________________ File transfer
+		void fileTransfer(int const &clienteFd, std::string const &paht);
 
 		// ________________________ CHANNEL MESSAGE.
 		void channelManager(Client *client, std::string &channelName);
@@ -63,7 +83,6 @@ class Server
 
 		// ________________________ AUTHENTICATION.
 		std::string const &getPass() const;
-		bool checkAuthenticator(Client &client, std::string &command);
 		int  parseHandler(Client &client, std::string &message);
 };
 

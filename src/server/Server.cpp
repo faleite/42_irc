@@ -7,9 +7,19 @@
 Server::Server(int const &port, std::string pass) : _port(port), _pass(pass)
 {
   this->_sockfd = -1;
+  commandMap["NICK"] = &Server::nick;
+  commandMap["USER"] = &Server::user;
+  commandMap["PASS"] = &Server::pass;
+  commandMap["JOIN"] = &Server::join;
 }
 
-Server::Server() : _sockfd(-1), _port(0), _pass("") {}
+Server::Server() : _sockfd(-1), _port(0), _pass("") 
+{
+  commandMap["NICK"] = &Server::nick;
+  commandMap["USER"] = &Server::user;
+  commandMap["PASS"] = &Server::pass;
+  commandMap["JOIN"] = &Server::join;
+}
 
 Server::Server(const Server &copyObj) { *this = copyObj; }
 
@@ -122,23 +132,25 @@ void Server::acceptClient()
   _clients.push_back(newClient);
 
   // TESTING
-  sendWelcomeMessage(newClient);
-  brodcastMessage(newClient.getName() + " Has Join to the server" );
+  // sendWelcomeMessage(newClient);
+  // brodcastMessage(newClient.getName() + " Has Join to the server" );
 }
 
 void Server::initServer()
 {
   this->createSocket();
  
-  //___________________________________SET CHANNELS
-  createChannel("#general");
-  createChannel("#news");
-  createChannel("#random");
+  // //___________________________________SET CHANNELS
+  // createChannel("#general");
+  // createChannel("#news");
+  // createChannel("#random");
 
-  //___________________________________SET BOT
+  // //___________________________________SET BOT
   Client faleiteBot(-1, "FaleiteLegend");
+  faleiteBot.setNickName("bot1");
   Client juanBot(-1, "MasterTinxzYoda");
   juanBot.setIsBot(true);
+  juanBot.setNickName("bot2");
   faleiteBot.setIsBot(true);
   juanBot.setOperator(true);
   faleiteBot.setOperator(true);
@@ -147,14 +159,14 @@ void Server::initServer()
   std::cout << "Bot :::: " << juanBot.getName() << std::endl;
   std::cout << "Bot :::: " << faleiteBot.getName() << std::endl;
 
-  //___________________________________SET CHANNELS BOTS.
-  _channels["#general"].joinChannel(&juanBot, "");
-  _channels["#random"].joinChannel(&juanBot, "");
-  _channels["#news"].joinChannel(&juanBot, "");
+  // //___________________________________SET CHANNELS BOTS.
+  // _channels["#general"].joinChannel(&juanBot, "");
+  // _channels["#random"].joinChannel(&juanBot, "");
+  // _channels["#news"].joinChannel(&juanBot, "");
 
-  _channels["#general"].joinChannel(&faleiteBot, "");
-  _channels["#random"].joinChannel(&faleiteBot, "");
-  _channels["#news"].joinChannel(&faleiteBot, "");
+  // _channels["#general"].joinChannel(&faleiteBot, "");
+  // _channels["#random"].joinChannel(&faleiteBot, "");
+  // _channels["#news"].joinChannel(&faleiteBot, "");
 
   while (!this->_signal)
   {
@@ -228,23 +240,3 @@ bool Server::findChannel(std::string const &channelName)
   it = _channels.find(channelName);
   return (it != _channels.end() ? true : false);
 }
-
-////////////////////////////////////
-
-bool Server::checkAuthenticator(Client &client, std::string &command)
-{
-  std::istringstream stream(command);
-  std::string password;
-  stream >> password;
-  if (password == getPass())
-  {
-    client.setAuthenticated(true);
-    std::cout << "Correct Password: " << client.getAuthenticator() << std::endl;
-    return true;
-  }
-  //   else
-  // 	client.sendMessage("ERROR :Invalid password");
-  return false;
-}
-
-//////////////////////////////////////
