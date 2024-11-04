@@ -37,7 +37,7 @@ public:
   // Actions.
   void joinChannel(Client *newClient, const std::string &password);
   void leaveChannel(Client *client);
-  void brodcastMessage(std::string &message);
+  void brodcastMessage(std::string const &message);
   bool isOnList(Client *client);
   bool isOnChannel(Client *client);
   void changeTopic(Client *clientOperator, std::string const &topic);
