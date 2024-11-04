@@ -30,3 +30,9 @@ std::string  Replies::ERR_NICKNAMEINUSE(const std::string &nick)
   return(":jf.irc 433 * " + nick + " :Nickname is already in use");
 }
 
+std::string  Replies::RPL_NAMREPLY(void)
+{
+  // :ergo.test 353 juan = #local :@juan
+  return(":jf.irc 353 juan = #local :@juan");
+  //  + channel + " "  + nick + ":Nickname is already in use");
+}

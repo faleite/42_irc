@@ -13,13 +13,13 @@ Client::Client()
 }
 
 Client::Client(int clientSocket, std::string const &name)
-    : isWelcome(false), _clientSocket(clientSocket), _ip(""), _port(0),
-      _name(name), _nickName(name), _isOperator(true), _isBot(false) {
+  : _clientSocket(clientSocket), _ip(""), _port(0), _name(name), _nickName(""), _authAttempted(false), 
+  _isAuthenticated(false), _isRegistered(false), _isOperator(false), _isBot(false) {
   std::cout << "Name Client Constructor Called" << std::endl; // Tolk
 }
 Client::Client(int clientSoket, std::string ip, int port)
-    : _clientSocket(clientSoket), _ip(ip), _port(port), _name(""), _nickName(""), 
-    _authAttempted(false), _isAuthenticated(false),_isRegistered(false), _isOperator(false) {
+  : _clientSocket(clientSoket), _ip(ip), _port(port), _name(""), _nickName(""), _authAttempted(false), 
+  _isAuthenticated(false), _isRegistered(false), _isOperator(false), _isBot(false) {
   // std::cout << "Client Socket Constructor Connected" << std::endl; // Tolk
   // about it
 }
@@ -27,7 +27,6 @@ Client::Client(int clientSoket, std::string ip, int port)
 Client::Client(const Client &copyObj) { *this = copyObj; }
 Client &Client::operator=(const Client &assignCopy) {
   if (this != &assignCopy) {
-    this->isWelcome = assignCopy._isOperator;
     this->_clientSocket = assignCopy._clientSocket;
     this->_ip = assignCopy._ip;
     this->_port = assignCopy._port;
@@ -37,6 +36,7 @@ Client &Client::operator=(const Client &assignCopy) {
     this->_isAuthenticated = assignCopy._isAuthenticated;
     this->_isRegistered = assignCopy._isRegistered;
     this->_isOperator = assignCopy._isOperator;
+    this->_isBot = assignCopy._isBot;
   }
   return *this;
 }

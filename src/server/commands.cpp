@@ -90,7 +90,11 @@ void Server::nick(Client &client, const std::string &cmd, const std::vector<std:
 void Server::join(Client &client, const std::string &cmd, const std::vector<std::string> &param)
 {
   (void)cmd;
-  // <channel>
-  std::cout << ":::::: CHANEL " << param[0] << std::endl;
+  // validate the #channel
+  if (param.size() > 1)
+  {
+    _channels[param[0]].joinChannel(&client, param[1]);
+    return ;
+  }
   _channels[param[0]].joinChannel(&client, "");
 }

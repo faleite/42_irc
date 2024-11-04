@@ -24,9 +24,8 @@ void Server::sendWelcomeMessage(Client newClient) {
       <<"           ▄▀▀▀█▄▐▀▀▪▄▐▀▀▄ ▐█▐█•▐▀▀▪▄▐▀▀▄          \n"
       <<"           ▐█▄▪▐█▐█▄▄▌▐█•█▌ ███ ▐█▄▄▌▐█•█▌         \n"
       <<"            ▀▀▀▀  ▀▀▀ .▀  ▀. ▀   ▀▀▀ .▀  ▀         \n"
-      <<"\n"
       << reset
-      << "We're thrilled to have you join our community!\n"
+      << "\nWe're thrilled to have you join our community!\n"
       << "\n"
       << "Feel free to jump into our channels:\n"
       << "- **#general**: For general discussion and announcements.\n"
@@ -65,25 +64,6 @@ void Server::brodcastMessage(std::string const &message) {
   }
 }
 
-void Server::comunicationManager(Client *client, std::string message) {
-  std::string cmd;
-  std::stringstream ss(message);
-
-  ss >> cmd;
-  if (cmd == MSG) {
-    // Call the function to handle message in channel.
-  } else if (cmd == PRIVMSG) {
-    // call the function for handle private Message.
-    privateMessage(client, ss);
-  } else if (cmd == LIST) {
-    // list all the channels.
-  } else if (cmd == SEND) {
-    // call the function to handle the file transfer
-  } else {
-    std::cerr << "COMAND NOT FOUND ::::: " << std::endl;
-  }
-}
-
 void Server::handleMessage(int fd) {
   std::string message = this->getMessage(fd);
   for (size_t i = 0; i < _clients.size(); i++) {
@@ -92,12 +72,9 @@ void Server::handleMessage(int fd) {
         connectionRegistration(_clients[i], message);
       } else {
         commands(_clients[i], message);
-        comunicationManager(&_clients[i], message);
       }
     }
   }
-  // brodcastMessage(message);
-  // std::cout << message;
 }
 
 void Server::channelManager(Client *client, std::string &channelName) {

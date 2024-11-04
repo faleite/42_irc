@@ -2,6 +2,8 @@
 #define CHANNEL_HPP
 
 #include "../client/Client.hpp"
+#include "../replies/Replies.hpp"
+
 #include <sstream>
 #include <string>
 

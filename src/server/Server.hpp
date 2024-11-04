@@ -22,6 +22,8 @@
 #define QUIT "QUIT"
 
 #define BUFFER_SIZE 1024
+
+class Channel;
 class Server
 {
 	private:
@@ -57,8 +59,6 @@ class Server
 		std::string getMessage(int fd);
 		void handleMessage(int fd);
 		
-		// Private Messagge Logic.
-		void privateMessage(Client *client, std::stringstream &commands);
 		// File Message Logic.
 		// Bot Message Logic.
 		std::vector<std::vector<std::string> > tokenization(const std::string &message);
@@ -71,6 +71,8 @@ class Server
 		void user(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void join(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void quit(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		// Private Messagge Logic.
+		void privmsg(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 
 		typedef void (Server::*CommandFunc)(Client&, const std::string &, const std::vector<std::string>&);
     	std::map<std::string, CommandFunc> commandMap;
@@ -80,7 +82,6 @@ class Server
 
 		// ________________________ CHANNEL MESSAGE.
 		void channelManager(Client *client, std::string &channelName);
-		void comunicationManager(Client *client, std::string messge);
   		void createChannel(std::string const &name);
  		bool findChannel(std::string const &channelName);
 

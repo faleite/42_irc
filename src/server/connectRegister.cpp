@@ -45,7 +45,7 @@ int checkInvalidCommand(const std::string &cmd)
 {
   // See if exist others commands already
   if (cmd == JOIN || cmd == KICK || cmd == INVITE || cmd == LIST
-      || cmd == MODE || cmd == PRIVMSG || cmd == PRIVMSG)
+      || cmd == MODE || cmd == PRIVMSG || cmd == PRIVMSG || cmd == SEND)
     return (1);
   else if (cmd != PASS && cmd != NICK 
             && cmd != USER && cmd != QUIT)

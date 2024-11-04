@@ -24,7 +24,6 @@
 // class Client : public Communicator {
 class Client {
 protected:
-  bool isWelcome;
   int _clientSocket;
   std::string _ip;
   int _port;
@@ -63,14 +62,12 @@ public:
   std::string const &getIp() const;
   int getPort() const;
   bool getIsBot(void) const;
-  bool getIsWelcome() const;
   // Setters.
   void setName(const std::string _name);
   void setNickName(const std::string _nick);
   void setOperator(bool _isOperator);
   void setAuthAttempted(bool _attempted);
   void setAuthenticated(bool _pass);
-  void setIsWelcome(bool welcome);
   void setIsBot(bool isBot);
   void setRegistered(const bool _register);
 
