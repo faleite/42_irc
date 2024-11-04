@@ -1,5 +1,6 @@
 #include "Server.hpp"
 #include <exception>
+#include <ostream>
 #include <sys/socket.h>
 
 // #_____________________________________________________ UTILIIES.
@@ -9,23 +10,21 @@ void Server::sendWelcomeMessage(Client newClient) {
   const std::string blue = "\033[34m";
   const std::string reset = "\033[0m";
 
-  oss <<"\nHello, " << newClient.getName() << "!\n"
+  oss << "\nHello, " << newClient.getName() << "!\n"
       << "Welcome to the **best IRC Server** around.\n"
-      << blue
-      <<"\n"
-      <<"                       ▪  ▄▄▄   ▄▄·                     \n"
-      <<"                       ██ ▀▄ █·▐█ ▌▪                    \n"
-      <<"                       ▐█·▐▀▀▄ ██ ▄▄                    \n"
-      <<"                       ▐█▌▐█•█▌▐███▌                    \n"
-      <<"                       ▀▀▀.▀  ▀·▀▀▀                     \n"
-      <<"               .▄▄ · ▄▄▄ .▄▄▄   ▌ ▐·▄▄▄ .▄▄▄            \n"
-      <<"               ▐█ ▀. ▀▄.▀·▀▄ █·▪█·█▌▀▄.▀·▀▄ █·          \n"
-      <<"               ▄▀▀▀█▄▐▀▀▪▄▐▀▀▄ ▐█▐█•▐▀▀▪▄▐▀▀▄           \n"
-      <<"               ▐█▄▪▐█▐█▄▄▌▐█•█▌ ███ ▐█▄▄▌▐█•█▌          \n"
-      <<"                ▀▀▀▀  ▀▀▀ .▀  ▀. ▀   ▀▀▀ .▀  ▀          \n"
-      <<"\n"
-      << reset
-      << "We're thrilled to have you join our community!\n"
+      << blue << "\n"
+      << "                       ▪  ▄▄▄   ▄▄·                     \n"
+      << "                       ██ ▀▄ █·▐█ ▌▪                    \n"
+      << "                       ▐█·▐▀▀▄ ██ ▄▄                    \n"
+      << "                       ▐█▌▐█•█▌▐███▌                    \n"
+      << "                       ▀▀▀.▀  ▀·▀▀▀                     \n"
+      << "               .▄▄ · ▄▄▄ .▄▄▄   ▌ ▐·▄▄▄ .▄▄▄            \n"
+      << "               ▐█ ▀. ▀▄.▀·▀▄ █·▪█·█▌▀▄.▀·▀▄ █·          \n"
+      << "               ▄▀▀▀█▄▐▀▀▪▄▐▀▀▄ ▐█▐█•▐▀▀▪▄▐▀▀▄           \n"
+      << "               ▐█▄▪▐█▐█▄▄▌▐█•█▌ ███ ▐█▄▄▌▐█•█▌          \n"
+      << "                ▀▀▀▀  ▀▀▀ .▀  ▀. ▀   ▀▀▀ .▀  ▀          \n"
+      << "\n"
+      << reset << "We're thrilled to have you join our community!\n"
       << "\n"
       << "To get started, please set your name and nickname:\n"
       << "- Use `USER <YourName> <ip> <host> <surname>` to set your real "
@@ -57,7 +56,7 @@ std::string Server::getMessage(int fd) {
     cleanClient(fd);
     close(fd);
   } else
-      message = std::string(buffer, bytesRecv);
+    message = std::string(buffer, bytesRecv);
   return (message);
 }
 
@@ -75,44 +74,16 @@ void Server::comunicationManager(Client *client, std::string message) {
 
   ss >> cmd;
   if (cmd == "MSG") {
-    std::string channel;
-    ss >> channel;
-    std::map<std::string, Channel>::iterator it =
-        _channels.find(channel.substr(1));
-    if (it != _channels.end()) {
-      std::string mess;
-
-      std::getline(ss, mess);
-      std::cout << "siuuui" << client->getName() << std::endl;
-      it->second.brodcastMessage(mess);
-    }
+    // Call the function to handle message in channel.
   } else if (cmd == "PRIVMSG") {
-    std::string clientNick;
-    ss >> clientNick;
-
-    std::string mess;
-    std::getline(ss, mess);
-    for (std::vector<Client>::iterator it = _clients.begin();
-         it != _clients.end(); ++it) {
-      if (it->getNickName() == clientNick) {
-        it->getMessage(client->getNickName() + "send you a message");
-        it->getMessage(mess);
-        break;
-      }
-    }
+    // call the function for handle private Message.
+    privateMessage(client, ss);
   } else if (cmd == "LIST") {
     // list all the channels.
   } else if (cmd == "SEND") {
-    std::string filePath;
-    std::string clientNick;
-    ss >> clientNick;
-    ss >> filePath;
-    for (std::vector<Client>::iterator it = _clients.begin();
-         it != _clients.end(); ++it) {
-      if (it->getNickName() == clientNick) {
-        fileTransfer(it->getSocket(), "../file.txt");
-      }
-    }
+    // call the function to handle the file transfer
+  } else {
+    std::cerr << "COMAND NOT FOUND ::::: " << std::endl;
   }
 }
 
@@ -121,8 +92,9 @@ void Server::handleMessage(int fd) {
   for (size_t i = 0; i < _clients.size(); i++) {
     if (_clients[i].getSocket() == fd) {
       std::string mess;
-      parseHandler(_clients[i], message); // this func return 0 or 1 to error
-      comunicationManager(&_clients[i], message);
+      if (!parseHandler(_clients[i],
+                        message)) // this func return 0 or 1 to error
+        comunicationManager(&_clients[i], message);
     }
   }
   // brodcastMessage(message);

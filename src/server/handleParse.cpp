@@ -88,8 +88,12 @@ int Server::parseHandler(Client &client, std::string &message)
     }
     if (client.getAuthenticator() && !client.getNickName().empty() && !client.getName().empty())
     {
-      sendWelcomeMessage(client);
-      brodcastMessage(client.getName() + " Has Join to the server" );
+      if (client.getIsWelcome() == false)
+      {
+        sendWelcomeMessage(client);
+        brodcastMessage(client.getName() + " Has Join to the server" );
+        client.setIsWelcome(true);
+      }
     }
     return 0;
 }

@@ -55,6 +55,11 @@ class Server
   		void sendWelcomeMessage(Client newClient);
 		std::string getMessage(int fd);
 		void handleMessage(int fd);
+		
+		// Private Messagge Logic.
+		void privateMessage(Client *client, std::stringstream &commands);
+		// File Message Logic.
+		// Bot Message Logic.
 
 		// ________________________ COMMANDS HANDLER.
 		void pass(Client &client, const std::string &cmd, const std::vector<std::string>&param);
