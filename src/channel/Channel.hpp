@@ -22,22 +22,27 @@ private:
   std::vector<Client *> invitedList;
 
 public:
-  Channel(){};
+  //___________________ Default Class Set Up.
+  Channel();
   Channel(std::string const &name);
   ~Channel();
-  // getters.
+  
+  //____________________ Getters.
   std::string const &getName(void) const;
   std::string const &getTopic(void) const;
   int getLimit(void);
-  // Setter.
+  int getUsers(void);
+
+  //_____________________Setter.
   void setTopic(std::string const &topic);
   void setLimit(int limit);
   void setPrivilige(Client *client, bool enable);
   bool getVerification();
-  // Actions.
+  
+  //______________________Actions.
   void joinChannel(Client *newClient, const std::string &password);
   void leaveChannel(Client *client);
-  void brodcastMessage(std::string const &message);
+  void broadcastMessage(std::string const &message);
   bool isOnList(Client *client);
   bool isOnChannel(Client *client);
   void changeTopic(Client *clientOperator, std::string const &topic);

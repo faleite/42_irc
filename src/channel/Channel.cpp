@@ -5,6 +5,9 @@
 
 //_______________________________________: Constructor
 
+Channel::Channel() {
+  std::cout << "The Channel < " << " > was created" << std::endl;
+}
 Channel::Channel(std::string const &name)
     : _needInvitation(false), _needVerification(false), _channelKey(""),
       _restricTopic(false), _active(true), limit(-1), _name(name), _topic("") {
@@ -66,24 +69,25 @@ bool Channel::getVerification() { return (_needVerification); }
 void Channel::joinChannel(Client *newClient, const std::string &password) {
 
   //__________________________ Check Limit.
-  (limit > 0 && limit == static_cast<int>(channelUsers.size()))
-      ? throw("You can not join to the Channel, max set user reached")
-      : true;
+  if (limit > 0 && limit == static_cast<int>(channelUsers.size())) {
+    throw std::runtime_error(
+        "You can not join to the Channel, max set user reached");
+  }
 
   //__________________________ Check is on Channel
-  (isOnChannel(newClient) == true) ? throw("You are already in the channel")
-                                   : true;
+  if (isOnChannel(newClient)) {
+    throw std::runtime_error("You are already in the channel");
+  }
 
   //__________________________ Check Channel Invite Only
-  (_needInvitation == true && newClient->getIsOperator() == false &&
-   isOnList(newClient) == false)
-      ? throw("You cannot join the channel: invite-only.")
-      : true;
+  if (_needInvitation && !newClient->getIsOperator() && !isOnList(newClient)) {
+    throw std::runtime_error("You cannot join the channel: invite-only.");
+  }
+
   //__________________________ Check Verification
-  if (_needVerification == true) {
-    (password != _channelKey)
-        ? throw("You cannot join the channel: use correct password.")
-        : true;
+  if (_needVerification && password != _channelKey) {
+    throw std::runtime_error(
+        "You cannot join the channel: use correct password.");
   }
 
   //__________________________ Check First client on channel.
@@ -92,8 +96,9 @@ void Channel::joinChannel(Client *newClient, const std::string &password) {
 
   //__________________________ Add the client to the channel.
   channelUsers.push_back(newClient);
-  this->brodcastMessage(newClient->getNickName() + " joined the Channel.");
-  
+  this->broadcastMessage(newClient->getNickName() + " joined the Channel." +
+                         _name);
+
   // newClient->getMessage(":juan!~u@e77ncepu88yiy.irc JOIN #local");
   // newClient->getMessage(Replies::RPL_NAMREPLY());
 }
@@ -109,11 +114,20 @@ void Channel::leaveChannel(Client *client) {
     _active = false;
 }
 
-void Channel::brodcastMessage(std::string const &message) {
+void Channel::broadcastMessage(std::string const &message) {
   for (std::vector<Client *>::iterator it = channelUsers.begin();
        it != channelUsers.end(); ++it) {
     (*it)->getMessage(message);
   }
+}
+
+int Channel::getUsers(void) {
+  int count = 0;
+  for (std::vector<Client *>::iterator it = channelUsers.begin();
+       it != channelUsers.end(); ++it) {
+    count++;
+  }
+  return count;
 }
 
 //_______________________________________: Perform Operators.
