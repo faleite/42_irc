@@ -4,8 +4,7 @@
 
 //_______________________________________: Constructor
 
-Server::Server(int const &port, std::string pass) : _port(port), _pass(pass)
-{
+Server::Server(int const &port, std::string pass) : _port(port), _pass(pass) {
   this->_sockfd = -1;
   commandMap[NICK] = &Server::nick;
   commandMap[USER] = &Server::user;
@@ -15,8 +14,7 @@ Server::Server(int const &port, std::string pass) : _port(port), _pass(pass)
   commandMap[PRIVMSG] = &Server::privmsg;
 }
 
-Server::Server() : _sockfd(-1), _port(0), _pass("") 
-{
+Server::Server() : _sockfd(-1), _port(0), _pass("") {
   commandMap[NICK] = &Server::nick;
   commandMap[USER] = &Server::user;
   commandMap[PASS] = &Server::pass;
@@ -27,10 +25,8 @@ Server::Server() : _sockfd(-1), _port(0), _pass("")
 
 Server::Server(const Server &copyObj) { *this = copyObj; }
 
-Server &Server::operator=(const Server &assignCopy)
-{
-  if (this != &assignCopy)
-  {
+Server &Server::operator=(const Server &assignCopy) {
+  if (this != &assignCopy) {
     this->_port = assignCopy._port;
     this->_pass = assignCopy._pass;
     this->_pfds = assignCopy._pfds;
@@ -45,10 +41,7 @@ Server &Server::operator=(const Server &assignCopy)
 
 Server::~Server() {}
 
-std::string const &Server::getPass() const
-{
-  return (_pass);
-}
+std::string const &Server::getPass() const { return (_pass); }
 
 // Handle Signals
 
@@ -56,20 +49,16 @@ Server *Server::instance = NULL;
 
 void Server ::stop() { this->_signal = true; }
 
-void Server::closeSignal(int sig)
-{
-  if (instance == NULL)
-  {
+void Server::closeSignal(int sig) {
+  if (instance == NULL) {
     std::cout << "No server to Shut Down" << std::endl;
     return;
   }
-  if (sig == SIGINT || sig == SIGQUIT)
-  {
+  if (sig == SIGINT || sig == SIGQUIT) {
     instance->stop();
   }
 }
-void Server::registerSignalHandler()
-{
+void Server::registerSignalHandler() {
   instance = this;
   signal(SIGINT, closeSignal);
   signal(SIGQUIT, closeSignal);
@@ -77,8 +66,7 @@ void Server::registerSignalHandler()
 
 // Handle Server
 
-void Server::createSocket()
-{
+void Server::createSocket() {
   this->_signal = false;
   int optval = 1;
 
@@ -87,28 +75,27 @@ void Server::createSocket()
   servAddr.sin_addr.s_addr =
       INADDR_ANY; // Accepts connections on any network interface
   servAddr.sin_port = htons(_port);
-  
+
   _sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (_sockfd == -1)
     throw std::runtime_error("Can't create a socket");
-  if (setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1)
+  if (setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) ==
+      -1)
     throw std::runtime_error("Can't set socket options");
   if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) == -1)
     throw std::runtime_error("Can't set non_blocking");
-
 
   if (bind(_sockfd, (struct sockaddr *)&servAddr, sizeof(servAddr)) == -1)
     throw std::runtime_error("Can't be bind to IP/port");
   if (listen(_sockfd, SOMAXCONN) == -1)
     throw std::runtime_error("Can't listen");
   std::cout << "Server Running on Port : " << _port << std::endl;
- 
+
   pollfd pfd = {_sockfd, POLLIN, 0};
   _pfds.push_back(pfd);
 }
 
-void Server::acceptClient()
-{
+void Server::acceptClient() {
   sockaddr_in client;
   socklen_t cliSize = sizeof(client);
 
@@ -135,17 +122,18 @@ void Server::acceptClient()
       Client(clifd, inet_ntoa(client.sin_addr), ntohs(client.sin_port));
   _clients.push_back(newClient);
 
-  std::cout << "Client connected :fd: " << clifd << " port: " << ntohs(client.sin_port) << std::endl;
-  newClient.getMessage("To get started, please set your pass, name and nickname:\n \
+  std::cout << "Client connected :fd: " << clifd
+            << " port: " << ntohs(client.sin_port) << std::endl;
+  newClient.getMessage(
+      "To get started, please set your pass, name and nickname:\n \
    - Use `PASS <ServerPass>` to set the server irc pass.\n \
    - Use `USER <YourName> <ip> <host> <surname>` to set your real data.\n \
    - Use `NICK <YourNickname>` to choose a nickname.\n");
 }
 
-void Server::initServer()
-{
+void Server::initServer() {
   this->createSocket();
- 
+
   // //___________________________________SET CHANNELS
   // createChannel("#general");
   // createChannel("#news");
@@ -174,20 +162,16 @@ void Server::initServer()
   // _channels["#random"].joinChannel(&faleiteBot, "");
   // _channels["#news"].joinChannel(&faleiteBot, "");
 
-  while (!this->_signal)
-  {
+  while (!this->_signal) {
     // negative timeout waits forever
     int events = poll(&_pfds[0], _pfds.size(), -1);
-    if (events == -1)
-    {
+    if (events == -1) {
       std::cout << "\nStop\n";
       close(_pfds[0].fd);
       break;
     }
-    for (size_t i = 0; i < _pfds.size(); i++)
-    {
-      if (_pfds[i].revents & POLLIN)
-      {
+    for (size_t i = 0; i < _pfds.size(); i++) {
+      if (_pfds[i].revents & POLLIN) {
         if (_pfds[i].fd == _sockfd)
           this->acceptClient();
         else
@@ -198,51 +182,34 @@ void Server::initServer()
   closeFds();
 }
 
-void Server::closeFds()
-{
-  for (std::vector<Client>::iterator it = _clients.begin(); it != _clients.end(); it++)
-  {
-    if (it->getSocket() != -1)
-    {
-      std::cout << "Client has been disconnected :fd: " << it->getSocket() << std::endl;
+void Server::closeFds() {
+  for (std::vector<Client>::iterator it = _clients.begin();
+       it != _clients.end(); it++) {
+    if (it->getSocket() != -1) {
+      std::cout << "Client has been disconnected :fd: " << it->getSocket()
+                << std::endl;
       close(it->getSocket());
     }
   }
-  if (_sockfd != -1)
-  {
+  if (_sockfd != -1) {
     std::cout << "Server has been disconnected :fd: " << _sockfd << std::endl;
     close(_sockfd);
   }
 }
 
-void Server::cleanClient(int fd)
-{
-  for (std::vector<Client>::iterator it = _clients.begin(); it != _clients.end(); it++)
-  {
-    if (it->getSocket() == fd)
-		{
+void Server::cleanClient(int fd) {
+  for (std::vector<Client>::iterator it = _clients.begin();
+       it != _clients.end(); it++) {
+    if (it->getSocket() == fd) {
       it = _clients.erase(it);
-      break ;
+      break;
     }
   }
-	for (std::vector<pollfd>::iterator it = _pfds.begin(); it != _pfds.end(); it++)
-	{
-		if (it->fd == fd)
-		{
-			it = _pfds.erase(it);
-			return ;
-		}
-	}
-}
-
-void Server::createChannel(std::string const &name)
-{
-  _channels[name.substr(1)] = Channel(name.substr(1));
-}
-
-bool Server::findChannel(std::string const &channelName)
-{
-  std::map<std::string, Channel>::iterator it;
-  it = _channels.find(channelName);
-  return (it != _channels.end() ? true : false);
+  for (std::vector<pollfd>::iterator it = _pfds.begin(); it != _pfds.end();
+       it++) {
+    if (it->fd == fd) {
+      it = _pfds.erase(it);
+      return;
+    }
+  }
 }

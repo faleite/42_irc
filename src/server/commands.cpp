@@ -1,5 +1,6 @@
 #include "Server.hpp"
 
+
 int Server::commands(Client &client, std::string &message) {
   std::string msg = message;
   if (msg.empty() || msg == ".\r\n")
@@ -83,13 +84,3 @@ void Server::nick(Client &client, const std::string &cmd,
 }
 
 // Talk about this
-void Server::join(Client &client, const std::string &cmd,
-                  const std::vector<std::string> &param) {
-  (void)cmd;
-  try {
-    (param.size() > 1) ? _channels[param[0]].joinChannel(&client, param[1])
-                       : _channels[param[0]].joinChannel(&client, "");
-  } catch (std::exception &e) {
-    std::cout << "Error :::" << e.what() << std::endl;
-  }
-}

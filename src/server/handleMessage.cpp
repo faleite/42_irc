@@ -76,22 +76,3 @@ void Server::handleMessage(int fd) {
     }
   }
 }
-
-void Server::channelManager(Client *client, std::string &channelName) {
-  std::string channNa;
-
-  channNa = channelName.substr(1);
-  std::map<std::string, Channel>::iterator it = _channels.find(channNa);
-  std::cout << ":::::::: >>>>>> " << it->first << std::endl;
-  if (it != _channels.end()) {
-    std::cout << "Channel found " << std::endl;
-    std::cout << client->getName() << " will join to this channel" << std::endl;
-    if (it->second.getVerification() == false)
-      it->second.joinChannel(client, "");
-  } else {
-    std::cout << "Channel created" << std::endl;
-    createChannel(channNa);
-    it = _channels.find(channNa);
-    it->second.joinChannel(client, "");
-  }
-}

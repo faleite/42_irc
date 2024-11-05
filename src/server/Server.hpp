@@ -6,7 +6,9 @@
 #include "../file/File.hpp"
 #include "../client/HTTPClient.hpp"
 #include "../replies/Replies.hpp"
-
+#include <iostream>
+#include <iomanip>
+#include <sstream>
 #define JOIN "JOIN"
 #define KICK "KICK"
 #define INVITE "INVITE"     
@@ -69,10 +71,12 @@ class Server
 		void pass(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void nick(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void user(Client &client, const std::string &cmd, const std::vector<std::string>&param);
-		void join(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void quit(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		// Private Messagge Logic.
 		void privmsg(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		//__________________________ Channel Logic.
+		void join(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		void list(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 
 		typedef void (Server::*CommandFunc)(Client&, const std::string &, const std::vector<std::string>&);
     	std::map<std::string, CommandFunc> commandMap;
@@ -81,9 +85,10 @@ class Server
 		void fileTransfer(int const &clienteFd, std::string const &paht);
 
 		// ________________________ CHANNEL MESSAGE.
-		void channelManager(Client *client, std::string &channelName);
+		void channelManager(Client const &client, std::string const &channelName);
   		void createChannel(std::string const &name);
  		bool findChannel(std::string const &channelName);
+		void listChannels();
 
 
 		// ________________________ AUTHENTICATION.
