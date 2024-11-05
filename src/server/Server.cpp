@@ -9,18 +9,22 @@ Server::Server(int const &port, std::string pass) : _port(port), _pass(pass) {
   commandMap[NICK] = &Server::nick;
   commandMap[USER] = &Server::user;
   commandMap[PASS] = &Server::pass;
-  commandMap[JOIN] = &Server::join;
   commandMap[QUIT] = &Server::quit;
   commandMap[PRIVMSG] = &Server::privmsg;
+  commandMap[JOIN] = &Server::join;
+  commandMap[LIST] = &Server::list;
+  commandMap[MSG] = &Server::msg;
 }
 
 Server::Server() : _sockfd(-1), _port(0), _pass("") {
   commandMap[NICK] = &Server::nick;
   commandMap[USER] = &Server::user;
   commandMap[PASS] = &Server::pass;
-  commandMap[JOIN] = &Server::join;
   commandMap[QUIT] = &Server::quit;
   commandMap[PRIVMSG] = &Server::privmsg;
+  commandMap[JOIN] = &Server::join;
+  commandMap[LIST] = &Server::list;
+  commandMap[MSG] = &Server::msg;
 }
 
 Server::Server(const Server &copyObj) { *this = copyObj; }
