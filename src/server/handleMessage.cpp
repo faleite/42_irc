@@ -42,6 +42,8 @@ void Server::sendWelcomeMessage(Client newClient) {
   newClient.getMessage(welcomeMessage);
 }
 
+//____________________________________________ GET MESSAGE
+
 std::string Server::getMessage(int fd) {
   char buffer[1024];
   memset(buffer, 0, sizeof(buffer));

@@ -1,6 +1,8 @@
 #include "Server.hpp"
 #include <string>
 
+//_______________________________________________CREATE CHANNEL
+
 void Server::createChannel(std::string const &name) {
   _channels[name] = Channel(name);
 }
@@ -34,31 +36,7 @@ void Server::list(Client &client, const std::string &cmd,
   client.getMessage(response);
 }
 
-// void Server::join(Client &client, const std::string &cmd,
-//                   const std::vector<std::string> &param) {
-//   (void)cmd;
-//   try {
-
-//     std::map<std::string, Channel>::iterator it = _channels.find(param[0]);
-//     if (it != _channels.end()) {
-//       std::cout << ":::::::::::::::::::: Chanel Found :::::::" << param[0]
-//                 << std::endl;
-//       (param.size() > 1) ? _channels[param[0]].joinChannel(&client, param[1])
-//                          : _channels[param[0]].joinChannel(&client, "");
-//     } else {
-//       std::cout << ":::::::::::::::::::: Creating Channel :::::::" << param[0]
-//                 << std::endl;
-//       createChannel(param[0]);
-//       it = _channels.find(param[0]);
-//       it->second.joinChannel(&client, "");
-//     }
-//     client.getMessage(
-//         Replies::RPL_WELCOME(client.getNickName(), client.getName(), param[0]));
-//   } catch (std::exception &e) {
-//     std::cout << "Error :::" << e.what() << std::endl;
-//     client.getMessage(e.what());
-//   }
-// }
+//_____________________________JOIN TO A CHANNEL________________________
 
 void Server::join(Client &client, const std::string &cmd,
                   const std::vector<std::string> &param) {
@@ -87,6 +65,8 @@ void Server::join(Client &client, const std::string &cmd,
     client.getMessage(e.what());
   }
 }
+
+//________________________________SEND MESSAGE IN THE CHANNEL
 
 void Server::msg(Client &client, const std::string &cmd,
                  const std::vector<std::string> &param) {

@@ -14,6 +14,8 @@ Server::Server(int const &port, std::string pass) : _port(port), _pass(pass) {
   commandMap[JOIN] = &Server::join;
   commandMap[LIST] = &Server::list;
   commandMap[MSG] = &Server::msg;
+  commandMap[MODE] = &Server::mode;
+  commandMap[TOPIC] = &Server::topic;
 }
 
 Server::Server() : _sockfd(-1), _port(0), _pass("") {
@@ -25,6 +27,7 @@ Server::Server() : _sockfd(-1), _port(0), _pass("") {
   commandMap[JOIN] = &Server::join;
   commandMap[LIST] = &Server::list;
   commandMap[MSG] = &Server::msg;
+  commandMap[MODE] = &Server::mode;
 }
 
 Server::Server(const Server &copyObj) { *this = copyObj; }

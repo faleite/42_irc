@@ -6,6 +6,8 @@
 void Server::privmsg(Client &client, const std::string &cmd,
                      const std::vector<std::string> &param) {
   (void)cmd;
+  if (param.size() < 2 || param[1].empty())
+    return;
   std::ostringstream oss;
   for (size_t i = 1; i < param.size(); ++i) {
     if (i != 0)
