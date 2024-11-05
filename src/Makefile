@@ -13,6 +13,7 @@ SRC := main.cpp \
 	  server/handleMessage.cpp\
 	  server/connectRegister.cpp \
 	  server/commands.cpp \
+	  server/ChannelManager.cpp \
 	  replies/Replies.cpp \
 
 OBJ := $(SRC:.cpp=.o)
