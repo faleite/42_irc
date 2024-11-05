@@ -78,6 +78,10 @@ class Server
 		void join(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void list(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void msg(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		
+		//_________________________CHANNEL MODES
+		void mode(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		void topic(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 
 		//_________________________CHANNEL MODES
 		void mode(Client &client, const std::string &cmd, const std::vector<std::string>&param);

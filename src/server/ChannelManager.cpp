@@ -3,6 +3,8 @@
 
 //_______________________________________________CREATE CHANNEL
 
+//_______________________________________________CREATE CHANNEL
+
 void Server::createChannel(std::string const &name)
 {
   _channels[name] = Channel(name);
