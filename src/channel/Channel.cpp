@@ -10,7 +10,8 @@ Channel::Channel() {
 }
 Channel::Channel(std::string const &name)
     : _needInvitation(false), _needVerification(false), _channelKey(""),
-      _restricTopic(false), _active(true), limit(-1), _name(name), _topic("") {
+      _restricTopic(false), _active(true), limit(-1), _name(name),
+      _topic(name + " interactions") {
   std::cout << "The Channel < " << name << " > was created" << std::endl;
 }
 
@@ -98,7 +99,7 @@ void Channel::joinChannel(Client *newClient, const std::string &password) {
   channelUsers.push_back(newClient);
   this->broadcastMessage(newClient->getNickName() + " joined the Channel." +
                          _name);
-
+  Replies::RPL_WELCOME(newClient->getNickName(), newClient->getName(), _name);
   // newClient->getMessage(":juan!~u@e77ncepu88yiy.irc JOIN #local");
   // newClient->getMessage(Replies::RPL_NAMREPLY());
 }
