@@ -63,7 +63,7 @@ void Server::join(Client &client, const std::string &cmd,
 void Server::msg(Client &client, const std::string &cmd,
                  const std::vector<std::string> &param) {
   (void)cmd;
-  std::string mess = client.getName();
+  std::string mess = client.getName() + " : ";
   std::ostringstream oss;
   for (size_t i = 1; i < param.size(); ++i) {
     if (i != 0)
