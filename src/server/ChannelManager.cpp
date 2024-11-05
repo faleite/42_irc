@@ -1,6 +1,8 @@
 #include "Server.hpp"
 #include <string>
 
+//_______________________________________________CREATE CHANNEL
+
 void Server::createChannel(std::string const &name) {
   _channels[name] = Channel(name);
 }
@@ -34,6 +36,8 @@ void Server::list(Client &client, const std::string &cmd,
   client.getMessage(response);
 }
 
+//_____________________________JOIN TO A CHANNEL________________________
+
 void Server::join(Client &client, const std::string &cmd,
                   const std::vector<std::string> &param) {
   (void)cmd;
@@ -59,6 +63,8 @@ void Server::join(Client &client, const std::string &cmd,
     client.getMessage(e.what());
   }
 }
+
+//________________________________SEND MESSAGE IN THE CHANNEL
 
 void Server::msg(Client &client, const std::string &cmd,
                  const std::vector<std::string> &param) {

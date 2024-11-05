@@ -78,6 +78,10 @@ class Server
 		void join(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void list(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void msg(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		
+		//_________________________CHANNEL MODES
+		void mode(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		void topic(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 
 		typedef void (Server::*CommandFunc)(Client&, const std::string &, const std::vector<std::string>&);
     	std::map<std::string, CommandFunc> commandMap;
@@ -92,6 +96,8 @@ class Server
 		void listChannels();
 
 
+
+
 		// ________________________ AUTHENTICATION.
 		std::string const &getPass() const;
 		int  connectionRegistration(Client &client, std::string &message);
@@ -100,4 +106,5 @@ class Server
 
 };
 
+bool stringToInt(const std::string &str, int &port);
 #endif // SERVER_HPP
