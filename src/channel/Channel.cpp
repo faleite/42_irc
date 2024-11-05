@@ -55,13 +55,6 @@ bool Channel::isOnChannel(Client *client) {
   return true;
 }
 
-int stringToInt(const std::string &str) {
-  std::stringstream ss(str);
-  int result;
-  ss >> result;
-  return result;
-}
-
 //_______________________________________: Actions.
 
 // Set up the password, and the authentication in the list of the client.
@@ -174,45 +167,48 @@ void Channel::invite(Client *clientOperator, Client *clientInvited) {
 void Channel::mode(Client *clientOperator, std::string const &modeCmd,
                    std::vector<std::string> params) {
 
-  bool enable;
+  if (!isOnChannel(clientOperator))
+    throw(std::runtime_error("You are not part of this channel"));
 
-  if (clientOperator->getIsOperator() == false) {
-    std::cout << "Only operators can perform this funtion" << std::endl;
-    return;
-  }
+  //__________________________ IF IS + WILL ADD THIS MODE OF THE CHANNEL.
+  bool enable;
   modeCmd[0] == '+' ? enable = true : enable = false;
   size_t modeParameters = 0;
 
   for (int i = 1; modeCmd[i]; ++i) {
 
     switch (modeCmd[i]) {
+    //_______________________________________ INVITATION MODE.
     case 'i':
       _needInvitation = enable;
-      std::cout << "Invite Only Mode" << (enable ? "Enable" : "Disable")
-                << std::endl;
+      broadcastMessage(clientOperator->getName() +
+                       " : set the channel to invitation mode only");
+      break;
+    
+    //_______________________________________ LIMIT USER NAME MODE.
+    case 'l':
+      if (enable) {
+        if (params.size() >= 3) {
+          if (stringToInt(params[2], limit)) {
+            broadcastMessage(clientOperator->getName() +
+                             " : set the channel limit to" + params[2]);
+          } else {
+            clientOperator->getMessage("Wrong Limit ");
+          }
+        } else {
+          std::cout << "Error: Missing user limit parameter."
+                    << std::endl; // Remove for invalid.
+        }
+      } else {
+        limit = -1;
+        broadcastMessage(clientOperator->getName() +
+                         " : delete the channel limit ");
+      }
       break;
     case 't':
       _restricTopic = enable;
       std::cout << "Restricted Topic Mode " << (enable ? "Enable" : "Disable")
                 << std::endl;
-      break;
-    case 'l':
-      if (enable) {
-        if (modeParameters < params.size()) {
-          try {
-            limit = stringToInt(params[modeParameters++]);
-            std::cout << "User limit set to: " << limit << std::endl;
-          } catch (std::invalid_argument &) {
-            std::cout << "Error: Invalid user limit parameter." << std::endl;
-          }
-        } else {
-          std::cout << "Error: Missing user limit parameter." << std::endl;
-        }
-      } else {
-        limit = -1;
-        std::cout << "Limit parameter Removed." << std::endl;
-      }
-      // TODO.
       break;
     case 'o': // give a privilege to and user, or remove
       setPrivilige(clientOperator, enable);
