@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ "$#" -ne 5 ]; then
+    echo "Usage: $0 <port> <pass> <user> <nick> <numuser>"
+    exit 1
+fi
+
+PORT=$1
+PASS=$2
+USER=$3
+NICK=$4
+NUSER=$5
+
+# Start nc and send commands
+{
+    echo "PASS $PASS"
+    sleep 1
+    echo "USER $USER * * *"
+    sleep 1
+    echo "NICK $NICK$NUSER"
+    sleep 1
+} | nc localhost $PORT
