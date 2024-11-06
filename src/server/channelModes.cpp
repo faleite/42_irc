@@ -67,6 +67,11 @@ void Server::topic(Client &client, const std::string &cmd,
 // Command : IVITE <#channel> <user>
 // invite username #channelname
 
+//___________Password.
+// command : MODE <#CHANNEL> <FLAG> <pass>
+// EX :      MODE #GENERAL +k pass
+// Param : 3 param[0] para[1] param[2]
+// What we handle.
 void Server::invite(Client &client, const std::string &cmd, const std::vector<std::string> &param)
 {
   (void)cmd;
