@@ -83,6 +83,7 @@ class Server
 		void mode(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void topic(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void invite(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		void kick(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 
 		//_________________________CHANNEL MODES
 		void mode(Client &client, const std::string &cmd, const std::vector<std::string>&param);

@@ -248,7 +248,9 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
       std::cout << "Restricted Topic Mode " << (enable ? "Enable" : "Disable")
                 << std::endl;
       break;
-    case 'o': // give a privilege to and user, or remove
+
+    //______________________________ GIVE PRIVILEGES
+    case 'o':
       // 1. find the client nick.
       for (std::vector<Client *>::iterator iter = channelUsers.begin();
            iter != channelUsers.end(); iter++)
