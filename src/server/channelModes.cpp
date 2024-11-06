@@ -44,12 +44,16 @@ void Server::topic(Client &client, const std::string &cmd,
   findChannel(param[0]) ? _channels[param[0]].setTopic(mess)
                         : client.getMessage("Channel not found");
 }
-
+void Server::kick(Client &client, const std::string &cmd, const std::vector<std::string> &param)
+{
+  (void)cmd;
+  
+}
 //______________________________________ MODE OF THE CHANNEL.
 
 // Modes.
 
-//___________Limit.
+//___________Limit. l
 // command : MODE <#CHANNEL> <FLAG> <NUMBER>
 // EX :      MODE #GENERAL -l 10
 // Param : 3 param[0] para[1] param[2]
@@ -59,7 +63,7 @@ void Server::topic(Client &client, const std::string &cmd,
 // command : MODE <#channel> <flag>
 // Ex : MODE #general -t // set the topic to private.
 
-//___________ set privilege
+//___________ set privilege -o
 // command : MODE <#channel> <flag> <userNickname>
 // Ex : MODE #general -o user1
 
@@ -72,6 +76,7 @@ void Server::topic(Client &client, const std::string &cmd,
 // EX :      MODE #GENERAL +k pass
 // Param : 3 param[0] para[1] param[2]
 // What we handle.
+
 void Server::invite(Client &client, const std::string &cmd, const std::vector<std::string> &param)
 {
   (void)cmd;
@@ -85,7 +90,8 @@ void Server::invite(Client &client, const std::string &cmd, const std::vector<st
       if (iter->getNickName() == param[1])
       {
 
-        _channels[param[0]].invite(&(*iter)); return;
+        _channels[param[0]].invite(&(*iter));
+        return;
       }
     }
     client.getMessage("User Not Found");

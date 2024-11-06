@@ -83,6 +83,7 @@ class Server
 		void mode(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void topic(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void invite(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		void kick(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 
 		typedef void (Server::*CommandFunc)(Client&, const std::string &, const std::vector<std::string>&);
     	std::map<std::string, CommandFunc> commandMap;
