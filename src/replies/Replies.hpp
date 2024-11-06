@@ -13,6 +13,10 @@ public:
   static std::string ERR_NEEDMOREPARAMS(const std::string &cmd);
   static std::string ERR_UNKNOWNCOMMAND(const std::string &cmd);
   static std::string ERR_NICKNAMEINUSE(const std::string &nick);
+  static std::string ERR_NOSUCHCHANNEL(const std::string &nick, const std::string &channel);
+  static std::string LEAVE_CHANNEL(const std::string &nick, 
+                                   const std::string &user,
+                                   const std::string &channel);
   static std::string RPL_NAMREPLY(void);
   static std::string RPL_WELCOME(const std::string &nick,
                                  const std::string &user,

@@ -90,9 +90,21 @@ std::string Replies::RPL_WELCOME(const std::string &nick,
                                  const std::string &channel_name) {
   // Opcion 1. 
   return std::string(":") + nick + "!" + user + "@localhoost" + " JOIN " +
-         channel_name + " * :" + user + "\r\n";
+         channel_name + " * :" + user;
 
   // Opcion 2.
   // return std::string(":jf.irc 433") + nick + "!" + user + "@localhoost" +
   //        " JOIN " + channel_name + " * :" + user + "\r\n";
+}
+
+std::string Replies::ERR_NOSUCHCHANNEL(const std::string &nick, const std::string &channel) {
+  return (":jf.irc 403 " + nick + " " + channel + " :No such channel");
+}
+
+
+std::string Replies::LEAVE_CHANNEL(const std::string &nick,
+                                 const std::string &user,
+                                 const std::string &channel) {
+ return std::string(":" + nick + "!" + user + "@localhoost" + " PART " +
+         channel);
 }
