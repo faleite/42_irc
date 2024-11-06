@@ -205,34 +205,45 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
   for (int i = 1; modeCmd[i]; ++i)
   {
 
-    switch (modeCmd[i]) {
+    switch (modeCmd[i])
+    {
     //_______________________________________ INVITATION MODE.
     case 'i':
       _needInvitation = enable;
       broadcastMessage(clientOperator->getName() +
                        " : set the channel to invitation mode only");
       break;
-    
+
     //_______________________________________ LIMIT USER NAME MODE.
     case 'l':
-      if (enable) {
-        if (params.size() >= 3) {
-          if (stringToInt(params[2], limit)) {
+      if (enable)
+      {
+        if (params.size() >= 3)
+        {
+          if (stringToInt(params[2], limit))
+          {
             broadcastMessage(clientOperator->getName() +
                              " : set the channel limit to" + params[2]);
-          } else {
+          }
+          else
+          {
             clientOperator->getMessage("Wrong Limit ");
           }
-        } else {
+        }
+        else
+        {
           std::cout << "Error: Missing user limit parameter."
                     << std::endl; // Remove for invalid.
         }
-      } else {
+      }
+      else
+      {
         limit = -1;
         broadcastMessage(clientOperator->getName() +
                          " : delete the channel limit ");
       }
       break;
+    //____________________________ Restricted topic.
     case 't':
       _restricTopic = enable;
       std::cout << "Restricted Topic Mode " << (enable ? "Enable" : "Disable")
