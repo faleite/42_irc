@@ -46,7 +46,9 @@ void Server::topic(Client &client, const std::string &cmd,
 }
 void Server::kick(Client &client, const std::string &cmd, const std::vector<std::string> &param)
 {
+  (void)client;
   (void)cmd;
+  (void)param;
   
 }
 //______________________________________ MODE OF THE CHANNEL.
