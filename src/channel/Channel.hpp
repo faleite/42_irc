@@ -26,19 +26,20 @@ public:
   Channel();
   Channel(std::string const &name);
   ~Channel();
-  
+
   //____________________ Getters.
   std::string const &getName(void) const;
   std::string const &getTopic(void) const;
   int getLimit(void);
   int getUsers(void);
+  bool getRestrictedTopic(void);
 
   //_____________________Setter.
   void setTopic(std::string const &topic);
   void setLimit(int limit);
   void setPrivilige(Client *client, bool enable);
   bool getVerification();
-  
+
   //______________________Actions.
   void joinChannel(Client *newClient, const std::string &password);
   void leaveChannel(Client *client);
@@ -52,7 +53,7 @@ public:
   void mode(Client *clientOperator, std::string const &mode,
             std::vector<std::string> params);
   // void modeLimit(int limit, bool enable, std::vector<std::string> params);
-  void invite(Client *clientOperator, Client *ClientInvited);
+  void invite( Client *ClientInvited);
   void setTopic(Client *clientOperator, std::string const &newTopic);
 };
 #endif
