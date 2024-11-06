@@ -11,7 +11,7 @@
 #include <sstream>
 #define JOIN "JOIN"
 #define KICK "KICK"
-#define INVITE "INVITE"     
+#define INVITE "INVITE"
 #define TOPIC "TOPIC"
 #define MODE "MODE"
 #define MSG "MSG"
@@ -19,7 +19,7 @@
 #define LIST "LIST"
 #define PRIVMSG "PRIVMSG"
 #define PASS "PASS"
-#define NICK "NICK" 
+#define NICK "NICK"
 #define USER "USER"
 #define QUIT "QUIT"
 
@@ -37,7 +37,7 @@ class Server
 		static Server *instance;
 		bool _signal;
 		std::map<std::string, Channel> _channels; // structure to keeep track of the channels,
-		
+
 	public:
 		Server();
 		Server(const Server &copyObj);
@@ -60,7 +60,7 @@ class Server
   		void sendWelcomeMessage(Client newClient);
 		std::string getMessage(int fd);
 		void handleMessage(int fd);
-		
+
 		// File Message Logic.
 		// Bot Message Logic.
 		std::vector<std::vector<std::string> > tokenization(const std::string &message);
@@ -78,10 +78,11 @@ class Server
 		void join(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void list(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void msg(Client &client, const std::string &cmd, const std::vector<std::string>&param);
-		
+
 		//_________________________CHANNEL MODES
 		void mode(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 		void topic(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		void invite(Client &client, const std::string &cmd, const std::vector<std::string>&param);
 
 		typedef void (Server::*CommandFunc)(Client&, const std::string &, const std::vector<std::string>&);
     	std::map<std::string, CommandFunc> commandMap;

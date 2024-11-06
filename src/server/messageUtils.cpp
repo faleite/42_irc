@@ -42,7 +42,7 @@ void Server::fileTransfer(int const &clientFd, std::string const &paht) {
 
       std::string ackbytesRead;
       ackbytesRead = this->getMessage(clientFd);
-      if (ackbytesRead.empty() || ackbytesRead == "AKC" != 0)
+      if (ackbytesRead.empty() || (ackbytesRead == "AKC") != 0)
         break;
     }
     std::cout << "FILE TRANSFERED SUCCESSFULLY" << std::endl;
