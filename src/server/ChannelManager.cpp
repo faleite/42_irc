@@ -3,8 +3,6 @@
 
 //_______________________________________________CREATE CHANNEL
 
-//_______________________________________________CREATE CHANNEL
-
 void Server::createChannel(std::string const &name)
 {
   _channels[name] = Channel(name);
@@ -32,7 +30,7 @@ void Server::list(Client &client, const std::string &cmd,
     std::string channelName = it->first;
     int userCount = it->second.getUsers();
     std::string topic = it->second.getRestrictedTopic() ? "Restricted Topic"
-                                                        : it->second.getTopic();
+                                                      : it->second.getTopic();
 
     std::stringstream row;
     row << "| " << std::left << std::setw(19) << channelName << "| "

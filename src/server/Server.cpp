@@ -16,6 +16,7 @@ Server::Server(int const &port, std::string pass) : _port(port), _pass(pass) {
   commandMap[MSG] = &Server::msg;
   commandMap[MODE] = &Server::mode;
   commandMap[TOPIC] = &Server::topic;
+  commandMap[INVITE] = &Server::invite;
 }
 
 Server::Server() : _sockfd(-1), _port(0), _pass("") {
@@ -28,6 +29,7 @@ Server::Server() : _sockfd(-1), _port(0), _pass("") {
   commandMap[LIST] = &Server::list;
   commandMap[MSG] = &Server::msg;
   commandMap[MODE] = &Server::mode;
+  commandMap[INVITE] = &Server::invite;
 }
 
 Server::Server(const Server &copyObj) { *this = copyObj; }
