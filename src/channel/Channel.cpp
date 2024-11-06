@@ -200,7 +200,6 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
   //__________________________ IF IS + WILL ADD THIS MODE OF THE CHANNEL.
   bool enable;
   modeCmd[0] == '+' ? enable = true : enable = false;
-  size_t modeParameters = 0;
 
   for (int i = 1; modeCmd[i]; ++i)
   {
@@ -262,9 +261,9 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
       _needVerification = enable;
       if (enable)
       {
-        if (modeParameters < params.size())
+        if (params.size() >= 3)
         {
-          _channelKey = params[modeParameters++];
+          _channelKey = params[2];
           std::cout << "Channel key set to: " << _channelKey << std::endl;
         }
         else
