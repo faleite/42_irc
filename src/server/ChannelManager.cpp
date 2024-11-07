@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include <stdexcept>
 #include <string>
 
 //_______________________________________________CREATE CHANNEL
@@ -88,8 +89,14 @@ void Server::join(Client &client, const std::string &cmd,
       std::cout << ":::::::::::::::::::: Chanel Found :::::::" << channels[i]
                 << std::endl;
       // Talk about the second parameter PASS (KEY).
+      try{
+
       (param.size() > 1) ? _channels[channels[i]].joinChannel(&client, param[1])
                         : _channels[channels[i]].joinChannel(&client, "");
+      }catch(std::runtime_error &e)
+      {
+        client.getMessage(e.what());
+      }
     }
     else
     {
@@ -128,7 +135,7 @@ void Server::msg(Client &client, const std::string &cmd,
   mess += oss.str();
   if (findChannel(param[0]))
   {
-    _channels[param[0]].isOnChannel(&client)
+    _channels[param[0]].isOnChannel(client.getNickName())
         ? _channels[param[0]].broadcastMessage(mess)
         : client.getMessage("You are not part of this channel");
   }

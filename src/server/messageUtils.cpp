@@ -15,16 +15,16 @@ void Server::privmsg(Client &client, const std::string &cmd,
     oss << param[i];
   }
   std::string mess = oss.str();
-  for (std::vector<Client>::iterator it = _clients.begin();
+  for (std::vector<Client *>::iterator it = _clients.begin();
        it != _clients.end(); ++it) {
-    if (it->getNickName() == param[0]) {
-      if (it->getIsBot() == true && param[1] == "JOKE") {
+    if ((*it)->getNickName() == param[0]) {
+      if ((*it)->getIsBot() == true && param[1] == "JOKE") {
         HTTPClient httpClient;
         std::string joke =
             httpClient.get("http://official-joke-api.appspot.com/jokes/random");
         client.getMessage("Here's a joke for you: " + joke);
       } else
-        it->getMessage(client.getNickName() +
+        (*it)->getMessage(client.getNickName() +
                        " send you a private message: " + mess);
       return;
     }

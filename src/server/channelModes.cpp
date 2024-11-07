@@ -5,6 +5,37 @@
 #include <string>
 #include <vector>
 
+// KICK <channel> <nickname>
+//______________________________________ KICK.
+// command : TOPIC <#CHANNEL> <nickname>.
+// EX :      KICK #GENERAL user1
+// EX :      KICK #channelname usernickname Reason
+// Param : 3 param[0] para[1] param[2]
+// What we handle.
+
+void Server::kick(Client &client, const std::string &cmd,
+                  const std::vector<std::string> &param) {
+  (void)cmd;
+  if (param.size() < 2 || param[1].empty())
+    return;
+  if (!client.getIsOperator()) {
+    client.getMessage("Only Operators can change the remove users");
+    return;
+  }
+  if (findChannel(param[0]) &&
+      _channels[param[0]].isOnChannel(client.getNickName())) {
+    for (std::vector<Client *>::iterator it = _clients.begin();
+         it != _clients.end(); ++it) {
+      if ((*it)->getNickName() == param[1]) {
+        _channels[param[0]].leaveChannel((*it));
+        return;
+      }
+    }
+  } else {
+    std::cout << "you or the user are not in the channel sorry bro";
+  }
+  return;
+}
 //______________________________________ TOPIC.
 // command : TOPIC <#CHANNEL> will list the topic of te channel.
 // EX :      TOPIC #GENERAL
@@ -13,29 +44,26 @@
 // What we handle.
 
 void Server::topic(Client &client, const std::string &cmd,
-                   const std::vector<std::string> &param)
-{
+                   const std::vector<std::string> &param) {
   (void)cmd;
-  if (param.size() == 1)
-  {
-    if (findChannel(param[0]) && _channels[param[0]].isOnChannel(&client))
-    {
-      _channels[param[0]].getRestrictedTopic() ? client.getMessage("The topic of this channel is restricted")
-                                               : client.getMessage("the topic of the channel is :" + _channels[param[0]].getTopic());
+  if (param.size() == 1) {
+    if (findChannel(param[0]) &&
+        _channels[param[0]].isOnChannel(client.getNickName())) {
+      _channels[param[0]].getRestrictedTopic()
+          ? client.getMessage("The topic of this channel is restricted")
+          : client.getMessage("the topic of the channel is :" +
+                              _channels[param[0]].getTopic());
     }
     return;
-  }
-  else if (param.size() < 2 || param[1].empty())
+  } else if (param.size() < 2 || param[1].empty())
     return;
-  if (!client.getIsOperator())
-  {
+  if (!client.getIsOperator()) {
     client.getMessage("Only Operators can change the channel mode");
     return;
   }
   std::string mess;
   std::ostringstream oss;
-  for (size_t i = 1; i < param.size(); ++i)
-  {
+  for (size_t i = 1; i < param.size(); ++i) {
     if (i != 0)
       oss << " ";
     oss << param[i];
@@ -44,11 +72,7 @@ void Server::topic(Client &client, const std::string &cmd,
   findChannel(param[0]) ? _channels[param[0]].setTopic(mess)
                         : client.getMessage("Channel not found");
 }
-void Server::kick(Client &client, const std::string &cmd, const std::vector<std::string> &param)
-{
-  (void)cmd;
-  
-}
+
 //______________________________________ MODE OF THE CHANNEL.
 
 // Modes.
@@ -77,20 +101,18 @@ void Server::kick(Client &client, const std::string &cmd, const std::vector<std:
 // Param : 3 param[0] para[1] param[2]
 // What we handle.
 
-void Server::invite(Client &client, const std::string &cmd, const std::vector<std::string> &param)
-{
+void Server::invite(Client &client, const std::string &cmd,
+                    const std::vector<std::string> &param) {
   (void)cmd;
 
   if (param.size() < 2 || param[1].empty() || !client.getIsOperator())
     return;
-  if (findChannel(param[0]))
-  {
-    for (std::vector<Client>::iterator iter = _clients.begin(); iter != _clients.end(); iter++)
-    {
-      if (iter->getNickName() == param[1])
-      {
+  if (findChannel(param[0])) {
+    for (std::vector<Client *>::iterator iter = _clients.begin();
+         iter != _clients.end(); iter++) {
+      if ((*iter)->getNickName() == param[1]) {
 
-        _channels[param[0]].invite(&(*iter));
+        _channels[param[0]].invite((*iter));
         return;
       }
     }
@@ -99,21 +121,18 @@ void Server::invite(Client &client, const std::string &cmd, const std::vector<st
 }
 
 void Server::mode(Client &client, const std::string &cmd,
-                  const std::vector<std::string> &param)
-{
+                  const std::vector<std::string> &param) {
 
   (void)cmd;
 
   if (param.size() < 2 || param[1].empty() || !client.getIsOperator())
     return;
 
-  if (findChannel(param[0]))
-  {
-    _channels[param[0]].isOnChannel(&client)
+  if (findChannel(param[0])) {
+    _channels[param[0]].isOnChannel(client.getNickName())
         ? _channels[param[0]].mode(&client, param[1], param)
         : client.getMessage("You are not in the channel");
-  }
-  else
+  } else
     client.getMessage("Channel not found");
 }
 

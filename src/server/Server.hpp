@@ -32,7 +32,7 @@ class Server
 		int _sockfd;
 		int _port;
 		std::string _pass;
-		std::vector<Client> _clients;
+		std::vector<Client *> _clients;
 		std::vector<struct pollfd> _pfds;
 		static Server *instance;
 		bool _signal;

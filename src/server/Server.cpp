@@ -17,6 +17,7 @@ Server::Server(int const &port, std::string pass) : _port(port), _pass(pass) {
   commandMap[MODE] = &Server::mode;
   commandMap[TOPIC] = &Server::topic;
   commandMap[INVITE] = &Server::invite;
+  commandMap[KICK] = &Server::kick;
 }
 
 Server::Server() : _sockfd(-1), _port(0), _pass("") {
@@ -30,6 +31,7 @@ Server::Server() : _sockfd(-1), _port(0), _pass("") {
   commandMap[MSG] = &Server::msg;
   commandMap[MODE] = &Server::mode;
   commandMap[INVITE] = &Server::invite;
+  commandMap[KICK] = &Server::kick;
 }
 
 Server::Server(const Server &copyObj) { *this = copyObj; }
@@ -127,13 +129,13 @@ void Server::acceptClient() {
   if (result != 0)
     throw std::runtime_error("Can't get hostname");
 
-  Client newClient =
+  Client *newClient = new
       Client(clifd, inet_ntoa(client.sin_addr), ntohs(client.sin_port));
   _clients.push_back(newClient);
 
   std::cout << "Client connected :fd: " << clifd
             << " port: " << ntohs(client.sin_port) << std::endl;
-  newClient.getMessage(
+  newClient->getMessage(
       "To get started, please set your pass, name and nickname:\n \
    - Use `PASS <ServerPass>` to set the server irc pass.\n \
    - Use `USER <YourName> <ip> <host> <surname>` to set your real data.\n \
@@ -149,18 +151,18 @@ void Server::initServer() {
   // createChannel("#random");
 
   // //___________________________________SET BOT
-  Client faleiteBot(-1, "FaleiteLegend");
-  faleiteBot.setNickName("bot1");
-  Client juanBot(-1, "MasterTinxzYoda");
-  juanBot.setIsBot(true);
-  juanBot.setNickName("bot2");
-  faleiteBot.setIsBot(true);
-  juanBot.setOperator(true);
-  faleiteBot.setOperator(true);
+  Client *faleiteBot = new Client(-1, "FaleiteLegend");
+  faleiteBot->setNickName("bot1");
+  Client *juanBot = new Client(-1, "MasterTinxzYoda");
+  juanBot->setIsBot(true);
+  juanBot->setNickName("bot2");
+  faleiteBot->setIsBot(true);
+  juanBot->setOperator(true);
+  faleiteBot->setOperator(true);
   _clients.push_back(juanBot);
   _clients.push_back(faleiteBot);
-  std::cout << "Bot :::: " << juanBot.getName() << std::endl;
-  std::cout << "Bot :::: " << faleiteBot.getName() << std::endl;
+  std::cout << "Bot :::: " << juanBot->getName() << std::endl;
+  std::cout << "Bot :::: " << faleiteBot->getName() << std::endl;
 
   // //___________________________________SET CHANNELS BOTS.
   // _channels["#general"].joinChannel(&juanBot, "");
@@ -192,12 +194,12 @@ void Server::initServer() {
 }
 
 void Server::closeFds() {
-  for (std::vector<Client>::iterator it = _clients.begin();
+  for (std::vector<Client *>::iterator it = _clients.begin();
        it != _clients.end(); it++) {
-    if (it->getSocket() != -1) {
-      std::cout << "Client has been disconnected :fd: " << it->getSocket()
+    if ((*it)->getSocket() != -1) {
+      std::cout << "Client has been disconnected :fd: " << (*it)->getSocket()
                 << std::endl;
-      close(it->getSocket());
+      close((*it)->getSocket());
     }
   }
   if (_sockfd != -1) {
@@ -207,9 +209,9 @@ void Server::closeFds() {
 }
 
 void Server::cleanClient(int fd) {
-  for (std::vector<Client>::iterator it = _clients.begin();
+  for (std::vector<Client *>::iterator it = _clients.begin();
        it != _clients.end(); it++) {
-    if (it->getSocket() == fd) {
+    if ((*it)->getSocket() == fd) {
       it = _clients.erase(it);
       break;
     }

@@ -86,7 +86,7 @@ void Server::registerNewUser(Client &client, const std::string &cmd, const std::
   {
     	for (size_t i = 0; i < _clients.size(); ++i)
 	    {
-	    	if (param[0] == _clients[i].getNickName())
+	    	if (param[0] == _clients[i]->getNickName())
 	    	{
 	    		client.getMessage(Replies::ERR_NICKNAMEINUSE(param[0]));
         	return ;

@@ -60,20 +60,20 @@ std::string Server::getMessage(int fd) {
 
 void Server::brodcastMessage(std::string const &message) {
 
-  for (std::vector<Client>::iterator it = _clients.begin();
+  for (std::vector<Client *>::iterator it = _clients.begin();
        it != _clients.end(); it++) {
-    it->getMessage(message);
+    (*it)->getMessage(message);
   }
 }
 
 void Server::handleMessage(int fd) {
   std::string message = this->getMessage(fd);
   for (size_t i = 0; i < _clients.size(); i++) {
-    if (_clients[i].getSocket() == fd) {
-      if (!_clients[i].getRegistered()) {
-        connectionRegistration(_clients[i], message);
+    if (_clients[i]->getSocket() == fd) {
+      if (!_clients[i]->getRegistered()) {
+        connectionRegistration(*_clients[i], message);
       } else {
-        commands(_clients[i], message);
+        commands(*_clients[i], message);
       }
     }
   }
