@@ -1,5 +1,34 @@
 ## Handle Channel
 
+### JOIN New Channel
+```sh
+<< JOIN #local
+>> :faaraujo!~u@e77ncepu88yiy.irc JOIN #local * realname
+<< MODE #local
+<< WHO #local %chtsunfra,152
+>> :ergo.test 353 faaraujo = #local :@faaraujo!~u@e77ncepu88yiy.irc
+>> :ergo.test 366 faaraujo #local :End of NAMES list
+>> :ergo.test 324 faaraujo #local +Cnt
+>> :ergo.test 329 faaraujo #local 1731002626 # Not avaliable in RFC 2812
+>> :ergo.test 354 faaraujo 152 #local ~u e77ncepu88yiy.irc ergo.test faaraujo H@ 0 realname
+>> :ergo.test 315 faaraujo #local :End of WHO list
+```
+
+### JOIN Existing Channel
+```sh
+<< JOIN #local
+>> :juan!~u@e77ncepu88yiy.irc JOIN #local * JaunP
+<< MODE #local
+<< WHO #local %chtsunfra,152
+>> :ergo.test 353 juan = #local :@faaraujo!~u@e77ncepu88yiy.irc juan!~u@e77ncepu88yiy.irc
+>> :ergo.test 366 juan #local :End of NAMES list
+>> :ergo.test 324 juan #local +Cnt
+>> :ergo.test 329 juan #local 1731007297
+>> :ergo.test 354 juan 152 #local ~u e77ncepu88yiy.irc ergo.test faaraujo H@ 0 realname
+>> :ergo.test 354 juan 152 #local ~u e77ncepu88yiy.irc ergo.test juan H 0 JaunP
+>> :ergo.test 315 juan #local :End of WHO list
+```
+
 ### Importante!
 - Se o usuário usar o comando `JOIN` para um canal que existe, o server ignorará o comando.
 

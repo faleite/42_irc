@@ -98,7 +98,12 @@ void Channel::joinChannel(Client *newClient, const std::string &password) {
   channelUsers.push_back(newClient);
   this->broadcastMessage(newClient->getNickName() + " joined the Channel." +
                          _name);
-  Replies::RPL_WELCOME(newClient->getNickName(), newClient->getName(), _name);
+  newClient->getMessage(Replies::JOIN_CHANNEL(newClient->getNickName(), newClient->getName(), _name));
+  // Replies::RPL_WELCOME(newClient->getNickName(), newClient->getName(), _name);
+  newClient->getMessage(Replies::RPL_NAMREPLY(newClient->getNickName(), newClient->getName(), _name, "="));
+  newClient->getMessage(Replies::RPL_ENDOFNAMES(newClient->getNickName(), _name));
+  newClient->getMessage(Replies::RPL_NAMREPLY(newClient->getNickName(), newClient->getName(), _name, "="));
+  newClient->getMessage(Replies::RPL_ENDOFNAMES(newClient->getNickName(), _name));
   // newClient->getMessage(":juan!~u@e77ncepu88yiy.irc JOIN #local");
   // newClient->getMessage(Replies::RPL_NAMREPLY());
 }

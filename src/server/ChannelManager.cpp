@@ -89,14 +89,15 @@ void Server::join(Client &client, const std::string &cmd,
       std::cout << ":::::::::::::::::::: Chanel Found :::::::" << channels[i]
                 << std::endl;
       // Talk about the second parameter PASS (KEY).
-      try{
+      // try{
 
       (param.size() > 1) ? _channels[channels[i]].joinChannel(&client, param[1])
                         : _channels[channels[i]].joinChannel(&client, "");
-      }catch(std::runtime_error &e)
-      {
-        client.getMessage(e.what());
-      }
+
+      // }catch(std::runtime_error &e)
+      // {
+      //   client.getMessage(e.what());
+      // }
     }
     else
     {
@@ -107,13 +108,13 @@ void Server::join(Client &client, const std::string &cmd,
       it = _channels.find(channels[i]);
       it->second.joinChannel(&client, "");
       client.getMessage(
-      Replies::RPL_WELCOME(client.getNickName(), client.getName(), channels[i]));
+      Replies::JOIN_CHANNEL(client.getNickName(), client.getName(), channels[i]));
       
       // Just test...
-      client.getMessage(":jf.irc 353 " +  client.getNickName() + " = " + channels[i] + " :@" + client.getNickName());
-      client.getMessage(":jf.irc 366 " +  client.getNickName() + channels[i] + " :End of /WHO list.");
-      client.getMessage(":jf.irc 353 " +  client.getNickName() + " = " + channels[i] + " :@" + client.getNickName());
-      client.getMessage(":jf.irc 366 " +  client.getNickName() + channels[i] + " :End of /WHO list.");
+      client.getMessage(Replies::RPL_NAMREPLY(client.getNickName(), client.getName(), channels[i], "="));
+      client.getMessage(Replies::RPL_ENDOFNAMES(client.getNickName(), channels[i]));
+      client.getMessage(Replies::RPL_NAMREPLY(client.getNickName(), client.getName(), channels[i], "="));
+      client.getMessage(Replies::RPL_ENDOFNAMES(client.getNickName(), channels[i]));
     }
   }
 }

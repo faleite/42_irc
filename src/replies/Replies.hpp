@@ -17,10 +17,21 @@ public:
   static std::string LEAVE_CHANNEL(const std::string &nick, 
                                    const std::string &user,
                                    const std::string &channel);
-  static std::string RPL_NAMREPLY(void);
   static std::string RPL_WELCOME(const std::string &nick,
                                  const std::string &user,
                                  const std::string &channel_name);
+  static std::string JOIN_CHANNEL(const std::string &nick,
+                                 const std::string &user,
+                                 const std::string &channel_name);
+  static std::string RPL_NAMREPLY(const std::string &nick,
+                                 const std::string &user,
+                                 const std::string &channel_name,
+                                 const std::string &type_channel);
+  static std::string RPL_ENDOFNAMES(const std::string &nick,
+                                 const std::string &channel_name);
+  static std::string RPL_CHANNELMODEIS(const std::string &nick,
+                                 const std::string &channel_name,
+                                 const std::string &modes);
 };
 
 #endif // REPLIES_HPP
