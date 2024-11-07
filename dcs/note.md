@@ -1,81 +1,58 @@
-## Register user
+## Handle Channel
 
-### PASS
-- [x] `PASS` must be the first or second command sent by the client.
-  - [x] if `USER` and `NICK` are set first, send incorrect `PASS` and close the connection.
-- [x] After sending `PASS`, `NICK`, and `USER`, an error message for `PASS` or a welcome message will be sent.
-- [x] Incorrect `PASS`, the server must send an error message and close the connection.
-- [x] After connecting, `PASS` and `USER` cannot be sent again.
-  - [x] send message: :You may not reregister
+### Importante!
+- Se o usuário usar o comando `JOIN` para um canal que existe, o server ignorará o comando.
 
-### NICK
-- [x] `NICK` can be sent at any time.
-- [x] Error Messages:
-  - [ ] `431 * :No nickname given`
-  - [ ] `432 * <nick> :Erroneous nickname`
-  - [x] `433 * <nick> :Nickname is already in use`
-  - [ ] `437 * <nick> :Nick/channel is temporarily unavailable`
+### TASK
+- [x] Channel name: `#foo`
+  - first character need: `#`
+- [x] Empty channel name
+- [x] `JOIN 0`
+- [x] `JOIN #foo,#bar`
+- [x] `JOIN #foo,&foobar,#bar`
+- [x] Channel name with space
 
-    ```cpp
-    // Returned when a nickname parameter expected for a
-    //            command and isn't found
-    std::string  Replies::ERR_NONICKNAMEGIVEN()
-    {
-      return(":jf.irc 431 * :No nickname given");
-    }
+### Command Join
+**Command: `JOIN`**\
+**Parameters:** `<channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0"`
+- Respostas numéricas:
+  - [x] 461 ERR_NEEDMOREPARAMS
+   - ex..: CMD `JOIN` sem parametros
+  - [x] 403 ERR_NOSUCHCHANNEL
+    - Usado para indicar que o nome do canal fornecido é inválido.
+    - ex..: `<channel name> :No such channel`
+	- ex..: `:ergo.test 403 user1 &foo :No such channel`
+  - ERR_BANNEDFROMCHAN
+  - ERR_INVITEONLYCHAN 
+  - ERR_BADCHANNELKEY
+  - ERR_CHANNELISFULL 
+  - ERR_BADCHANMASK
+  - ERR_TOOMANYCHANNELS
+  - ERR_TOOMANYTARGETS 
+  - ERR_UNAVAILRESOURCE
+  - RPL_TOPIC
+- Examples: **(Sugestao nao lidar com pass)**
+  - **JOIN #foobar ; Comando para entrar no canal #foobar.**
+  - **JOIN 0 ; Deixar todos os canais atualmente conectado.**
+    - ex..: `:araujo!~u@bpnicdmf5m7vu.irc PART #global`
+    - ex..: `:ergo.test NOTICE araujo :Warning: /JOIN 0 will remove you from all channels. To confirm, type: /JOIN 0 cjxx8`
+  - *JOIN #foo,#bar ​​fubar,foobar ;*
+    - *Comando para entrar no canal #foo usando a pass "fubar"\
+	 e no canal #bar usando a pass "foobar".*
+  - **JOIN #foo,#bar ​​; Comando para entrar nos canais #foo e #bar.**
+  - **:WiZ!jto@tolsun.oulu.fi JOIN #Twilight_zone;**\
+    **JOIN mensagem do WiZ no canal #Twilight_zone**
+	- Quando um usuario entra em um canal os mebros deste canal recebe uma menssagem\
+  informando que o usuario entrou no canal. `:user2!~u@bpnicdmf5m7vu.irc JOIN #foo`
 
-    /*
-    Returned after receiving a NICK message which contains
-    characters which do not fall in the defined set.  See
-    section 2.3.1 for details on valid nicknames.
-    */
-    std::string  Replies::ERR_ERRONEUSNICKNAME()
-    {
-      return(":jf.irc 432 * <nick> :Erroneous nickname");
-    }
-
-    /*
-    437    ERR_UNAVAILRESOURCE
-                  "<nick/channel> :Nick/channel is temporarily unavailable"
-
-            - Returned by a server to a user trying to join a channel
-              currently blocked by the channel delay mechanism.
-
-            - Returned by a server to a user trying to change nickname
-              when the desired nickname is blocked by the nick delay
-              mechanism.
-    */
-    ```
-
-### USER
-- [x] `USER` process
-[*RFC protocol*](https://datatracker.ietf.org/doc/html/rfc2812#section-3.1.3)\
-Command: `USER`\
-Parameters: `<username> <mode> <unused> <realname>`\
-Example: `USER guest 0 * :Ronnie Reagan`
-- [x] `USER` must have 4 parameters. The fourth parameter can contain spaces.
-- [x] Error message: `461 * USER :Not enough parameters`
-
-### Quit
-- [x] `QUIT` process
-[*RFC protocol*](https://datatracker.ietf.org/doc/html/rfc2812#section-3.1.7)\
-Command: `QUIT`\
-Parameters: `<Quit Message>`\
-Example: `QUIT :Gone to have lunch`
-
-### HexChat
-- To register a user in HexChat it sends:
-  - **<<** `CAP` LS 302
-  - **<<** `PASS` 1234
-  - **<<** `NICK` fabricio
-  - **<<** `USER` faleite 0 * :realname
-    - `faleite` is the username
-    - `0` is the user mode
-    - `*` is the user's host
-    - `:realname` is the user's real name
-
-### Other Commands
-- `JOIN`, `KICK`, `INVITE`, `TOPIC`, `MODE`, `PRIVMSG`, `OPER`, `LIST`
-> [!NOTE]
-> These commands are not used in the registration process.
-> In this case, send message: `451 * :You need to register before you can use that command`
+### Test
+```sh
+pass 1234
+nick user1
+user a a a a
+```
+```sh
+pass 1234
+nick user2
+user b b b b
+```
