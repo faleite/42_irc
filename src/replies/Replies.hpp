@@ -24,14 +24,17 @@ public:
                                  const std::string &user,
                                  const std::string &channel_name);
   static std::string RPL_NAMREPLY(const std::string &nick,
-                                 const std::string &user,
-                                 const std::string &channel_name,
-                                 const std::string &type_channel);
+                                 const std::string &channel,
+                                 const std::string &type);
   static std::string RPL_ENDOFNAMES(const std::string &nick,
                                  const std::string &channel_name);
   static std::string RPL_CHANNELMODEIS(const std::string &nick,
                                  const std::string &channel_name,
                                  const std::string &modes);
+  static std::string ERR_CHANNELISFULL(const std::string &channel);
+  static std::string ERR_INVITEONLYCHAN(const std::string &channel);
+  static std::string ERR_BADCHANNELKEY(const std::string &channel);
+  static std::string ERR_USERONCHANNEL(const std::string &nick, const std::string &channel);
 };
 
 #endif // REPLIES_HPP

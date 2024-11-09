@@ -36,7 +36,7 @@ int Server::connectionRegistration(Client &client, std::string &message)
     {
       client.setRegistered(true);
       this->sendWelcomeMessage(client);
-      this->brodcastMessage(client.getName() + " Has Join to the server" );
+      // this->brodcastMessage(client.getName() + " Has Join to the server" );
     }
     return (0);
 }

@@ -86,38 +86,20 @@ void Server::join(Client &client, const std::string &cmd,
     std::map<std::string, Channel>::iterator it = _channels.find(channels[i]);
     if (it != _channels.end())
     {
-      std::cout << ":::::::::::::::::::: Chanel Found :::::::" << channels[i]
-                << std::endl;
-      // Talk about the second parameter PASS (KEY).
-      // try{
-
+      std::cout << ":::::::: Channel Found :::::::: " << channels[i] << std::endl;
       (param.size() > 1) ? _channels[channels[i]].joinChannel(&client, param[1])
                         : _channels[channels[i]].joinChannel(&client, "");
-
-      // }catch(std::runtime_error &e)
-      // {
-      //   client.getMessage(e.what());
-      // }
     }
     else
     {
-      std::cout << ":::::::::::::::::::: Creating Channel :::::::" << channels[i]
-                << std::endl;
-    
+      std::cout << "::::::: Creating Channel ::::::: " << channels[i] << std::endl;
       createChannel(channels[i]);
       it = _channels.find(channels[i]);
       it->second.joinChannel(&client, "");
-      client.getMessage(
-      Replies::JOIN_CHANNEL(client.getNickName(), client.getName(), channels[i]));
-      
-      // Just test...
-      client.getMessage(Replies::RPL_NAMREPLY(client.getNickName(), client.getName(), channels[i], "="));
-      client.getMessage(Replies::RPL_ENDOFNAMES(client.getNickName(), channels[i]));
-      client.getMessage(Replies::RPL_NAMREPLY(client.getNickName(), client.getName(), channels[i], "="));
-      client.getMessage(Replies::RPL_ENDOFNAMES(client.getNickName(), channels[i]));
     }
   }
 }
+
 
 //________________________________SEND MESSAGE IN THE CHANNEL
 

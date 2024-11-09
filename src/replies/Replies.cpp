@@ -101,6 +101,41 @@ std::string Replies::ERR_NOSUCHCHANNEL(const std::string &nick, const std::strin
   return (":jf.irc 403 " + nick + " " + channel + " :No such channel");
 }
 
+/**
+471  ERR_CHANNELISFULL
+    "<channel> :Cannot join channel (+l)"
+*/
+std::string Replies::ERR_CHANNELISFULL(const std::string &channel) {
+  return (":jf.irc 471 " + channel + " :Cannot join channel (+l)");
+}
+
+/**
+473    ERR_INVITEONLYCHAN
+              "<channel> :Cannot join channel (+i)"
+*/
+std::string Replies::ERR_INVITEONLYCHAN(const std::string &channel) {
+  return (":jf.irc 473 " + channel + " :Cannot join channel (+i)");
+}
+
+/**
+475    ERR_BADCHANNELKEY
+              "<channel> :Cannot join channel (+k)"
+*/
+std::string Replies::ERR_BADCHANNELKEY(const std::string &channel) {
+  return (":jf.irc 475 " + channel + " :Cannot join channel (+k)");
+}
+
+/**
+  443    ERR_USERONCHANNEL
+              "<user> <channel> :is already on channel"
+
+         - Returned when a client tries to invite a user to a
+           channel they are already on.
+*/
+std::string Replies::ERR_USERONCHANNEL(const std::string &nick, const std::string &channel) {
+  return (":jf.irc 443 " + nick + " " + channel + " is already on channel");
+}
+
 
 std::string Replies::LEAVE_CHANNEL(const std::string &nick,
                                  const std::string &user,
@@ -124,10 +159,11 @@ std::string Replies::JOIN_CHANNEL(const std::string &nick,
 *            channels, and "=" for others (public channels).
 */
 std::string Replies::RPL_NAMREPLY(const std::string &nick,
-                                 const std::string &user,
-                                 const std::string &channel_name,
-                                 const std::string &type_channel) { // = (public (default))
-  return std::string(":jf.irc 353 " + nick + type_channel + channel_name + " :@" + nick + "!" + user + "@localhoost");
+                                 const std::string &channel,
+                                 const std::string &type) { // = (public (default))
+  // return std::string(":jf.irc 353 " + nick + type + channel + " :@" + nick + "!" + is_operator + "@localhoost");
+  // return std::string(":jf.irc 353 " + nick + " " + type + " " + channel + " :" + is_operator + nick);
+  return std::string(":jf.irc 353 " + nick + " " + type + " " + channel + " :");
 }
 
 /**

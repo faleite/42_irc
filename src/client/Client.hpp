@@ -75,12 +75,14 @@ public:
   void joinChanel(const std::string &_chanel,
                   const std::string &password) const;
   void leaveChanel(const std::string &_chanel) const;
-
+  
   // Factory method
 
   // setters
 };
 
 Client *createRandomClient(int clientSocket);
+
+
 
 #endif

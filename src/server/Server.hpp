@@ -98,8 +98,6 @@ class Server
 		void listChannels();
 
 
-
-
 		// ________________________ AUTHENTICATION.
 		std::string const &getPass() const;
 		int  connectionRegistration(Client &client, std::string &message);

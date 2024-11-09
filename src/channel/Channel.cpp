@@ -69,25 +69,27 @@ void Channel::joinChannel(Client *newClient, const std::string &password) {
 
   //__________________________ Check Limit.
   if (limit > 0 && limit == static_cast<int>(channelUsers.size())) {
-    throw std::runtime_error(
-        "You can not join to the Channel, max set user reached");
+    newClient->getMessage(Replies::ERR_CHANNELISFULL(this->_name));
+    return ;
   }
 
   //__________________________ Check is on Channel
   if (isOnChannel(newClient->getNickName())) {
-    throw std::runtime_error("You are already in the channel");
+    newClient->getMessage(Replies::ERR_USERONCHANNEL(newClient->getNickName(), this->_name));
+    return ;
   }
 
   //__________________________ Check Channel Invite Only
   if (_needInvitation && !newClient->getIsOperator() &&
       !isOnList(newClient->getNickName())) {
-    throw std::runtime_error("You cannot join the channel: invite-only.");
+    newClient->getMessage(Replies::ERR_INVITEONLYCHAN(this->_name));
+    return ;
   }
 
   //__________________________ Check Verification
   if (_needVerification && password != _channelKey) {
-    throw std::runtime_error(
-        "You cannot join the channel: use correct password.");
+    newClient->getMessage(Replies::ERR_BADCHANNELKEY(this->_name));
+    return ;
   }
 
   //__________________________ Check First client on channel.
@@ -96,17 +98,26 @@ void Channel::joinChannel(Client *newClient, const std::string &password) {
 
   //__________________________ Add the client to the channel.
   channelUsers.push_back(newClient);
-  this->broadcastMessage(newClient->getNickName() + " joined the Channel." +
-                         _name);
+
   newClient->getMessage(Replies::JOIN_CHANNEL(newClient->getNickName(), newClient->getName(), _name));
-  // Replies::RPL_WELCOME(newClient->getNickName(), newClient->getName(), _name);
-  newClient->getMessage(Replies::RPL_NAMREPLY(newClient->getNickName(), newClient->getName(), _name, "="));
-  newClient->getMessage(Replies::RPL_ENDOFNAMES(newClient->getNickName(), _name));
-  newClient->getMessage(Replies::RPL_NAMREPLY(newClient->getNickName(), newClient->getName(), _name, "="));
-  newClient->getMessage(Replies::RPL_ENDOFNAMES(newClient->getNickName(), _name));
-  // newClient->getMessage(":juan!~u@e77ncepu88yiy.irc JOIN #local");
-  // newClient->getMessage(Replies::RPL_NAMREPLY());
+  this->updateListUsers(newClient);
+
 }
+
+void Channel::updateListUsers(Client *client) {
+
+  std::string NAMREPLY = Replies::RPL_NAMREPLY(client->getNickName(), _name, "=");
+
+  for (size_t i = 0; i < channelUsers.size(); ++i)
+      NAMREPLY += (channelUsers[i]->getIsOperator() ? "@" + channelUsers[i]->getNickName() : channelUsers[i]->getNickName()) + " ";
+  NAMREPLY += "\r\n";
+
+  std::string ENDOFNAMES = Replies::RPL_ENDOFNAMES(client->getNickName(), _name);
+  
+  client->getMessage(NAMREPLY + ENDOFNAMES);
+  this->broadcastMessage(NAMREPLY + ENDOFNAMES);
+}
+
 
 void Channel::leaveChannel(Client *client) {
   std::vector<Client *>::iterator it =

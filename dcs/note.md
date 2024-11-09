@@ -1,5 +1,52 @@
 ## Handle Channel
 
+### TASK
+- [x] Channel name: `#foo`
+  - first character need: `#`
+- [x] Empty channel name
+- [x] `JOIN 0`
+- [x] `JOIN #foo,#bar`
+- [x] `JOIN #foo,&foobar,#bar`
+- [x] Channel name with space
+- [x] Remove the message when starting connection (line: 39, file: connectRegister.cpp): `<user_name> Has Join to the server`
+- [x] Remove code line **99** and **100** on file: `Channelcpp`
+- [x] If the user uses the `JOIN` command for an existing channel, the server will ignore the command.
+- [x] Replies:
+  - [x] 461 ERR_NEEDMOREPARAMS
+   - ex..: CMD `JOIN` without parameters
+  - [x] 403 ERR_NOSUCHCHANNEL
+    - Used to indicate that the provided channel name is invalid.
+    - ex..: `<channel name> :No such channel`
+    - ex..: `:ergo.test 403 user1 &foo :No such channel`
+  - [x] ERR_CHANNELISFULL 
+  - [x] ERR_INVITEONLYCHAN 
+  - [x] ERR_BADCHANNELKEY
+  - [x] ERR_USERONCHANNEL
+
+### Command Join
+**Command: `JOIN`**\
+**Parameters:** `<channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0"`
+- Numeric replies:
+  - [ ] ERR_BANNEDFROMCHAN
+  - [ ] ERR_BADCHANMASK
+  - [ ] ERR_TOOMANYCHANNELS
+  - [ ] ERR_TOOMANYTARGETS 
+  - [ ] ERR_UNAVAILRESOURCE
+  - [ ] RPL_TOPIC
+- Examples: **(Suggestion not to handle pass)**
+  - **JOIN #foobar ; Command to join the channel #foobar.**
+  - **JOIN 0 ; Leave all currently connected channels.**
+    - ex..: `:araujo!~u@bpnicdmf5m7vu.irc PART #global`
+    - ex..: `:ergo.test NOTICE araujo :Warning: /JOIN 0 will remove you from all channels. To confirm, type: /JOIN 0 cjxx8`
+  - *JOIN #foo,#bar ​​fubar,foobar ;*
+    - *Command to join the channel #foo using the pass "fubar"\
+     and the channel #bar using the pass "foobar".*
+  - **JOIN #foo,#bar ​​; Command to join the channels #foo and #bar.**
+  - **:WiZ!jto@tolsun.oulu.fi JOIN #Twilight_zone;**\
+    **JOIN message from WiZ in the channel #Twilight_zone**
+    - When a user joins a channel, the members of that channel receive a message\
+  informing that the user has joined the channel. `:user2!~u@bpnicdmf5m7vu.irc JOIN #foo`
+
 ### JOIN New Channel
 ```sh
 << JOIN #local
@@ -28,51 +75,6 @@
 >> :ergo.test 354 juan 152 #local ~u e77ncepu88yiy.irc ergo.test juan H 0 JaunP
 >> :ergo.test 315 juan #local :End of WHO list
 ```
-
-### Importante!
-- Se o usuário usar o comando `JOIN` para um canal que existe, o server ignorará o comando.
-
-### TASK
-- [x] Channel name: `#foo`
-  - first character need: `#`
-- [x] Empty channel name
-- [x] `JOIN 0`
-- [x] `JOIN #foo,#bar`
-- [x] `JOIN #foo,&foobar,#bar`
-- [x] Channel name with space
-
-### Command Join
-**Command: `JOIN`**\
-**Parameters:** `<channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0"`
-- Respostas numéricas:
-  - [x] 461 ERR_NEEDMOREPARAMS
-   - ex..: CMD `JOIN` sem parametros
-  - [x] 403 ERR_NOSUCHCHANNEL
-    - Usado para indicar que o nome do canal fornecido é inválido.
-    - ex..: `<channel name> :No such channel`
-	- ex..: `:ergo.test 403 user1 &foo :No such channel`
-  - ERR_BANNEDFROMCHAN
-  - ERR_INVITEONLYCHAN 
-  - ERR_BADCHANNELKEY
-  - ERR_CHANNELISFULL 
-  - ERR_BADCHANMASK
-  - ERR_TOOMANYCHANNELS
-  - ERR_TOOMANYTARGETS 
-  - ERR_UNAVAILRESOURCE
-  - RPL_TOPIC
-- Examples: **(Sugestao nao lidar com pass)**
-  - **JOIN #foobar ; Comando para entrar no canal #foobar.**
-  - **JOIN 0 ; Deixar todos os canais atualmente conectado.**
-    - ex..: `:araujo!~u@bpnicdmf5m7vu.irc PART #global`
-    - ex..: `:ergo.test NOTICE araujo :Warning: /JOIN 0 will remove you from all channels. To confirm, type: /JOIN 0 cjxx8`
-  - *JOIN #foo,#bar ​​fubar,foobar ;*
-    - *Comando para entrar no canal #foo usando a pass "fubar"\
-	 e no canal #bar usando a pass "foobar".*
-  - **JOIN #foo,#bar ​​; Comando para entrar nos canais #foo e #bar.**
-  - **:WiZ!jto@tolsun.oulu.fi JOIN #Twilight_zone;**\
-    **JOIN mensagem do WiZ no canal #Twilight_zone**
-	- Quando um usuario entra em um canal os mebros deste canal recebe uma menssagem\
-  informando que o usuario entrou no canal. `:user2!~u@bpnicdmf5m7vu.irc JOIN #foo`
 
 ### Test
 ```sh
