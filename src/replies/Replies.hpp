@@ -35,6 +35,7 @@ public:
   static std::string ERR_INVITEONLYCHAN(const std::string &channel);
   static std::string ERR_BADCHANNELKEY(const std::string &channel);
   static std::string ERR_USERONCHANNEL(const std::string &nick, const std::string &channel);
+  static std::string ERR_NOSUCHNICK(const std::string &nick);
 };
 
 #endif // REPLIES_HPP

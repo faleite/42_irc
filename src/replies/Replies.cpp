@@ -97,6 +97,18 @@ std::string Replies::RPL_WELCOME(const std::string &nick,
   //        " JOIN " + channel_name + " * :" + user + "\r\n";
 }
 
+
+/**
+401    ERR_NOSUCHNICK
+              "<nickname> :No such nick/channel"
+
+          - Used to indicate the nickname parameter supplied to a
+            command is currently unused.
+*/
+std::string Replies::ERR_NOSUCHNICK(const std::string &nick) {
+  return (":jf.irc 401 " + nick + " :No such nick/channel");
+}
+
 std::string Replies::ERR_NOSUCHCHANNEL(const std::string &nick, const std::string &channel) {
   return (":jf.irc 403 " + nick + " " + channel + " :No such channel");
 }

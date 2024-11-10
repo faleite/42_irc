@@ -1,5 +1,12 @@
 ## Handle Channel
 
+### Task (10/11/2024)
+- [x] privmsg() `Change the function, working well, just not using <bot> for now`
+- [x] broadcastMessage() `Now broadcast recive a client`
+- [x] leaveChannel() `About broadcast`
+- [x] msg() `About broadcast` -> *We no need this function*
+- [x] mode() `About broadcast`
+
 ### TASK
 - [x] Channel name: `#foo`
   - first character need: `#`
@@ -22,6 +29,7 @@
   - [x] ERR_INVITEONLYCHAN 
   - [x] ERR_BADCHANNELKEY
   - [x] ERR_USERONCHANNEL
+  - [x] ERR_NOSUCHNICK
 
 ### Command Join
 **Command: `JOIN`**\

@@ -3,34 +3,35 @@
 #include <sstream>
 #include <sys/socket.h>
 
-void Server::privmsg(Client &client, const std::string &cmd,
-                     const std::vector<std::string> &param) {
-  (void)cmd;
-  if (param.size() < 2 || param[1].empty())
-    return;
-  std::ostringstream oss;
-  for (size_t i = 1; i < param.size(); ++i) {
-    if (i != 0)
-      oss << " ";
-    oss << param[i];
-  }
-  std::string mess = oss.str();
-  for (std::vector<Client *>::iterator it = _clients.begin();
-       it != _clients.end(); ++it) {
-    if ((*it)->getNickName() == param[0]) {
-      if ((*it)->getIsBot() == true && param[1] == "JOKE") {
-        HTTPClient httpClient;
-        std::string joke =
-            httpClient.get("http://official-joke-api.appspot.com/jokes/random");
-        client.getMessage("Here's a joke for you: " + joke);
-      } else
-        (*it)->getMessage(client.getNickName() +
-                       " send you a private message: " + mess);
-      return;
-    }
-  }
-  client.getMessage("Error:  ⚠️ " + param[0] + " not found.");
-}
+
+// void Server::privmsg(Client &client, const std::string &cmd,
+//                      const std::vector<std::string> &param) {
+//   (void)cmd;
+//   if (param.size() < 2 || param[1].empty())
+//     return;
+//   std::ostringstream oss;
+//   for (size_t i = 1; i < param.size(); ++i) {
+//     if (i != 0)
+//       oss << " ";
+//     oss << param[i];
+//   }
+//   std::string mess = oss.str();
+//   for (std::vector<Client *>::iterator it = _clients.begin();
+//        it != _clients.end(); ++it) {
+//     if ((*it)->getNickName() == param[0]) {
+//       if ((*it)->getIsBot() == true && param[1] == "JOKE") {
+//         HTTPClient httpClient;
+//         std::string joke =
+//             httpClient.get("http://official-joke-api.appspot.com/jokes/random");
+//         client.getMessage("Here's a joke for you: " + joke);
+//       } else
+//         (*it)->getMessage(client.getNickName() +
+//                        " send you a private message: " + mess);
+//       return;
+//     }
+//   }
+//   client.getMessage("Error:  ⚠️ " + param[0] + " not found.");
+// }
 
 void Server::fileTransfer(int const &clientFd, std::string const &paht) {
   try {

@@ -115,16 +115,15 @@ void Channel::updateListUsers(Client *client) {
   std::string ENDOFNAMES = Replies::RPL_ENDOFNAMES(client->getNickName(), _name);
   
   client->getMessage(NAMREPLY + ENDOFNAMES);
-  this->broadcastMessage(NAMREPLY + ENDOFNAMES);
+  this->broadcastMessage(NAMREPLY + ENDOFNAMES, client);
 }
-
 
 void Channel::leaveChannel(Client *client) {
   std::vector<Client *>::iterator it =
       std::find(channelUsers.begin(), channelUsers.end(), client);
   if (it != channelUsers.end()) {
     channelUsers.erase(it);
-    broadcastMessage((*it)->getNickName() + " Has left the Channel");
+    broadcastMessage((*it)->getNickName() + " Has left the Channel", client);
     client->getMessage("The admin has banned you from this channel");
   }
 
@@ -133,10 +132,11 @@ void Channel::leaveChannel(Client *client) {
   //   _active = false;
 }
 
-void Channel::broadcastMessage(std::string const &message) {
-  for (std::vector<Client *>::iterator it = channelUsers.begin();
+void Channel::broadcastMessage(std::string const &message, Client *sender) {
+  for (std::vector<Client *>::iterator it = this->channelUsers.begin();
        it != channelUsers.end(); ++it) {
-    (*it)->getMessage(message);
+    if (*it != sender)
+      (*it)->getMessage(message);
   }
 }
 
@@ -194,7 +194,7 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
     case 'i':
       _needInvitation = enable;
       broadcastMessage(clientOperator->getName() +
-                       " : set the channel to invitation mode only");
+                       " : set the channel to invitation mode only", clientOperator);
       break;
 
     //_______________________________________ LIMIT USER NAME MODE.
@@ -203,7 +203,7 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
         if (params.size() >= 3) {
           if (stringToInt(params[2], limit)) {
             broadcastMessage(clientOperator->getName() +
-                             " : set the channel limit to" + params[2]);
+                             " : set the channel limit to" + params[2], clientOperator);
           } else {
             clientOperator->getMessage("Wrong Limit ");
           }
@@ -214,7 +214,7 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
       } else {
         limit = -1;
         broadcastMessage(clientOperator->getName() +
-                         " : delete the channel limit ");
+                         " : delete the channel limit ", clientOperator);
       }
       break;
     //____________________________ Restricted topic.
