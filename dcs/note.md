@@ -1,11 +1,47 @@
 ## Handle Channel
 
+### 42_IRC Resources 
+- Connection Registration commands ***-> (Able to authenticate, set a nickname, a username)***:
+  - [x] `PASS`
+  - [x] `NICK`
+  - [x] `USER`
+- Channel operations commands:
+  - [x] `JOIN` ***-> join a channel***
+  - [x] `PRIVMSG` ***-> send and receive private messages***
+    - [x] ***-> All the messages sent from one client to a channel\
+    have to be forwarded to every other client that joined the channel.***
+- Commands specifically for operators:
+  - [ ] `PART` ***-> Leave a channel*** `(I think not need to handle this command)`
+  - [ ] `KICK` ***-> Eject a client from the channel***
+  - [ ] `INVITE` ***-> Invite a client to a channel***
+  - [ ] `TOPIC` ***-> Change or view the channel topic***
+  - [ ] `MODE` ***-> Change the channel’s mode:***
+    - [ ] `i` ***-> Set/remove Invite-only channel***
+    - [ ] `t` ***-> Set/remove the restrictions of the TOPIC command to channel operators***
+    - [ ] `k` ***-> Set/remove the channel key (password)***
+    - [ ] `o` ***-> Give/take channel operator privilege***
+    - [ ] `l` ***-> Set/remove the user limit to channel***
+- [x] Ensure that your server correctly processes everything that you send to it
+  - `\$> nc 127.0.0.1 6667`\
+    `com^Dman^Dd`\
+    `\$>`\
+    ***-> Use ctrl+D to send the command in several parts: ’com’, then ’man’, then ’d\n’.***
+- [] Delete client when disconnecting ***->(Client * -> client)***
+- Don't need to handle the following commands:
+  - [x] `NAMES`
+  - [x] `LIST`
+
 ### Task (10/11/2024)
 - [x] privmsg() `Change the function, working well, just not using <bot> for now`
 - [x] broadcastMessage() `Now broadcast recive a client`
 - [x] leaveChannel() `About broadcast`
 - [x] msg() `About broadcast` -> *We no need this function*
 - [x] mode() `About broadcast`
+- [x] Ensure that your server correctly processes everything that you send to it
+  - `\$> nc 127.0.0.1 6667`\
+    `com^Dman^Dd`\
+    `\$>`\
+    ***-> Use ctrl+D to send the command in several parts: ’com’, then ’man’, then ’d\n’.***
 
 ### TASK
 - [x] Channel name: `#foo`

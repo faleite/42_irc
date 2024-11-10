@@ -50,7 +50,12 @@ Server &Server::operator=(const Server &assignCopy) {
 
 //_______________________________________: Destructor
 
-Server::~Server() {}
+Server::~Server() {
+  for (std::vector<Client *>::iterator it = _clients.begin();
+       it != _clients.end(); it++) {
+    delete *it;
+  } 
+}
 
 std::string const &Server::getPass() const { return (_pass); }
 
@@ -212,15 +217,17 @@ void Server::cleanClient(int fd) {
   for (std::vector<Client *>::iterator it = _clients.begin();
        it != _clients.end(); it++) {
     if ((*it)->getSocket() == fd) {
+      // delete *it;
       it = _clients.erase(it);
-      break;
+      break ;
     }
   }
   for (std::vector<pollfd>::iterator it = _pfds.begin(); it != _pfds.end();
        it++) {
     if (it->fd == fd) {
       it = _pfds.erase(it);
-      return;
+      break ;
     }
   }
+  _clientBuffers.erase(fd);
 }
