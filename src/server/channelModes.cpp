@@ -16,18 +16,31 @@
 void Server::kick(Client &client, const std::string &cmd,
                   const std::vector<std::string> &param) {
   (void)cmd;
-  if (param.size() < 2 || param[1].empty())
-    return;
-  if (!client.getIsOperator()) {
-    client.getMessage("Only Operators can change the remove users");
+  if (param.size() < 2 || param[1].empty()) {
+    client.getMessage(Replies::ERR_NEEDMOREPARAMS(cmd));
     return;
   }
+  if (!client.getIsOperator()) {
+    client.getMessage(Replies::ERR_CHANOPRIVSNEEDED(param[0]));
+    return;
+  }
+  
+  std::string mess;
+  std::ostringstream oss;
+  for (size_t i = 2; i < param.size(); ++i) {
+    if (i != 0)
+      oss << " ";
+    oss << param[i];
+  }
+  mess += oss.str();
   if (findChannel(param[0]) &&
       _channels[param[0]].isOnChannel(client.getNickName())) {
     for (std::vector<Client *>::iterator it = _clients.begin();
          it != _clients.end(); ++it) {
-      if ((*it)->getNickName() == param[1]) {
+      if (_channels[param[0]].isOnChannel((*it)->getNickName())) {
         _channels[param[0]].leaveChannel((*it));
+        (*it)->getMessage(
+            Replies::KICK_USER(client, param[1], (*it)->getName(), mess));
         return;
       }
     }
@@ -111,8 +124,7 @@ void Server::invite(Client &client, const std::string &cmd,
     for (std::vector<Client *>::iterator iter = _clients.begin();
          iter != _clients.end(); iter++) {
       if ((*iter)->getNickName() == param[1]) {
-
-        _channels[param[0]].invite((*iter));
+        _channels[param[0]].invite(client.getNickName(), (*iter));
         return;
       }
     }
@@ -124,6 +136,7 @@ void Server::mode(Client &client, const std::string &cmd,
                   const std::vector<std::string> &param) {
 
   (void)cmd;
+  std::cout << "hello :::::::::::: MOD COMMAND" << std::endl;
 
   if (param.size() < 2 || param[1].empty() || !client.getIsOperator())
     return;
