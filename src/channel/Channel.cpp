@@ -124,7 +124,6 @@ void Channel::leaveChannel(Client *client) {
   if (it != channelUsers.end()) {
     channelUsers.erase(it);
     broadcastMessage((*it)->getNickName() + " Has left the Channel", client);
-    client->getMessage("The admin has banned you from this channel");
   }
 
   // treat when channel gets empty.
@@ -160,15 +159,14 @@ void Channel::changeTopic(Client *clientOperator, std::string const &topic) {
   }
 }
 
-void Channel::invite(Client *clientInvited) {
+void Channel::invite(std::string const &inviter, Client *clientInvited) {
   if (isOnChannel(clientInvited->getNickName())) {
     std::cout << "Client already in the channel" << std::endl;
     return;
   }
   if (isOnList(clientInvited->getNickName()) == false) {
     invitedList.push_back(clientInvited);
-    clientInvited->getMessage("You has been invited to the " + _name +
-                              " channel");
+    clientInvited->getMessage(Replies::RPL_INVITING("INVITE", inviter, _name));
   } else {
     std::cout << "Client has been already invited to the channel" << std::endl;
   }

@@ -52,7 +52,7 @@ public:
   void mode(Client *clientOperator, std::string const &mode,
             std::vector<std::string> params);
   // void modeLimit(int limit, bool enable, std::vector<std::string> params);
-  void invite( Client *ClientInvited);
+  void invite( const std::string &inviter, Client *ClientInvited);
   void setTopic(Client *clientOperator, std::string const &newTopic);
 
   void updateListUsers(Client *client);
