@@ -59,35 +59,42 @@
            channels, and "=" for others (public channels).
               */
 
-std::string Replies::ERR_NEEDMOREPARAMS(const std::string &cmd) {
+std::string Replies::ERR_NEEDMOREPARAMS(const std::string &cmd)
+{
   return (":jf.irc 461 * " + cmd + " :Not enough parameters");
 }
 
-std::string Replies::ERR_UNKNOWNCOMMAND(const std::string &cmd) {
+std::string Replies::ERR_UNKNOWNCOMMAND(const std::string &cmd)
+{
   return (":jf.irc 421 * " + cmd + " :Unknown command");
 }
 
-std::string Replies::ERR_PASSWDMISMATCH() {
+std::string Replies::ERR_PASSWDMISMATCH()
+{
   return (":jf.irc 464 * :Password incorrect");
 }
 
-std::string Replies::ERR_NOTREGISTERED() {
+std::string Replies::ERR_NOTREGISTERED()
+{
   return (":jf.irc 451 * :You need to register before you can use that "
           "command"); // ":You have not registered"
 }
 
-std::string Replies::ERR_ALREADYREGISTRED() {
+std::string Replies::ERR_ALREADYREGISTRED()
+{
   return (":jf.irc 462 * :You may not reregisterd");
 }
 
-std::string Replies::ERR_NICKNAMEINUSE(const std::string &nick) {
+std::string Replies::ERR_NICKNAMEINUSE(const std::string &nick)
+{
   return (":jf.irc 433 * " + nick + " :Nickname is already in use");
 }
 
 // 001.
 std::string Replies::RPL_WELCOME(const std::string &nick,
                                  const std::string &user,
-                                 const std::string &channel_name) {
+                                 const std::string &channel_name)
+{
   // Opcion 1.
   return std::string(":") + nick + "!" + user + "@localhoost" + " JOIN " +
          channel_name + " * :" + user;
@@ -104,12 +111,14 @@ std::string Replies::RPL_WELCOME(const std::string &nick,
           - Used to indicate the nickname parameter supplied to a
             command is currently unused.
 */
-std::string Replies::ERR_NOSUCHNICK(const std::string &nick) {
+std::string Replies::ERR_NOSUCHNICK(const std::string &nick)
+{
   return (":jf.irc 401 " + nick + " :No such nick/channel");
 }
 
 std::string Replies::ERR_NOSUCHCHANNEL(const std::string &nick,
-                                       const std::string &channel) {
+                                       const std::string &channel)
+{
   return (":jf.irc 403 " + nick + " " + channel + " :No such channel");
 }
 
@@ -117,7 +126,8 @@ std::string Replies::ERR_NOSUCHCHANNEL(const std::string &nick,
 471  ERR_CHANNELISFULL
     "<channel> :Cannot join channel (+l)"
 */
-std::string Replies::ERR_CHANNELISFULL(const std::string &channel) {
+std::string Replies::ERR_CHANNELISFULL(const std::string &channel)
+{
   return (":jf.irc 471 " + channel + " :Cannot join channel (+l)");
 }
 
@@ -125,7 +135,8 @@ std::string Replies::ERR_CHANNELISFULL(const std::string &channel) {
 473    ERR_INVITEONLYCHAN
               "<channel> :Cannot join channel (+i)"
 */
-std::string Replies::ERR_INVITEONLYCHAN(const std::string &channel) {
+std::string Replies::ERR_INVITEONLYCHAN(const std::string &channel)
+{
   return (":jf.irc 473 " + channel + " :Cannot join channel (+i)");
 }
 
@@ -133,7 +144,8 @@ std::string Replies::ERR_INVITEONLYCHAN(const std::string &channel) {
 475    ERR_BADCHANNELKEY
               "<channel> :Cannot join channel (+k)"
 */
-std::string Replies::ERR_BADCHANNELKEY(const std::string &channel) {
+std::string Replies::ERR_BADCHANNELKEY(const std::string &channel)
+{
   return (":jf.irc 475 " + channel + " :Cannot join channel (+k)");
 }
 
@@ -145,20 +157,23 @@ std::string Replies::ERR_BADCHANNELKEY(const std::string &channel) {
            channel they are already on.
 */
 std::string Replies::ERR_USERONCHANNEL(const std::string &nick,
-                                       const std::string &channel) {
+                                       const std::string &channel)
+{
   return (":jf.irc 443 " + nick + " " + channel + " is already on channel");
 }
 
 std::string Replies::LEAVE_CHANNEL(const std::string &nick,
                                    const std::string &user,
-                                   const std::string &channel) {
+                                   const std::string &channel)
+{
   return std::string(":" + nick + "!" + user + "@localhoost" + " PART " +
                      channel);
 }
 
 std::string Replies::JOIN_CHANNEL(const std::string &nick,
                                   const std::string &user,
-                                  const std::string &channel_name) {
+                                  const std::string &channel_name)
+{
   return std::string(":") + nick + "!" + user + "@localhoost" + " JOIN " +
          channel_name + " * realname";
 }
@@ -172,7 +187,8 @@ std::string Replies::JOIN_CHANNEL(const std::string &nick,
  */
 std::string
 Replies::RPL_NAMREPLY(const std::string &nick, const std::string &channel,
-                      const std::string &type) { // = (public (default))
+                      const std::string &type)
+{ // = (public (default))
   // return std::string(":jf.irc 353 " + nick + type + channel + " :@" + nick +
   // "!" + is_operator + "@localhoost"); return std::string(":jf.irc 353 " +
   // nick + " " + type + " " + channel + " :" + is_operator + nick);
@@ -194,7 +210,8 @@ Replies::RPL_NAMREPLY(const std::string &nick, const std::string &channel,
            the end.
 */
 std::string Replies::RPL_ENDOFNAMES(const std::string &nick,
-                                    const std::string &channel_name) {
+                                    const std::string &channel_name)
+{
   return std::string(":jf.irc 366 " + nick + " " + channel_name +
                      " :End of NAMES list.");
 }
@@ -228,7 +245,8 @@ std::string Replies::RPL_ENDOFNAMES(const std::string &nick,
  */
 std::string Replies::RPL_CHANNELMODEIS(const std::string &nick,
                                        const std::string &channel_name,
-                                       const std::string &modes) {
+                                       const std::string &modes)
+{
   return std::string(":jf.irc 324 " + nick + " " + channel_name + " " + modes);
 }
 
@@ -273,23 +291,41 @@ std::string Replies::RPL_CHANNELMODEIS(const std::string &nick,
 
 // 482     ERR_CHANOPRIVSNEEDED
 // "<channel> :You're not channel operator"
-std::string Replies::ERR_CHANOPRIVSNEEDED(const std::string &channel) {
+std::string Replies::ERR_CHANOPRIVSNEEDED(const std::string &channel)
+{
   return (":jf.irc 482 * " + channel + " :You're not channel operator");
 }
 
 // 442     ERR_NOTONCHANNEL
 // "<channel> :You're not on that channel"
-std::string Replies::ERR_NOTONCHANNEL(const std::string &channel) {
+std::string Replies::ERR_NOTONCHANNEL(const std::string &channel)
+{
   return (":jf.irc 442 * " + channel + " :You're not on that channel");
 }
 
-std::string Replies::KICK_USER(Client const &kicker,
-                               const std::string &channelName,
-                               const std::string &target,
-                               const std::string &reason) {
-  std::string kickMessage = ":" + kicker.getNickName() + "!" +
-                            kicker.getName() + "@localhoost" + " KICK " +
-                            channelName + " " + target + " :" + reason;
+// >> :juan!aldana@localhost KICK #uva faraujo :sair
+// >> :araujo!faaraujo@localhost PART #test1 :Leaving
+std::string Replies::KICK_USER(const std::string &cmd,
+                          const std::string &nick,
+                          const std::string &name,
+                          const std::string &channel,
+                          const std::string &target,
+                          const std::string &reason)
+{
+  std::string kickMessage = ":" + nick + "!" +
+                            name + "@localhost " + cmd + " " +
+                            channel + " " + target + reason;
+  return (kickMessage);
+}
+std::string Replies::PART_USER(const std::string &cmd,
+                          const std::string &nick,
+                          const std::string &name,
+                          const std::string &channel,
+                          const std::string &reason)
+{
+  std::string kickMessage = ":" + nick + "!" +
+                            name + "@localhost " + cmd + " " +
+                            channel + reason;
   return (kickMessage);
 }
 
@@ -299,6 +335,7 @@ std::string Replies::KICK_USER(Client const &kicker,
 
 std::string Replies::RPL_INVITING(const std::string &cmd,
                                   const std::string &nick,
-                                  const std::string &channel) {
-  return (":jf.irc 443 " + cmd + " " + nick + " "+ channel);
+                                  const std::string &channel)
+{
+  return (":jf.irc 443 " + cmd + " " + nick + " " + channel);
 }

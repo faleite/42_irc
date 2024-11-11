@@ -42,7 +42,7 @@ public:
 
   //______________________Actions.
   void joinChannel(Client *newClient, const std::string &password);
-  void leaveChannel(Client *client);
+  void leaveChannel(Client *client, const std::string &mess);
   void broadcastMessage(std::string const &message, Client *sender);
   bool isOnList(std::string const &clientNick);
   bool isOnChannel(const std::string &nickName);

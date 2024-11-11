@@ -11,7 +11,7 @@
     - [x] ***-> All the messages sent from one client to a channel\
     have to be forwarded to every other client that joined the channel.***
 - Commands specifically for operators:
-  - [ ] `PART` ***-> Leave a channel*** `(I think not need to handle this command)`
+  - [ ] `PART` ***-> Leave a channel***
   - [ ] `KICK` ***-> Eject a client from the channel***
   - [ ] `INVITE` ***-> Invite a client to a channel***
   - [ ] `TOPIC` ***-> Change or view the channel topic***

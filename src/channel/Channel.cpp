@@ -6,13 +6,15 @@
 
 //_______________________________________: Constructor
 
-Channel::Channel() {
+Channel::Channel()
+{
   std::cout << "The Channel < " << " > was created" << std::endl;
 }
 Channel::Channel(std::string const &name)
     : _needInvitation(false), _needVerification(false), _channelKey(""),
       _restricTopic(false), _active(true), limit(-1), _name(name),
-      _topic(name + " interactions") {
+      _topic(name + " interactions")
+{
   std::cout << "The Channel < " << name << " > was created" << std::endl;
 }
 
@@ -33,16 +35,19 @@ void Channel::setTopic(std::string const &topic) { this->_topic = topic; }
 
 void Channel::setLimit(int limit) { this->limit = limit; }
 
-void Channel::setPrivilige(Client *client, bool enable) {
+void Channel::setPrivilige(Client *client, bool enable)
+{
   client->setOperator(enable);
 }
 
 //_______________________________________: Search.
 
-bool Channel::isOnList(std::string const &nickName) {
+bool Channel::isOnList(std::string const &nickName)
+{
   std::vector<Client *>::iterator it;
 
-  for (it = invitedList.begin(); it != invitedList.end(); ++it) {
+  for (it = invitedList.begin(); it != invitedList.end(); ++it)
+  {
     if ((*it)->getNickName() == nickName)
       return true;
   }
@@ -50,10 +55,12 @@ bool Channel::isOnList(std::string const &nickName) {
 }
 std::vector<Client *> channelUsers;
 
-bool Channel::isOnChannel(const std::string &nickName) {
+bool Channel::isOnChannel(const std::string &nickName)
+{
   std::vector<Client *>::iterator it;
 
-  for (it = channelUsers.begin(); it != channelUsers.end(); ++it) {
+  for (it = channelUsers.begin(); it != channelUsers.end(); ++it)
+  {
     if ((*it)->getNickName() == nickName)
       return true;
   }
@@ -65,31 +72,36 @@ bool Channel::isOnChannel(const std::string &nickName) {
 // Set up the password, and the authentication in the list of the client.
 
 bool Channel::getVerification() { return (_needVerification); }
-void Channel::joinChannel(Client *newClient, const std::string &password) {
+void Channel::joinChannel(Client *newClient, const std::string &password)
+{
 
   //__________________________ Check Limit.
-  if (limit > 0 && limit == static_cast<int>(channelUsers.size())) {
+  if (limit > 0 && limit == static_cast<int>(channelUsers.size()))
+  {
     newClient->getMessage(Replies::ERR_CHANNELISFULL(this->_name));
-    return ;
+    return;
   }
 
   //__________________________ Check is on Channel
-  if (isOnChannel(newClient->getNickName())) {
+  if (isOnChannel(newClient->getNickName()))
+  {
     newClient->getMessage(Replies::ERR_USERONCHANNEL(newClient->getNickName(), this->_name));
-    return ;
+    return;
   }
 
   //__________________________ Check Channel Invite Only
   if (_needInvitation && !newClient->getIsOperator() &&
-      !isOnList(newClient->getNickName())) {
+      !isOnList(newClient->getNickName()))
+  {
     newClient->getMessage(Replies::ERR_INVITEONLYCHAN(this->_name));
-    return ;
+    return;
   }
 
   //__________________________ Check Verification
-  if (_needVerification && password != _channelKey) {
+  if (_needVerification && password != _channelKey)
+  {
     newClient->getMessage(Replies::ERR_BADCHANNELKEY(this->_name));
-    return ;
+    return;
   }
 
   //__________________________ Check First client on channel.
@@ -101,29 +113,32 @@ void Channel::joinChannel(Client *newClient, const std::string &password) {
 
   newClient->getMessage(Replies::JOIN_CHANNEL(newClient->getNickName(), newClient->getName(), _name));
   this->updateListUsers(newClient);
-
 }
 
-void Channel::updateListUsers(Client *client) {
+void Channel::updateListUsers(Client *client)
+{
 
   std::string NAMREPLY = Replies::RPL_NAMREPLY(client->getNickName(), _name, "=");
 
   for (size_t i = 0; i < channelUsers.size(); ++i)
-      NAMREPLY += (channelUsers[i]->getIsOperator() ? "@" + channelUsers[i]->getNickName() : channelUsers[i]->getNickName()) + " ";
+    NAMREPLY += (channelUsers[i]->getIsOperator() ? "@" + channelUsers[i]->getNickName() : channelUsers[i]->getNickName()) + " ";
   NAMREPLY += "\r\n";
 
   std::string ENDOFNAMES = Replies::RPL_ENDOFNAMES(client->getNickName(), _name);
-  
+
   client->getMessage(NAMREPLY + ENDOFNAMES);
   this->broadcastMessage(NAMREPLY + ENDOFNAMES, client);
 }
 
-void Channel::leaveChannel(Client *client) {
+void Channel::leaveChannel(Client *client, const std::string &mess)
+{
+  (void)mess;
   std::vector<Client *>::iterator it =
       std::find(channelUsers.begin(), channelUsers.end(), client);
-  if (it != channelUsers.end()) {
+  if (it != channelUsers.end())
+  {
     channelUsers.erase(it);
-    broadcastMessage((*it)->getNickName() + " Has left the Channel", client);
+    // broadcastMessage(Replies::KICK_USER(*client, _name, (*it)->getNickName(), mess), client);
   }
 
   // treat when channel gets empty.
@@ -131,18 +146,22 @@ void Channel::leaveChannel(Client *client) {
   //   _active = false;
 }
 
-void Channel::broadcastMessage(std::string const &message, Client *sender) {
+void Channel::broadcastMessage(std::string const &message, Client *sender)
+{
   for (std::vector<Client *>::iterator it = this->channelUsers.begin();
-       it != channelUsers.end(); ++it) {
+       it != channelUsers.end(); ++it)
+  {
     if (*it != sender)
       (*it)->getMessage(message);
   }
 }
 
-int Channel::getUsers(void) {
+int Channel::getUsers(void)
+{
   int count = 0;
   for (std::vector<Client *>::iterator it = channelUsers.begin();
-       it != channelUsers.end(); ++it) {
+       it != channelUsers.end(); ++it)
+  {
     count++;
   }
   return count;
@@ -150,33 +169,41 @@ int Channel::getUsers(void) {
 
 //_______________________________________: Perform Operators.
 
-void Channel::changeTopic(Client *clientOperator, std::string const &topic) {
+void Channel::changeTopic(Client *clientOperator, std::string const &topic)
+{
   if (clientOperator->getIsOperator() == true)
     setTopic(topic);
-  else {
+  else
+  {
     std::cout << "Just the User Operator can perform this function"
               << std::endl;
   }
 }
 
-void Channel::invite(std::string const &inviter, Client *clientInvited) {
-  if (isOnChannel(clientInvited->getNickName())) {
+void Channel::invite(std::string const &inviter, Client *clientInvited)
+{
+  if (isOnChannel(clientInvited->getNickName()))
+  {
     std::cout << "Client already in the channel" << std::endl;
     return;
   }
-  if (isOnList(clientInvited->getNickName()) == false) {
+  if (isOnList(clientInvited->getNickName()) == false)
+  {
     invitedList.push_back(clientInvited);
     clientInvited->getMessage(Replies::RPL_INVITING("INVITE", inviter, _name));
-  } else {
+  }
+  else
+  {
     std::cout << "Client has been already invited to the channel" << std::endl;
   }
-  for (int i = 0; i < (int) invitedList.size(); ++i)
+  for (int i = 0; i < (int)invitedList.size(); ++i)
     std::cout << invitedList[i]->getNickName() << std::endl;
 }
 
 // void Channel::modeLimit(int limit, bool enable) {}
 void Channel::mode(Client *clientOperator, std::string const &modeCmd,
-                   std::vector<std::string> params) {
+                   std::vector<std::string> params)
+{
 
   if (!isOnChannel(clientOperator->getNickName()))
     throw(std::runtime_error("You are not part of this channel"));
@@ -185,34 +212,48 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
   bool enable;
   modeCmd[0] == '+' ? enable = true : enable = false;
 
-  for (int i = 1; modeCmd[i]; ++i) {
+  for (int i = 1; modeCmd[i]; ++i)
+  {
 
-    switch (modeCmd[i]) {
+    switch (modeCmd[i])
+    {
     //_______________________________________ INVITATION MODE.
     case 'i':
       _needInvitation = enable;
       broadcastMessage(clientOperator->getName() +
-                       " : set the channel to invitation mode only", clientOperator);
+                           " : set the channel to invitation mode only",
+                       clientOperator);
       break;
 
     //_______________________________________ LIMIT USER NAME MODE.
     case 'l':
-      if (enable) {
-        if (params.size() >= 3) {
-          if (stringToInt(params[2], limit)) {
+      if (enable)
+      {
+        if (params.size() >= 3)
+        {
+          if (stringToInt(params[2], limit))
+          {
             broadcastMessage(clientOperator->getName() +
-                             " : set the channel limit to" + params[2], clientOperator);
-          } else {
+                                 " : set the channel limit to" + params[2],
+                             clientOperator);
+          }
+          else
+          {
             clientOperator->getMessage("Wrong Limit ");
           }
-        } else {
+        }
+        else
+        {
           std::cout << "Error: Missing user limit parameter."
                     << std::endl; // Remove for invalid.
         }
-      } else {
+      }
+      else
+      {
         limit = -1;
         broadcastMessage(clientOperator->getName() +
-                         " : delete the channel limit ", clientOperator);
+                             " : delete the channel limit ",
+                         clientOperator);
       }
       break;
     //____________________________ Restricted topic.
@@ -226,22 +267,29 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
     case 'o':
       // 1. find the client nick.
       for (std::vector<Client *>::iterator iter = channelUsers.begin();
-           iter != channelUsers.end(); iter++) {
-        (*iter)->getNickName() == params[2]
+           iter != channelUsers.end(); iter++)
+      {
+        isOnChannel((*iter)->getNickName())
             ? setPrivilige((*iter), enable)
             : clientOperator->getMessage("User not found");
       }
       break;
     case 'k':
       _needVerification = enable;
-      if (enable) {
-        if (params.size() >= 3) {
+      if (enable)
+      {
+        if (params.size() >= 3)
+        {
           _channelKey = params[2];
           std::cout << "Channel key set to: " << _channelKey << std::endl;
-        } else {
+        }
+        else
+        {
           std::cout << "Missing Channel key Parameter " << std::endl;
         }
-      } else {
+      }
+      else
+      {
         _channelKey.clear();
         std::cout << "Channel key Removed " << std::endl;
       }

@@ -5,7 +5,8 @@
 #include "../server/Server.hpp"
 #include <string>
 
-class Replies {
+class Replies
+{
 public:
   static std::string ERR_PASSWDMISMATCH();
   static std::string ERR_NOTREGISTERED();
@@ -40,9 +41,16 @@ public:
   static std::string ERR_NOSUCHNICK(const std::string &nick);
   static std::string ERR_CHANOPRIVSNEEDED(const std::string &channel);
   static std::string ERR_NOTONCHANNEL(const std::string &channel);
-  static std::string KICK_USER(Client const &kicker,
-                               const std::string &channelName,
+  static std::string KICK_USER(const std::string &cmd,
+                               const std::string &nick,
+                               const std::string &name,
+                               const std::string &channel,
                                const std::string &target,
+                               const std::string &reason);
+  static std::string PART_USER(const std::string &cmd,
+                               const std::string &nick,
+                               const std::string &name,
+                               const std::string &channel,
                                const std::string &reason);
   static std::string RPL_INVITING(const std::string &cmd,
                                   const std::string &nick,

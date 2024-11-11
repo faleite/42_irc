@@ -70,7 +70,7 @@ void Server::join(Client &client, const std::string &cmd,
     for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it)
     {
       client.getMessage(Replies::LEAVE_CHANNEL(client.getNickName(), client.getName(), it->first));
-      it->second.leaveChannel(&client);
+      it->second.leaveChannel(&client, "");
     }
     return ;
   }
