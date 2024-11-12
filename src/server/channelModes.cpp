@@ -5,158 +5,6 @@
 #include <string>
 #include <vector>
 
-// PART
-
-void Server::part(Client &client, const std::string &cmd, const std::vector<std::string> &param)
-{
-  // std::vector<std::string> channel_list;
-
-  if (param.empty())
-  {
-    client.getMessage(Replies::ERR_NEEDMOREPARAMS(cmd));
-    return;
-  }
-  std::string mess;
-  std::ostringstream oss;
-
-  for (size_t i = 1; i < param.size(); ++i)
-  {
-    if (i != 0)
-      oss << " ";
-    oss << param[i];
-  }
-  mess += oss.str();
-  _channels[param[0]].leaveChannel(&client, mess);
-  _channels[param[0]].broadcastMessage(Replies::PART_USER(cmd,
-                                                          client.getNickName(),
-                                                          client.getName(),
-                                                          _channels[param[0]].getName(),
-                                                          mess),
-                                       &client);
-  return;
-
-  // for (size_t i = 0; i < param.size(); ++i)
-  // {
-  //   if (param[i][0] != '#')
-  //   {
-  //     if (i != 0)
-  //       oss << " ";
-  //     oss << param[i];
-  //   }
-  //   else
-  //   {
-  //     if (findChannel(param[i]) &&
-  //     _channels[param[i]].isOnChannel(client.getNickName()))
-  //     {
-  //       channel_list.push_back(param[i]);
-  //     }
-  //   }
-  // }
-
-  // for (std::vector<std::string>::iterator it = channel_list.begin();
-  //      it != channel_list.end(); ++it)
-  // {
-  // (client).getMessage(
-  //     Replies::KICK_USER(client, *it, client.getName(), mess));
-  // }
-}
-// KICK <channel> <nickname>
-//______________________________________ KICK.
-// command : TOPIC <#CHANNEL> <nickname>.
-// EX :      KICK #GENERAL user1
-// EX :      KICK #channelname usernickname Reason
-// Param : 3 param[0] para[1] param[2]
-// What we handle.
-
-void Server::kick(Client &client, const std::string &cmd,
-                  const std::vector<std::string> &param)
-{
-  (void)cmd;
-  if (param.size() < 2 || param[1].empty())
-  {
-    client.getMessage(Replies::ERR_NEEDMOREPARAMS(cmd));
-    return;
-  }
-  if (!client.getIsOperator())
-  {
-    client.getMessage(Replies::ERR_CHANOPRIVSNEEDED(param[0]));
-    return;
-  }
-
-  std::string mess;
-  std::ostringstream oss;
-  for (size_t i = 2; i < param.size(); ++i)
-  {
-    if (i != 0)
-      oss << " ";
-    oss << param[i];
-  }
-  mess += oss.str();
-  if (findChannel(param[0]) &&
-      _channels[param[0]].isOnChannel(client.getNickName()))
-  {
-    for (std::vector<Client *>::iterator it = _clients.begin();
-         it != _clients.end(); ++it)
-    {
-      if (_channels[param[0]].isOnChannel((*it)->getNickName()))
-      {
-        _channels[param[0]].leaveChannel((*it), mess);
-        // _channels[param[0]].broadcastMessage(
-        //     Replies::KICK_USER(client, param[1], (*it)->getName(), mess), (*it));
-        // (*it)->getMessage(
-        //     Replies::KICK_USER(client, param[1], (*it)->getName(), mess));
-        return;
-      }
-    }
-  }
-  else
-  {
-    std::cout << "you or the user are not in the channel sorry bro";
-  }
-  return;
-}
-//______________________________________ TOPIC.
-// command : TOPIC <#CHANNEL> will list the topic of te channel.
-// EX :      TOPIC #GENERAL
-// TOPIC #chhannel <new topic> change the topic of the channel.
-// Param : 3 param[0] para[1] param[2]
-// What we handle.
-
-void Server::topic(Client &client, const std::string &cmd,
-                   const std::vector<std::string> &param)
-{
-  (void)cmd;
-  if (param.size() == 1)
-  {
-    if (findChannel(param[0]) &&
-        _channels[param[0]].isOnChannel(client.getNickName()))
-    {
-      _channels[param[0]].getRestrictedTopic()
-          ? client.getMessage("The topic of this channel is restricted")
-          : client.getMessage("the topic of the channel is :" +
-                              _channels[param[0]].getTopic());
-    }
-    return;
-  }
-  else if (param.size() < 2 || param[1].empty())
-    return;
-  if (!client.getIsOperator())
-  {
-    client.getMessage("Only Operators can change the channel mode");
-    return;
-  }
-  std::string mess;
-  std::ostringstream oss;
-  for (size_t i = 1; i < param.size(); ++i)
-  {
-    if (i != 0)
-      oss << " ";
-    oss << param[i];
-  }
-  mess += oss.str();
-  findChannel(param[0]) ? _channels[param[0]].setTopic(mess)
-                        : client.getMessage("Channel not found");
-}
 
 //______________________________________ MODE OF THE CHANNEL.
 
@@ -176,37 +24,13 @@ void Server::topic(Client &client, const std::string &cmd,
 // command : MODE <#channel> <flag> <userNickname>
 // Ex : MODE #general -o user1
 
-//___________Invite to a channel
-// Command : IVITE <#channel> <user>
-// invite username #channelname
+
 
 //___________Password.
 // command : MODE <#CHANNEL> <FLAG> <pass>
 // EX :      MODE #GENERAL +k pass
 // Param : 3 param[0] para[1] param[2]
 // What we handle.
-
-void Server::invite(Client &client, const std::string &cmd,
-                    const std::vector<std::string> &param)
-{
-  (void)cmd;
-
-  if (param.size() < 2 || param[1].empty() || !client.getIsOperator())
-    return;
-  if (findChannel(param[1]))
-  {
-    for (std::vector<Client *>::iterator iter = _clients.begin();
-         iter != _clients.end(); iter++)
-    {
-      if ((*iter)->getNickName() == param[0])
-      {
-        _channels[param[1]].invite(client.getNickName(), (*iter));
-        return;
-      }
-    }
-    client.getMessage("User Not Found");
-  }
-}
 
 void Server::mode(Client &client, const std::string &cmd,
                   const std::vector<std::string> &param)

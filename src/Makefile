@@ -15,6 +15,13 @@ SRC := main.cpp \
 	  server/commands.cpp \
 	  server/channelModes.cpp \
 	  server/ChannelManager.cpp \
+	  server/commands/invite.cpp \
+	  server/commands/join.cpp \
+	  server/commands/kick.cpp \
+	  server/commands/list.cpp \
+	  server/commands/mode.cpp \
+	  server/commands/part.cpp \
+	  server/commands/topic.cpp \
 	  replies/Replies.cpp \
 
 OBJ := $(SRC:.cpp=.o)
