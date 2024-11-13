@@ -10,14 +10,11 @@
 
 // Remove the client from the channel
 
-void Channel::leaveChannel(Client *client, const std::string &mess) {
-  (void)mess;
+void Channel::leaveChannel(Client *client) {
   std::vector<Client *>::iterator it =
       std::find(channelUsers.begin(), channelUsers.end(), client);
   if (it != channelUsers.end()) {
     channelUsers.erase(it);
-    // broadcastMessage(Replies::KICK_USER(*client, _name, (*it)->getNickName(),
-    // mess), client);
   }
 
   // treat when channel gets empty.
@@ -25,16 +22,21 @@ void Channel::leaveChannel(Client *client, const std::string &mess) {
   //   _active = false;
 }
 
+
 void Server::kick(Client &client, const std::string &cmd,
                   const std::vector<std::string> &param) {
-  (void)cmd;
-
-  if (param.size() < 2 || param[1].empty()) {
+  if (param.size() < 3) {
     client.getMessage(Replies::ERR_NEEDMOREPARAMS(cmd));
     return;
   }
   if (!client.getIsOperator()) {
     client.getMessage(Replies::ERR_CHANOPRIVSNEEDED(param[0]));
+    return;
+  }
+  if (!findChannel(param[0])) {
+    client.getMessage(Replies::ERR_NOSUCHCHANNEL(
+                      client.getNickName(), 
+                      param[0]));
     return;
   }
 
@@ -46,43 +48,34 @@ void Server::kick(Client &client, const std::string &cmd,
     oss << param[i];
   }
   mess += oss.str();
-  if (findChannel(param[0]) &&
-      _channels[param[0]].isOnChannel(client.getNickName())) {
-    for (std::vector<Client *>::iterator it = _clients.begin();
-         it != _clients.end(); ++it) {
-      if (((*it)->getNickName()) == param[1]) {
-        _channels[param[0]].leaveChannel((*it), mess);
 
-        // _____________________ Kick Message for the target.
-        std::string kickMessage = ":jf.irc KICK " + param[0] + " " +
-                                  (*it)->getNickName() +
-                                  " :You have been kicked from the channel\r\n";
-        (*it)->getMessage(kickMessage);
-        // _____________________ Kick Message for the Channel.
-        std::string notifyMessage =
-            ":" + client.getNickName() + "!" + client.getName() + "@" +
-            client.getIp() + " KICK " + param[0] + " " + (*it)->getNickName() +
-            ": has been kicked from the channel\r\n";
-        _channels[param[0]].broadcastMessage(notifyMessage, &client);
-
-        // _____________________ Kick Message for the admin that kick the user.
-        std::string adminMessage = "::jf.irc KICK " + param[0] + " " +
-                                   (*it)->getNickName() +
-                                   " :Client has been kicked\r\n";
-        client.getMessage(adminMessage);
-
-        //     Replies::KICK_USER(client, param[1], (*it)->getName(), mess),
-        //     (*it));
-        // (*it)->getMessage(
-        //     Replies::KICK_USER(client, param[1], (*it)->getName(), mess));
-        return;
-      }
-      // client.getMessage(Replies::ERR_USERNOTINCHANNEL(client.getNickName(),
-      // param[0], param[1]));
-    }
+  if (!_channels[param[0]].isOnChannel(param[1])) {
+    client.getMessage(Replies::ERR_USERNOTINCHANNEL(
+                      client.getNickName(), 
+                      param[0], param[1]));
+    return;
   } else {
-    client.getMessage(
-        Replies::ERR_NOSUCHCHANNEL(client.getNickName(), param[0]));
+    for (size_t i = 0; i < this->_clients.size(); i++) {
+      if (this->_clients[i]->getNickName() == param[1]) {
+        this->_clients[i]->getMessage(Replies::KICK_USER(
+                                      cmd, client.getNickName(), 
+                                      client.getName(), param[0], 
+                                      param[1], mess));
+        client.getMessage(Replies::KICK_USER(
+                          cmd, client.getNickName(), 
+                          client.getName(), param[0], 
+                          param[1], mess));
+        _channels[param[0]].broadcastMessage(Replies::KICK_USER(
+                                              cmd, client.getNickName(), 
+                                              client.getName(), param[0], 
+                                              param[1], mess), &client);
+        _channels[param[0]].leaveChannel(this->_clients[i]);
+        if (this->_clients[i]->getIsOperator()){
+          this->_clients[i]->setOperator(false);
+        }
+        this->_channels[param[0]].updateListUsers(this->_clients[i]);
+        return; 
+      }
+    }
   }
-  return;
 }

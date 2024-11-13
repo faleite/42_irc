@@ -33,6 +33,7 @@ public:
   int getLimit(void);
   int getUsers(void);
   bool getRestrictedTopic(void);
+  std::vector<Client *> &getClients(void);
 
   //_____________________Setter.
   void setTopic(std::string const &topic);
@@ -42,7 +43,7 @@ public:
 
   //______________________Actions.
   void joinChannel(Client *newClient, const std::string &password);
-  void leaveChannel(Client *client, const std::string &mess);
+  void leaveChannel(Client *client);
   void broadcastMessage(std::string const &message, Client *sender);
   bool isOnList(std::string const &clientNick);
   bool isOnChannel(const std::string &nickName);

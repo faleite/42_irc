@@ -101,6 +101,8 @@ void Client::getFile(int serverSocket, std::string const &outputFilePath) {
     }
   }
 }
+
+// Are you in use?
 void Client::joinChanel(const std::string &_chanel,
                         const std::string &password = "") const {
   std::string command;

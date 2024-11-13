@@ -298,9 +298,9 @@ std::string Replies::PART_USER(const std::string &cmd, const std::string &nick,
                                const std::string &name,
                                const std::string &channel,
                                const std::string &reason) {
-  std::string kickMessage =
+  std::string partMessage =
       ":" + nick + "!" + name + "@localhost " + cmd + " " + channel + reason;
-  return (kickMessage);
+  return (partMessage);
 }
 
 //  341    RPL_INVITING

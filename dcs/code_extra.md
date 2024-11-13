@@ -1,5 +1,34 @@
 # CODE EXTRA
 
+
+## SEND MESSAGE (MSG)
+```cpp
+//________________________________SEND MESSAGE IN THE CHANNEL
+
+void Server::msg(Client &client, const std::string &cmd,
+                 const std::vector<std::string> &param)
+{
+  (void)cmd;
+  std::string mess = client.getName() + " : ";
+  std::ostringstream oss;
+  for (size_t i = 1; i < param.size(); ++i)
+  {
+    if (i != 0)
+      oss << " ";
+    oss << param[i];
+  }
+  mess += oss.str();
+  if (findChannel(param[0]))
+  {
+    _channels[param[0]].isOnChannel(client.getNickName())
+        ? _channels[param[0]].broadcastMessage(mess, &client)
+        : client.getMessage("You are not part of this channel");
+  }
+  else
+    client.getMessage("Channel not found");
+}
+```
+
 ## JOIN TO A CHANNEL
 ```cpp
 void Server::join(Client &client, const std::string &cmd,

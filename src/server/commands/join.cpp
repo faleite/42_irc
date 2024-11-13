@@ -26,7 +26,7 @@ void Server::join(Client &client, const std::string &cmd,
          it != _channels.end(); ++it) {
       client.getMessage(Replies::LEAVE_CHANNEL(client.getNickName(),
                                                client.getName(), it->first));
-      it->second.leaveChannel(&client, "");
+      it->second.leaveChannel(&client);
     }
     return;
   }

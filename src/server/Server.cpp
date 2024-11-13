@@ -13,7 +13,6 @@ Server::Server(int const &port, std::string pass) : _port(port), _pass(pass) {
   commandMap[PRIVMSG] = &Server::privmsg;
   commandMap[JOIN] = &Server::join;
   commandMap[LIST] = &Server::list;
-  commandMap[MSG] = &Server::msg;
   commandMap[MODE] = &Server::mode;
   commandMap[TOPIC] = &Server::topic;
   commandMap[INVITE] = &Server::invite;
@@ -29,7 +28,6 @@ Server::Server() : _sockfd(-1), _port(0), _pass("") {
   commandMap[PRIVMSG] = &Server::privmsg;
   commandMap[JOIN] = &Server::join;
   commandMap[LIST] = &Server::list;
-  commandMap[MSG] = &Server::msg;
   commandMap[MODE] = &Server::mode;
   commandMap[INVITE] = &Server::invite;
   commandMap[KICK] = &Server::kick;

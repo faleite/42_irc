@@ -34,7 +34,7 @@ protected:
   bool _isRegistered;
   bool _isOperator;
   bool _isBot;
-  std::set<std::string> _channels; // structure to keeep track of the channels,
+  // std::set<std::string> _channels; // structure to keeep track of the channels,
                                    // in and unorder set.
 public:
   // Canonical Form.

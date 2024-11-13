@@ -184,3 +184,4 @@ void Channel::invite(std::string const &inviter, Client *clientInvited)
     std::cout << invitedList[i]->getNickName() << std::endl;
 }
 
+std::vector<Client *> &Channel::getClients(void){ return this->channelUsers; }

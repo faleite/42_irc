@@ -24,63 +24,37 @@
 
 //         Translation: Alice is leaving the channel #general with the message
 //         "Goodbye!".
-
 void Server::part(Client &client, const std::string &cmd,
                   const std::vector<std::string> &param) {
-  // std::vector<std::string> channel_list;
-
   if (param.empty()) {
     client.getMessage(Replies::ERR_NEEDMOREPARAMS(cmd));
     return;
   }
+
+  if (this->_channels.find(param[0]) == this->_channels.end()) {
+    client.getMessage(Replies::ERR_NOSUCHCHANNEL(
+                      client.getNickName(), param[0]));
+    return;
+  }
+
   std::string mess;
   std::ostringstream oss;
-
   for (size_t i = 1; i < param.size(); ++i) {
     if (i != 0)
       oss << " ";
     oss << param[i];
   }
   mess += oss.str();
-  // _channels[param[0]].broadcastMessage(Replies::PART_USER(cmd,
-  //                                                         client.getNickName(),
-  //                                                         client.getName(),
-  //                                                         _channels[param[0]].getName(),
-  //                                                         mess),
-  //  &client);
-  _channels[param[0]].leaveChannel(&client, mess);
-  std::string notifyMessage = ":" + client.getNickName() + "!" +
-                              client.getName() + "@" + client.getIp() +
-                              " KICK " + param[0] + " " + client.getNickName() +
-                              ": " + mess + "\r\n";
-  _channels[param[0]].broadcastMessage(mess, &client);
-  std::string adminMessage = ":jf.irc KICK " + param[0] + " " +
-                             client.getNickName() + " :Client has leave\r\n";
-  client.getMessage(adminMessage);
-  return;
 
-  // for (size_t i = 0; i < param.size(); ++i)
-  // {
-  //   if (param[i][0] != '#')
-  //   {
-  //     if (i != 0)
-  //       oss << " ";
-  //     oss << param[i];
-  //   }
-  //   else
-  //   {
-  //     if (findChannel(param[i]) &&
-  //     _channels[param[i]].isOnChannel(client.getNickName()))
-  //     {
-  //       channel_list.push_back(param[i]);
-  //     }
-  //   }
-  // }
-
-  // for (std::vector<std::string>::iterator it = channel_list.begin();
-  //      it != channel_list.end(); ++it)
-  // {
-  // (client).getMessage(
-  //     Replies::KICK_USER(client, *it, client.getName(), mess));
-  // }
+  std::vector<Client *> &clients = this->_channels[param[0]].getClients();
+  for (std::vector<Client *>::iterator it = clients.begin(); 
+      it != clients.end();) {
+    if (*it == &client) 
+      it = clients.erase(it);
+    else 
+      ++it;
+  }
+  this->_channels[param[0]].updateListUsers(&client);
+  client.getMessage(Replies::PART_USER(cmd, client.getNickName(), 
+                    client.getName(), param[0], mess));
 }

@@ -12,8 +12,6 @@ SRC := main.cpp \
 	  server/messageUtils.cpp\
 	  server/handleMessage.cpp\
 	  server/connectRegister.cpp \
-	  server/commands.cpp \
-	  server/channelModes.cpp \
 	  server/ChannelManager.cpp \
 	  server/commands/invite.cpp \
 	  server/commands/join.cpp \
@@ -21,6 +19,7 @@ SRC := main.cpp \
 	  server/commands/list.cpp \
 	  server/commands/mode.cpp \
 	  server/commands/part.cpp \
+	  server/commands/registerUser.cpp \
 	  server/commands/topic.cpp \
 	  replies/Replies.cpp \
 
