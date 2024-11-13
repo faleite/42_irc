@@ -46,6 +46,7 @@ void Server::quit(Client &client, const std::string &cmd,
             << client.getSocket() << std::endl;
   cleanClient(client.getSocket());
   close(client.getSocket());
+  delete &client;
 }
 
 void Server::pass(Client &client, const std::string &cmd,

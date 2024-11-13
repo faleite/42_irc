@@ -54,7 +54,8 @@ Server::~Server() {
   for (std::vector<Client *>::iterator it = _clients.begin();
        it != _clients.end(); it++) {
     delete *it;
-  } 
+  }
+  this->_clients.clear();
 }
 
 std::string const &Server::getPass() const { return (_pass); }
@@ -217,7 +218,6 @@ void Server::cleanClient(int fd) {
   for (std::vector<Client *>::iterator it = _clients.begin();
        it != _clients.end(); it++) {
     if ((*it)->getSocket() == fd) {
-      // delete *it;
       it = _clients.erase(it);
       break ;
     }
@@ -230,4 +230,5 @@ void Server::cleanClient(int fd) {
     }
   }
   _clientBuffers.erase(fd);
+
 }

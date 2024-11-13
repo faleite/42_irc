@@ -19,8 +19,7 @@ bool Server::findChannel(std::string const &channelName)
 
 void Server::privmsg(Client &client, const std::string &cmd,
                      const std::vector<std::string> &param) {
-  if (param.empty() || param.size() < 2)
-  {
+  if (param.empty() || param.size() < 2) {
     client.getMessage(Replies::ERR_NEEDMOREPARAMS(cmd));
     return ;
   }
@@ -32,7 +31,7 @@ void Server::privmsg(Client &client, const std::string &cmd,
     oss << param[i];
   }
   std::string mess = oss.str();
-  
+
   if (param[0][0] == '#') {
     if (this->_channels.find(param[0]) == this->_channels.end()) {
       client.getMessage(Replies::ERR_NOSUCHCHANNEL(client.getNickName(), param[0]));
@@ -41,14 +40,11 @@ void Server::privmsg(Client &client, const std::string &cmd,
     std::string send_msg = (":" + client.getNickName() + "!" + client.getName() 
                             + "@localhost " + cmd + " " + param[0] + mess);
     this->_channels[param[0]].broadcastMessage(send_msg, &client);
-    return ;
   }
 
   size_t i = 0;
-  while (i < this->_clients.size())
-  {
-    if (this->_clients[i]->getNickName() == param[0])
-    {
+  while (i < this->_clients.size()) {
+    if (this->_clients[i]->getNickName() == param[0]) {
       std::string send_msg = (":" + client.getNickName() + "!" + client.getName() 
                             + "@localhost " + cmd + " " + param[0] + mess);
       this->_clients[i]->getMessage(send_msg);
@@ -56,8 +52,7 @@ void Server::privmsg(Client &client, const std::string &cmd,
     }
     
     i++;
-    if (i == this->_clients.size())
-    {
+    if (i == this->_clients.size() && param[0][0] != '#') {
       client.getMessage(Replies::ERR_NOSUCHNICK(client.getNickName()));
       return ;
     }

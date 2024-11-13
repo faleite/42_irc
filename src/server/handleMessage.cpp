@@ -72,9 +72,11 @@ std::string Server::getMessage(int fd) {
   std::string message;
   int bytesRecv = recv(fd, buffer, 1024, 0);
   if (bytesRecv <= 0 || bytesRecv > 510) {
-    std::cout << "Client on fd: " << fd << " Disconnected" << std::endl;
-    cleanClient(fd);
-    close(fd);
+    for (size_t i = 0; i < _clients.size(); i++) {
+      if (_clients[i]->getSocket() == fd) {
+        this->quit(*_clients[i], QUIT, std::vector<std::string>());
+      }
+    }
   } else
     message = std::string(buffer, bytesRecv);
   return (message);
