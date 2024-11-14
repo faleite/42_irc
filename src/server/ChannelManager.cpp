@@ -4,24 +4,21 @@
 
 //_______________________________________________CREATE CHANNEL
 
-void Server::createChannel(std::string const &name)
-{
+void Server::createChannel(std::string const &name) {
   _channels[name] = Channel(name);
 }
 
-bool Server::findChannel(std::string const &channelName)
-{
+bool Server::findChannel(std::string const &channelName) {
   std::map<std::string, Channel>::iterator it;
   it = _channels.find(channelName);
   return (it != _channels.end() ? true : false);
 }
 
-
 void Server::privmsg(Client &client, const std::string &cmd,
                      const std::vector<std::string> &param) {
   if (param.empty() || param.size() < 2) {
     client.getMessage(Replies::ERR_NEEDMOREPARAMS(cmd));
-    return ;
+    return;
   }
 
   std::ostringstream oss;
@@ -34,27 +31,30 @@ void Server::privmsg(Client &client, const std::string &cmd,
 
   if (param[0][0] == '#') {
     if (this->_channels.find(param[0]) == this->_channels.end()) {
-      client.getMessage(Replies::ERR_NOSUCHCHANNEL(client.getNickName(), param[0]));
-      return ;
+      client.getMessage(
+          Replies::ERR_NOSUCHCHANNEL(client.getNickName(), param[0]));
+      return;
     }
-    std::string send_msg = (":" + client.getNickName() + "!" + client.getName() 
-                            + "@localhost " + cmd + " " + param[0] + mess);
+    std::string send_msg =
+        (":" + client.getNickName() + "!" + client.getName() + "@localhost " +
+         cmd + " " + param[0] + mess);
     this->_channels[param[0]].broadcastMessage(send_msg, &client);
   }
 
   size_t i = 0;
   while (i < this->_clients.size()) {
     if (this->_clients[i]->getNickName() == param[0]) {
-      std::string send_msg = (":" + client.getNickName() + "!" + client.getName() 
-                            + "@localhost " + cmd + " " + param[0] + mess);
+      std::string send_msg =
+          (":" + client.getNickName() + "!" + client.getName() + "@localhost " +
+           cmd + " " + param[0] + mess);
       this->_clients[i]->getMessage(send_msg);
-      return ;
+      return;
     }
-    
+
     i++;
     if (i == this->_clients.size() && param[0][0] != '#') {
       client.getMessage(Replies::ERR_NOSUCHNICK(client.getNickName()));
-      return ;
+      return;
     }
   }
 }
@@ -77,8 +77,6 @@ void Server::privmsg(Client &client, const std::string &cmd,
 // command : MODE <#channel> <flag> <userNickname>
 // Ex : MODE #general -o user1
 
-
-
 //___________Password.
 // command : MODE <#CHANNEL> <FLAG> <pass>
 // EX :      MODE #GENERAL +k pass
@@ -86,22 +84,20 @@ void Server::privmsg(Client &client, const std::string &cmd,
 // What we handle.
 
 void Server::mode(Client &client, const std::string &cmd,
-                  const std::vector<std::string> &param)
-{
+                  const std::vector<std::string> &param) {
 
   (void)cmd;
   std::cout << "hello :::::::::::: MOD COMMAND" << std::endl;
 
-  if (param.size() < 2 || param[1].empty() || !client.getIsOperator())
+  if (param.size() < 2 || param[1].empty())
     return;
-
-  if (findChannel(param[0]))
-  {
+  if (!client.getIsOperator())
+    client.getMessage(Replies::ERR_CHANOPRIVSNEEDED(param[0]));
+  if (findChannel(param[0])) {
     _channels[param[0]].isOnChannel(client.getNickName())
         ? _channels[param[0]].mode(&client, param[1], param)
         : client.getMessage("You are not in the channel");
-  }
-  else
+  } else
     client.getMessage("Channel not found");
 }
 
