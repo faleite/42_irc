@@ -1,8 +1,9 @@
 #include "../Server.hpp"
 // void Channel::modeLimit(int limit, bool enable) {}
 void Channel::mode(Client *clientOperator, std::string const &modeCmd,
-                   std::vector<std::string> params)
-{
+                   std::vector<std::string> params) {
+  std::string message0;
+  std::string message1;
 
   if (!isOnChannel(clientOperator->getNickName()))
     throw(std::runtime_error("You are not part of this channel"));
@@ -11,86 +12,111 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
   bool enable;
   modeCmd[0] == '+' ? enable = true : enable = false;
 
-  for (int i = 1; modeCmd[i]; ++i)
-  {
+  for (int i = 1; modeCmd[i]; ++i) {
 
-    switch (modeCmd[i])
-    {
+    switch (modeCmd[i]) {
     //_______________________________________ INVITATION MODE.
     case 'i':
       _needInvitation = enable;
-      broadcastMessage(clientOperator->getName() +
-                           " : set the channel to invitation mode only",
-                       clientOperator);
+      message0 = ":server 324 " + clientOperator->getNickName() + " " + _name +
+                 " :Invite only mode set\r\n";
+      message1 = ":server 324 " + clientOperator->getNickName() + " " + _name +
+                 " :Invite only mode unset\r\n";
+      enable ? (broadcastMessage(message0, clientOperator),
+                clientOperator->getMessage(message0))
+             : (broadcastMessage(message1, clientOperator),
+                clientOperator->getMessage(message1));
       break;
 
     //_______________________________________ LIMIT USER NAME MODE.
     case 'l':
-      if (enable)
-      {
-        if (params.size() >= 3)
-        {
-          if (stringToInt(params[2], limit))
-          {
-            broadcastMessage(clientOperator->getName() +
-                                 " : set the channel limit to" + params[2],
-                             clientOperator);
-          }
-          else
-          {
+      if (enable) {
+        if (params.size() >= 3) {
+          if (stringToInt(params[2], limit)) {
+            std::string message = ":server 324 " +
+                                  clientOperator->getNickName() + " " + _name +
+                                  " :User limit set to " + params[2] + "\r\n";
+
+            broadcastMessage(message, clientOperator);
+            clientOperator->getMessage(message);
+          } else {
             clientOperator->getMessage("Wrong Limit ");
           }
+        } else {
+          clientOperator->getMessage(Replies::ERR_NEEDMOREPARAMS("Mode +l"));
         }
-        else
-        {
-          std::cout << "Error: Missing user limit parameter."
-                    << std::endl; // Remove for invalid.
-        }
-      }
-      else
-      {
+      } else {
         limit = -1;
-        broadcastMessage(clientOperator->getName() +
-                             " : delete the channel limit ",
-                         clientOperator);
+        std::string message = ":jf.irc 324 " + clientOperator->getNickName() +
+                              " " + _name + " :User limit removed\r\n";
+
+        broadcastMessage(message, clientOperator);
       }
       break;
     //____________________________ Restricted topic.
     case 't':
+      //____________________________________ ADD to the Replies after test .
       _restricTopic = enable;
-      std::cout << "Restricted Topic Mode " << (enable ? "Enable" : "Disable")
-                << std::endl;
+      message0 = ":jf.irc 324 " + clientOperator->getNickName() + " " + _name +
+                 " :Topic restricted mode set\r\n";
+      message1 = ":jf.irc 324 " + clientOperator->getNickName() + " " + _name +
+                 " :Topic restricted mode unset\r\n";
+      enable ? (broadcastMessage(message0, clientOperator),
+                clientOperator->getMessage(message0))
+             : (broadcastMessage(message1, clientOperator),
+                clientOperator->getMessage(message1));
       break;
 
     //______________________________ GIVE PRIVILEGES
     case 'o':
       // 1. find the client nick.
-      for (std::vector<Client *>::iterator iter = channelUsers.begin();
-           iter != channelUsers.end(); iter++)
-      {
-        isOnChannel((*iter)->getNickName())
-            ? setPrivilige((*iter), enable)
-            : clientOperator->getMessage("User not found");
+      if (params.size() >= 3) {
+
+        for (std::vector<Client *>::iterator iter = channelUsers.begin();
+             iter != channelUsers.end(); iter++) {
+          if ((*iter)->getNickName() == params[2]) {
+            setPrivilige((*iter), enable);
+            std::string message =
+                ":jf.irc 381 " + clientOperator->getNickName() + " " + _name +
+                " :Operator privileges given to " + params[2] + "\r\n";
+            std::string message1 = ":You are now an IRC operator";
+
+            std::string message2 =
+                ":jf.irc 381 " + clientOperator->getNickName() + " " + _name +
+                " :Operator privileges removed to " + params[2] + "\r\n";
+            std::string message3 = ":You are not more an IRC operator";
+            enable ? (broadcastMessage(message, clientOperator),
+                      (*iter)->getMessage(message1))
+                   : (broadcastMessage(message2, clientOperator),
+                      (*iter)->getMessage(message3));
+            break;
+          }
+        }
+        clientOperator->getMessage(Replies::ERR_USERNOTINCHANNEL(
+            clientOperator->getNickName(), params[0], params[2]));
+      } else {
+        clientOperator->getMessage(Replies::ERR_NEEDMOREPARAMS("mode +o"));
       }
       break;
     case 'k':
       _needVerification = enable;
-      if (enable)
-      {
-        if (params.size() >= 3)
-        {
+      if (enable) {
+        if (params.size() >= 3) {
           _channelKey = params[2];
-          std::cout << "Channel key set to: " << _channelKey << std::endl;
+          std::string message = ":jf.irc 324 " + clientOperator->getNickName() +
+                                " " + _name + " :Password set\r\n";
+          broadcastMessage(message, clientOperator);
+        } else {
+          std::string message = ":jf.irc 461 " + clientOperator->getNickName() +
+                                " " + _name + " :Not enough parameters\r\n";
+          clientOperator->getMessage(message);
+          clientOperator->getMessage(Replies::ERR_NEEDMOREPARAMS("MODE +k"));
         }
-        else
-        {
-          std::cout << "Missing Channel key Parameter " << std::endl;
-        }
-      }
-      else
-      {
+      } else {
         _channelKey.clear();
-        std::cout << "Channel key Removed " << std::endl;
+        std::string message = ":jf.irc 324 " + clientOperator->getNickName() +
+                              " " + _name + " :Password removed\r\n";
+        broadcastMessage(message, clientOperator);
       }
       break;
     default:
