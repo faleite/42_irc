@@ -79,6 +79,16 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
             std::string message =
                 ":jf.irc 381 " + clientOperator->getNickName() + " " + _name +
                 " :Operator privileges given to " + params[2] + "\r\n";
+            std::string message1 = ":You are now an IRC operator";
+
+            std::string message2 =
+                ":jf.irc 381 " + clientOperator->getNickName() + " " + _name +
+                " :Operator privileges removed to " + params[2] + "\r\n";
+            std::string message3 = ":You are not more an IRC operator";
+            enable ? (broadcastMessage(message, clientOperator),
+                      (*iter)->getMessage(message1))
+                   : (broadcastMessage(message2, clientOperator),
+                      (*iter)->getMessage(message3));
             break;
           }
         }
