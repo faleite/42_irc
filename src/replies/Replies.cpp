@@ -330,3 +330,29 @@ std::string Replies::ERR_USERNOTINCHANNEL(const std::string &nick,
 //          - RPL_YOUREOPER is sent back to a client which has
 //            just successfully issued an OPER message and gained
 //            operator status.
+
+/**
+332    RPL_TOPIC
+              "<channel> :<topic>"
+
+         - When sending a TOPIC message to determine the
+           channel topic, one of two replies is sent.  If
+           the topic is set, RPL_TOPIC is sent back else
+           RPL_NOTOPIC.
+ */
+std::string Replies::RPL_TOPIC(const std::string &channel, const std::string &topic) {
+  return (":jf.irc 332 * " + channel + topic);
+}
+
+/**
+331    RPL_NOTOPIC
+              "<channel> :No topic is set"
+
+         - When sending a TOPIC message to determine the
+           channel topic, one of two replies is sent.  If
+           the topic is set, RPL_TOPIC is sent back else
+           RPL_NOTOPIC.
+ */
+std::string Replies::RPL_NOTOPIC(const std::string &channel) {
+  return (":jf.irc 331 * " + channel + " :No topic is set");
+}

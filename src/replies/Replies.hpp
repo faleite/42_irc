@@ -56,6 +56,9 @@ public:
   static std::string ERR_USERNOTINCHANNEL(const std::string &nick,
                                           const std::string &channel,
                                           const std::string &nickTarget);
+  static std::string RPL_TOPIC(const std::string &channel, const std::string &topic);
+  static std::string RPL_NOTOPIC(const std::string &channel);
+
 };
 
 #endif // REPLIES_HPP

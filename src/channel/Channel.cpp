@@ -13,7 +13,7 @@ Channel::Channel()
 Channel::Channel(std::string const &name)
     : _needInvitation(false), _needVerification(false), _channelKey(""),
       _restricTopic(false), _active(true), limit(-1), _name(name),
-      _topic(name + " interactions")
+      _topic("")
 {
   std::cout << "The Channel < " << name << " > was created" << std::endl;
 }
