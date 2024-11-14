@@ -28,21 +28,24 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
       if (enable) {
         if (params.size() >= 3) {
           if (stringToInt(params[2], limit)) {
-            broadcastMessage(clientOperator->getName() +
-                                 " : set the channel limit to" + params[2],
-                             clientOperator);
+            std::string message = ":server 324 " +
+                                  clientOperator->getNickName() + " " + _name +
+                                  " :User limit set to " + params[2] + "\r\n";
+
+            broadcastMessage(message, clientOperator);
+            clientOperator->getMessage(message);
           } else {
             clientOperator->getMessage("Wrong Limit ");
           }
         } else {
-          std::cout << "Error: Missing user limit parameter."
-                    << std::endl; // Remove for invalid.
+          clientOperator->getMessage(Replies::ERR_NEEDMOREPARAMS("Mode +l"));
         }
       } else {
         limit = -1;
-        broadcastMessage(clientOperator->getName() +
-                             " : delete the channel limit ",
-                         clientOperator);
+        std::string message = ":jf.irc 324 " + clientOperator->getNickName() +
+                              " " + _name + " :User limit removed\r\n";
+
+        broadcastMessage(message, clientOperator);
       }
       break;
     //____________________________ Restricted topic.
@@ -50,17 +53,13 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
       //____________________________________ ADD to the Replies after test .
       _restricTopic = enable;
       message0 = ":jf.irc 324 " + clientOperator->getNickName() + " " + _name +
-                " :Topic restricted mode set\r\n";
+                 " :Topic restricted mode set\r\n";
       message1 = ":jf.irc 324 " + clientOperator->getNickName() + " " + _name +
-                " :Topic restricted mode set\r\n";        
-      enable ? broadcastMessage(":jf.irc 324 " + clientOperator->getNickName() +
-                                    " " + _name +
-                                    " :Topic restricted mode set\r\n",
-                                clientOperator)
-             : broadcastMessage(":jf.irc 324 " + clientOperator->getNickName() +
-                                    " " + _name +
-                                    " :Topic restricted mode unset\r\n",
-                                clientOperator);
+                 " :Topic restricted mode unset\r\n";
+      enable ? (broadcastMessage(message0, clientOperator),
+                clientOperator->getMessage(message0))
+             : (broadcastMessage(message1, clientOperator),
+                clientOperator->getMessage(message1));
       break;
 
     //______________________________ GIVE PRIVILEGES
