@@ -18,9 +18,14 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
     //_______________________________________ INVITATION MODE.
     case 'i':
       _needInvitation = enable;
-      broadcastMessage(clientOperator->getName() +
-                           " : set the channel to invitation mode only",
-                       clientOperator);
+      message0 = ":server 324 " + clientOperator->getNickName() + " " + _name +
+                 " :Invite only mode set\r\n";
+      message1 = ":server 324 " + clientOperator->getNickName() + " " + _name +
+                 " :Invite only mode unset\r\n";
+      enable ? (broadcastMessage(message0, clientOperator),
+                clientOperator->getMessage(message0))
+             : (broadcastMessage(message1, clientOperator),
+                clientOperator->getMessage(message1));
       break;
 
     //_______________________________________ LIMIT USER NAME MODE.
@@ -65,11 +70,22 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
     //______________________________ GIVE PRIVILEGES
     case 'o':
       // 1. find the client nick.
-      for (std::vector<Client *>::iterator iter = channelUsers.begin();
-           iter != channelUsers.end(); iter++) {
-        isOnChannel((*iter)->getNickName())
-            ? setPrivilige((*iter), enable)
-            : clientOperator->getMessage("User not found");
+      if (params.size() >= 3) {
+
+        for (std::vector<Client *>::iterator iter = channelUsers.begin();
+             iter != channelUsers.end(); iter++) {
+          if ((*iter)->getNickName() == params[2]) {
+            setPrivilige((*iter), enable);
+            std::string message =
+                ":jf.irc 381 " + clientOperator->getNickName() + " " + _name +
+                " :Operator privileges given to " + params[2] + "\r\n";
+            break;
+          }
+        }
+        clientOperator->getMessage(Replies::ERR_USERNOTINCHANNEL(
+            clientOperator->getNickName(), params[0], params[2]));
+      } else {
+        clientOperator->getMessage(Replies::ERR_NEEDMOREPARAMS("mode +o"));
       }
       break;
     case 'k':
