@@ -38,7 +38,6 @@ class Server
 		static Server *instance;
 		bool _signal;
 		std::map<std::string, Channel> _channels; // structure to keeep track of the channels,
-		std::map<int, std::string> _clientBuffers; // Resolved `Ctrl+D` issue.
 	public:
 		Server();
 		Server(const Server &copyObj);
@@ -64,9 +63,6 @@ class Server
 
 		// File Message Logic.
 		// Bot Message Logic.
-		std::vector<std::vector<std::string> > tokenization(const std::string &message);
-		bool removeWhitespaceParams(std::vector<std::string> &params);
-
 
 		// ________________________ COMMANDS HANDLER.
 		void pass(Client &client, const std::string &cmd, const std::vector<std::string>&param);
@@ -97,7 +93,6 @@ class Server
   		void createChannel(std::string const &name);
  		bool findChannel(std::string const &channelName);
 		void listChannels();
-
 
 		// ________________________ AUTHENTICATION.
 		std::string const &getPass() const;

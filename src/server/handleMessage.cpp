@@ -44,28 +44,6 @@ void Server::sendWelcomeMessage(Client newClient) {
 
 //____________________________________________ GET MESSAGE
 
-// std::string Server::getMessage(int fd) {
-//   char buffer[1024];
-//   memset(buffer, 0, sizeof(buffer));
-//   std::string message;
-//   int bytesRecv = recv(fd, buffer, 1024, 0);
-//   if (bytesRecv <= 0 || bytesRecv > 510) {
-//     std::cout << "Client has been disconnected :fd: " << fd << std::endl;
-//     cleanClient(fd);
-//     close(fd);
-//   } else{
-//     _clientBuffers[fd] += std::string(buffer, bytesRecv);
-//     size_t pos;
-//     while ((pos = _clientBuffers[fd].find('\n')) != std::string::npos) {
-//       message = _clientBuffers[fd].substr(0, pos + 1);
-//       _clientBuffers[fd].erase(0, pos + 1);
-//       // Process the complete message here or return it
-//       return message;
-//     }
-//   }
-//   return "";
-// }
-
 std::string Server::getMessage(int fd) {
   char buffer[1024];
   memset(buffer, 0, sizeof(buffer));
@@ -81,7 +59,6 @@ std::string Server::getMessage(int fd) {
     message = std::string(buffer, bytesRecv);
   return (message);
 }
-
 
 void Server::brodcastMessage(std::string const &message) {
 

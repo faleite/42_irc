@@ -229,6 +229,4 @@ void Server::cleanClient(int fd) {
       break ;
     }
   }
-  _clientBuffers.erase(fd);
-
 }

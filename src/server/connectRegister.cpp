@@ -2,53 +2,63 @@
 
 int Server::connectionRegistration(Client &client, std::string &message)
 {
-    std::string msg = message;
-    if (msg.empty() || msg == ".\r\n") 
-        return 1;
+  client.getBuffer() += message;
 
-    msg.erase(remove(msg.begin(), msg.end(), '\r'), msg.end());
-    std::vector<std::vector<std::string> > allTokens = this->tokenization(msg);
+  std::size_t pos;
+  while ((pos = client.getBuffer().find("\n")) != std::string::npos)
+  {
+    std::string msg = client.getBuffer().substr(0, pos);
+    client.setBuffer(client.getBuffer().substr(pos + 1));
+    if (!msg.empty() && msg[0] == ':')
+      msg = msg.substr(1);
 
-    for (size_t i = 0; i < allTokens.size(); ++i) 
+    std::stringstream ss(msg);
+    std::string cmd;
+    std::string params;
+    while (std::getline(ss, cmd))
     {
-      std::vector<std::string> tokens = allTokens[i];
-      if (tokens.empty())
-        continue;
+      if (!cmd.empty() && cmd[cmd.size() - 1] == '\r')
+        cmd.erase(cmd.size() - 1);
+      std::string cmdName = cmd.substr(0, cmd.find(" "));
+      for (size_t i = 0; i < cmdName.length(); ++i)
+        cmdName[i] = toupper((unsigned char)cmdName[i]);
 
-      std::string cmd = tokens[0];
-      std::vector<std::string> params(tokens.begin() + 1, tokens.end());
-      this->removeWhitespaceParams(params);
+      if (cmd.find(" ") != std::string::npos)
+        params = cmd.substr(cmd.find(" ") + 1);
 
-      for (size_t j = 0; j < cmd.length(); ++j) 
-        cmd[j] = toupper((unsigned char)cmd[j]);
-      
-      this->registerNewUser(client, cmd, params);
+      std::stringstream streamTokens(params);
+      std::string token;
+      std::vector<std::string> tokens;
+      while (std::getline(streamTokens, token, ' '))
+      {
+        token.erase(std::remove_if(token.begin(), token.end(), ::isspace), token.end());
+        tokens.push_back(token);
+      }
+      this->registerNewUser(client, cmdName, tokens);
     }
-    if (!client.getAuthenticator() && !client.getNickName().empty() && !client.getName().empty())
-    {
-      std::cout << "Client has been disconnected :fd: " << client.getSocket() << std::endl;
-      client.getMessage(Replies::ERR_PASSWDMISMATCH());
-      this->cleanClient(client.getSocket());
-      close(client.getSocket());
-      return (1);
-    }
-    if (client.getAuthenticator() && !client.getNickName().empty() && !client.getName().empty())
-    {
-      client.setRegistered(true);
-      this->sendWelcomeMessage(client);
-      // this->brodcastMessage(client.getName() + " Has Join to the server" );
-    }
-    return (0);
+  }
+  if (!client.getAuthenticator() && !client.getNickName().empty() && !client.getName().empty())
+  {
+    std::cout << "Client has been disconnected :fd: " << client.getSocket() << std::endl;
+    client.getMessage(Replies::ERR_PASSWDMISMATCH());
+    this->cleanClient(client.getSocket());
+    close(client.getSocket());
+    return (1);
+  }
+  if (client.getAuthenticator() && !client.getNickName().empty() && !client.getName().empty())
+  {
+    client.setRegistered(true);
+    this->sendWelcomeMessage(client);
+  }
+  return (0);
 }
 
 int checkInvalidCommand(const std::string &cmd)
 {
   // See if exist others commands already
-  if (cmd == JOIN || cmd == KICK || cmd == INVITE || cmd == LIST
-      || cmd == MODE || cmd == PRIVMSG || cmd == PRIVMSG || cmd == SEND)
+  if (cmd == JOIN || cmd == KICK || cmd == INVITE || cmd == LIST || cmd == MODE || cmd == PRIVMSG || cmd == SEND)
     return (1);
-  else if (cmd != PASS && cmd != NICK 
-            && cmd != USER && cmd != QUIT)
+  else if (cmd != PASS && cmd != NICK && cmd != USER && cmd != QUIT)
     return (2);
   return (0);
 }
@@ -62,14 +72,14 @@ void Server::registerNewUser(Client &client, const std::string &cmd, const std::
       client.getMessage(Replies::ERR_NOTREGISTERED());
     if (checkCmd == 2)
       client.getMessage(Replies::ERR_UNKNOWNCOMMAND(cmd));
-    return ;
+    return;
   }
   if (cmd == QUIT)
     this->quit(client, cmd, param);
   if (param.empty())
   {
     client.getMessage(Replies::ERR_NEEDMOREPARAMS(cmd));
-    return ;
+    return;
   }
   if (cmd == PASS)
   {
@@ -84,58 +94,23 @@ void Server::registerNewUser(Client &client, const std::string &cmd, const std::
   }
   else if (cmd == NICK)
   {
-    	for (size_t i = 0; i < _clients.size(); ++i)
-	    {
-	    	if (param[0] == _clients[i]->getNickName())
-	    	{
-	    		client.getMessage(Replies::ERR_NICKNAMEINUSE(param[0]));
-        	return ;
-	    	}
-	    }
-      client.setNickName(param[0]);
+    for (size_t i = 0; i < _clients.size(); ++i)
+    {
+      if (param[0] == _clients[i]->getNickName())
+      {
+        client.getMessage(Replies::ERR_NICKNAMEINUSE(param[0]));
+        return;
+      }
+    }
+    client.setNickName(param[0]);
   }
   else if (cmd == USER)
   {
     if (param.size() < 4)
     {
       client.getMessage(Replies::ERR_NEEDMOREPARAMS(cmd));
-      return ;
+      return;
     }
     client.setName(param[0]);
   }
-}
-
-std::vector<std::vector<std::string> > Server::tokenization(const std::string &message) 
-{
-    std::vector<std::vector<std::string> > allTokens;
-    std::istringstream iss(message);
-    std::string line;
-
-    while (getline(iss, line, '\n')) {
-        std::vector<std::string> tokens;
-        std::istringstream lineStream(line);
-        std::string token;
-
-        while (getline(lineStream, token, ' ')) {
-            tokens.push_back(token);
-        }
-        allTokens.push_back(tokens);
-    }
-    return allTokens;
-}
-
-bool Server::removeWhitespaceParams(std::vector<std::string> &params) 
-{
-  bool vectorEmpty = true;
-  for (size_t j = 0; j < params.size(); ++j) 
-  {
-    if (!params[j].empty() && params[j].find_first_not_of(" \t\n\v\f\r") != std::string::npos) 
-    {
-        vectorEmpty = false;
-        break;
-    }
-  }
-  if (vectorEmpty)
-    params.clear();
-  return vectorEmpty;
 }
