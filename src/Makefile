@@ -6,6 +6,7 @@ CPP_FLAGS := -Wall -Wextra -Werror -g -std=c++98
 SRC := main.cpp \
 	  channel/Channel.cpp \
 	  client/Client.cpp \
+	  client/Galois.cpp \
 	  client/HTTPClient.cpp\
 	  file/File.cpp \
 	  server/Server.cpp \
@@ -21,6 +22,7 @@ SRC := main.cpp \
 	  server/commands/part.cpp \
 	  server/commands/registerUser.cpp \
 	  server/commands/topic.cpp \
+	  server/commands/joke.cpp \
 	  replies/Replies.cpp \
 
 OBJ := $(SRC:.cpp=.o)

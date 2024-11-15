@@ -18,6 +18,7 @@ Server::Server(int const &port, std::string pass) : _port(port), _pass(pass) {
   commandMap[INVITE] = &Server::invite;
   commandMap[KICK] = &Server::kick;
   commandMap[PART] = &Server::part;
+  commandMap[JOKE] = &Server::joke;
 }
 
 Server::Server() : _sockfd(-1), _port(0), _pass("") {
@@ -32,6 +33,7 @@ Server::Server() : _sockfd(-1), _port(0), _pass("") {
   commandMap[INVITE] = &Server::invite;
   commandMap[KICK] = &Server::kick;
   commandMap[PART] = &Server::part;
+  commandMap[JOKE] = &Server::joke;
 }
 
 Server::Server(const Server &copyObj) { *this = copyObj; }
@@ -135,8 +137,8 @@ void Server::acceptClient() {
   if (result != 0)
     throw std::runtime_error("Can't get hostname");
 
-  Client *newClient = new
-      Client(clifd, inet_ntoa(client.sin_addr), ntohs(client.sin_port));
+  Client *newClient =
+      new Client(clifd, inet_ntoa(client.sin_addr), ntohs(client.sin_port));
   _clients.push_back(newClient);
 
   std::cout << "Client connected :fd: " << clifd
@@ -158,10 +160,10 @@ void Server::initServer() {
 
   // //___________________________________SET BOT
   Client *faleiteBot = new Client(-1, "FaleiteLegend");
-  faleiteBot->setNickName("bot1");
+  faleiteBot->setNickName("faleite");
   Client *juanBot = new Client(-1, "MasterTinxzYoda");
   juanBot->setIsBot(true);
-  juanBot->setNickName("bot2");
+  juanBot->setNickName("juan");
   faleiteBot->setIsBot(true);
   juanBot->setOperator(true);
   faleiteBot->setOperator(true);
@@ -219,16 +221,15 @@ void Server::cleanClient(int fd) {
        it != _clients.end(); it++) {
     if ((*it)->getSocket() == fd) {
       it = _clients.erase(it);
-      break ;
+      break;
     }
   }
   for (std::vector<pollfd>::iterator it = _pfds.begin(); it != _pfds.end();
        it++) {
     if (it->fd == fd) {
       it = _pfds.erase(it);
-      break ;
+      break;
     }
   }
   _clientBuffers.erase(fd);
-
 }

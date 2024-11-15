@@ -1,11 +1,12 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "../channel/Channel.hpp"
+// #include "../channel/Channel.hpp"
 #include "../client/Client.hpp"
 #include "../file/File.hpp"
 #include "../client/HTTPClient.hpp"
 #include "../replies/Replies.hpp"
+#include "../client/Galois.hpp"
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -23,6 +24,7 @@
 #define USER "USER"
 #define QUIT "QUIT"
 #define PART "PART"
+#define JOKE "JOKE"
 
 #define BUFFER_SIZE 1024
 
@@ -91,7 +93,9 @@ class Server
 
 		//_________________________ File transfer
 		void fileTransfer(int const &clienteFd, std::string const &paht);
-
+		//_________________________ Bot.
+		void joke(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+		 
 		// ________________________ CHANNEL MESSAGE.
 		void channelManager(Client const &client, std::string const &channelName);
   		void createChannel(std::string const &name);

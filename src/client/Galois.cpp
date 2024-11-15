@@ -45,7 +45,7 @@ std::string Galois::getResponseJoke(const std::string &_url) {
     }
   }
 
-  return lastLine;
+  return (lastLine);
 }
 
 std::string Galois::getSetUp() { return _setup; }

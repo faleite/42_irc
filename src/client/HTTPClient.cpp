@@ -78,7 +78,7 @@ std::string HTTPClient::get(const std::string &_url) {
     response.append(buffer, bytesRead);
   }
 
-  //_____________ Close the socket.
+  //_____________ Close
   close(sockFd);
   return response;
 }
