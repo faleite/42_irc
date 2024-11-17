@@ -65,7 +65,11 @@ int checkInvalidCommand(const std::string &cmd)
 
 void Server::registerNewUser(Client &client, const std::string &cmd, const std::vector<std::string> &param)
 {
+  if (cmd == "CAP")
+    return ;
+
   int checkCmd = checkInvalidCommand(cmd);
+  
   if (checkCmd)
   {
     if (checkCmd == 1)

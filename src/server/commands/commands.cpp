@@ -37,10 +37,13 @@ int Server::commands(Client &client, std::string &message)
       std::map<std::string, void (Server::*)(Client &, const std::string &,
       const std::vector<std::string> &)>::iterator it = commandMap.find(cmdName);
       if (it != commandMap.end())
+      {
         (this->*(it->second))(client, cmdName, tokens);
+        return (0);
+      }
     }
   }
-  return 0;
+  return (1);
 }
 
 void Server::quit(Client &client, const std::string &cmd,
@@ -58,6 +61,9 @@ void Server::quit(Client &client, const std::string &cmd,
   client.getMessage("ERROR :" + cmd + ": " + msg);
   std::cout << "Client disconnected with QUIT command :fd: "
             << client.getSocket() << std::endl;
+  for (std::map<std::string, Channel>::iterator it = _channels.begin();
+    it != _channels.end(); ++it) 
+    it->second.leaveChannel(&client);
   cleanClient(client.getSocket());
   close(client.getSocket());
   delete &client;
@@ -105,5 +111,3 @@ void Server::nick(Client &client, const std::string &cmd,
                     "@localhost " + cmd + " " + param[0]);
   client.setNickName(param[0]);
 }
-
-// Talk about this
