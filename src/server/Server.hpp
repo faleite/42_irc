@@ -25,6 +25,8 @@
 #define QUIT "QUIT"
 #define PART "PART"
 #define JOKE "JOKE"
+#define CAP "CAP"
+#define WHO "WHO"
 
 #define BUFFER_SIZE 1024
 

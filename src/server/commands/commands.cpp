@@ -1,5 +1,7 @@
 #include "../Server.hpp"
 
+int validCommand(const std::string &cmd);
+
 int Server::commands(Client &client, std::string &message)
 {
   client.getBuffer() += message;
@@ -23,6 +25,11 @@ int Server::commands(Client &client, std::string &message)
       for (size_t i = 0; i < cmdName.length(); ++i)
         cmdName[i] = toupper((unsigned char)cmdName[i]);
 
+      if (!validCommand(cmdName)) {
+        client.getMessage(Replies::ERR_UNKNOWNCOMMAND(cmdName));
+        return (1);
+      }
+      
       if (cmd.find(" ") != std::string::npos)
         params = cmd.substr(cmd.find(" ") + 1);
 
@@ -43,7 +50,7 @@ int Server::commands(Client &client, std::string &message)
       }
     }
   }
-  return (1);
+  return (2);
 }
 
 void Server::quit(Client &client, const std::string &cmd,
@@ -110,4 +117,19 @@ void Server::nick(Client &client, const std::string &cmd,
   client.getMessage(":" + client.getNickName() + "!" + client.getName() +
                     "@localhost " + cmd + " " + param[0]);
   client.setNickName(param[0]);
+}
+
+int validCommand(const std::string &cmd)
+{
+  static const char* validComands[] = {
+      JOIN, KICK, INVITE, LIST, MODE, PRIVMSG, SEND, PART,
+      PASS, NICK, USER, QUIT, CAP, WHO, TOPIC, JOKE
+  };
+
+  for (size_t i = 0; i < sizeof(validComands) / sizeof(validComands[0]); ++i) {
+    if (cmd == validComands[i]) {
+      return 1;
+    }
+  }
+  return 0;
 }
