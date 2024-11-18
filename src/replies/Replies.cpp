@@ -283,8 +283,6 @@ std::string Replies::ERR_NOTONCHANNEL(const std::string &channel) {
   return (":jf.irc 442 * " + channel + " :You're not on that channel");
 }
 
-// >> :juan!aldana@localhost KICK #uva faraujo :sair
-// >> :araujo!faaraujo@localhost PART #test1 :Leaving
 std::string Replies::KICK_USER(const std::string &cmd, const std::string &nick,
                                const std::string &name,
                                const std::string &channel,

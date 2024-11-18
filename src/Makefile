@@ -12,7 +12,7 @@ SRC := main.cpp \
 	  server/Server.cpp \
 	  server/messageUtils.cpp\
 	  server/handleMessage.cpp\
-	  server/connectRegister.cpp \
+	  server/registerClient.cpp \
 	  server/ChannelManager.cpp \
 	  server/commands/invite.cpp \
 	  server/commands/join.cpp \
@@ -20,7 +20,7 @@ SRC := main.cpp \
 	  server/commands/list.cpp \
 	  server/commands/mode.cpp \
 	  server/commands/part.cpp \
-	  server/commands/registerUser.cpp \
+	  server/commands/commands.cpp \
 	  server/commands/topic.cpp \
 	  server/commands/joke.cpp \
 	  server/commands/math.cpp \

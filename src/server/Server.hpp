@@ -26,28 +26,29 @@
 #define PART "PART"
 #define JOKE "JOKE"
 #define MATH "MATH"
+#define CAP "CAP"
+#define WHO "WHO"
 
 #define BUFFER_SIZE 1024
 
 class Channel;
 class Server
 {
-private:
-	int _sockfd;
-	int _port;
-	std::string _pass;
-	std::vector<Client *> _clients;
-	std::vector<struct pollfd> _pfds;
-	static Server *instance;
-	bool _signal;
-	std::map<std::string, Channel> _channels;  // structure to keeep track of the channels,
-	std::map<int, std::string> _clientBuffers; // Resolved `Ctrl+D` issue.
-public:
-	Server();
-	Server(const Server &copyObj);
-	Server &operator=(const Server &assignCopy);
-	Server(int const &port, std::string pass);
-	~Server();
+	private:
+		int _sockfd;
+		int _port;
+		std::string _pass;
+		std::vector<Client *> _clients;
+		std::vector<struct pollfd> _pfds;
+		static Server *instance;
+		bool _signal;
+		std::map<std::string, Channel> _channels; // structure to keeep track of the channels,
+	public:
+		Server();
+		Server(const Server &copyObj);
+		Server &operator=(const Server &assignCopy);
+		Server(int const &port, std::string pass);
+		~Server();
 
 	// ________________________ CONNECTION HANDLER
 	void createSocket();
@@ -65,21 +66,8 @@ public:
 	std::string getMessage(int fd);
 	void handleMessage(int fd);
 
-	// File Message Logic.
-	// Bot Message Logic.
-	std::vector<std::vector<std::string> > tokenization(const std::string &message);
-	bool removeWhitespaceParams(std::vector<std::string> &params);
-
-	// ________________________ COMMANDS HANDLER.
-	void pass(Client &client, const std::string &cmd, const std::vector<std::string> &param);
-	void nick(Client &client, const std::string &cmd, const std::vector<std::string> &param);
-	void user(Client &client, const std::string &cmd, const std::vector<std::string> &param);
-	void quit(Client &client, const std::string &cmd, const std::vector<std::string> &param);
-	// Private Messagge Logic.
-	void privmsg(Client &client, const std::string &cmd, const std::vector<std::string> &param);
-	//__________________________ Channel Logic.
-	void join(Client &client, const std::string &cmd, const std::vector<std::string> &param);
-	void list(Client &client, const std::string &cmd, const std::vector<std::string> &param);
+		// File Message Logic.
+		// Bot Message Logic.
 
 	//_________________________CHANNEL MODES
 	void mode(Client &client, const std::string &cmd, const std::vector<std::string> &param);
@@ -97,11 +85,22 @@ public:
 	void joke(Client &client, const std::string &cmd, const std::vector<std::string> &param);
 	void math(Client &client, const std::string &cmd, const std::vector<std::string> &param);
 
-	// ________________________ CHANNEL MESSAGE.
-	void channelManager(Client const &client, std::string const &channelName);
-	void createChannel(std::string const &name);
-	bool findChannel(std::string const &channelName);
-	void listChannels();
+		//_________________________ File transfer
+		void fileTransfer(int const &clienteFd, std::string const &paht);
+		//_________________________ Bot.
+		void joke(Client &client, const std::string &cmd, const std::vector<std::string>&param);
+
+		// ________________________ CHANNEL MESSAGE.
+		void channelManager(Client const &client, std::string const &channelName);
+  		void createChannel(std::string const &name);
+ 		bool findChannel(std::string const &channelName);
+		void listChannels();
+
+		// ________________________ AUTHENTICATION.
+		std::string const &getPass() const;
+		int  connectionRegistration(Client &client, std::string &message);
+		void registerNewUser(Client &client, const std::string &cmd, const std::vector<std::string> &param);
+		int  commands(Client &client, std::string &message);
 
 	// ________________________ AUTHENTICATION.
 	std::string const &getPass() const;

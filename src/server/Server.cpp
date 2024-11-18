@@ -233,5 +233,8 @@ void Server::cleanClient(int fd) {
       break;
     }
   }
+<<<<<<< HEAD
   _clientBuffers.erase(fd);
+=======
+>>>>>>> issue13/checks
 }

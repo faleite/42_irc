@@ -34,8 +34,8 @@ protected:
   bool _isRegistered;
   bool _isOperator;
   bool _isBot;
-  // std::set<std::string> _channels; // structure to keeep track of the channels,
-                                   // in and unorder set.
+  std::string _buffer; // Resolved `Ctrl+D` issue.
+
 public:
   // Canonical Form.
   Client();
@@ -62,6 +62,7 @@ public:
   std::string const &getIp() const;
   int getPort() const;
   bool getIsBot(void) const;
+  std::string &getBuffer();
   // Setters.
   void setName(const std::string _name);
   void setNickName(const std::string _nick);
@@ -70,11 +71,11 @@ public:
   void setAuthenticated(bool _pass);
   void setIsBot(bool isBot);
   void setRegistered(const bool _register);
+  void setBuffer(const std::string &buffer);
 
   // Operating Functions.
   void joinChanel(const std::string &_chanel,
                   const std::string &password) const;
-  void leaveChanel(const std::string &_chanel) const;
   
   // Factory method
 

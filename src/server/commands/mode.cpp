@@ -7,8 +7,8 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
   std::string message1;
   bool isOnChan = false;
 
-  if (!isOnChannel(clientOperator->getNickName()))
-    throw(std::runtime_error("You are not part of this channel"));
+  // if (!isOnChannel(clientOperator->getNickName()))
+  //   throw(std::runtime_error("You are not part of this channel"));
 
   //__________________________ IF IS + WILL ADD THIS MODE OF THE CHANNEL.
   bool enable;
@@ -22,10 +22,10 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
     //_______________________________________ INVITATION MODE.
     case 'i':
       _needInvitation = enable;
-      message0 = ":server 324 " + clientOperator->getNickName() + " " + _name +
-                 " :Invite only mode set\r\n";
-      message1 = ":server 324 " + clientOperator->getNickName() + " " + _name +
-                 " :Invite only mode unset\r\n";
+      message0 = ":jf.irc 324 " + clientOperator->getNickName() + " " + _name +
+                 " :Invite only mode set";
+      message1 = ":jf.irc 324 " + clientOperator->getNickName() + " " + _name +
+                 " :Invite only mode unset";
       enable ? (broadcastMessage(message0, clientOperator),
                 clientOperator->getMessage(message0))
              : (broadcastMessage(message1, clientOperator),
@@ -42,7 +42,7 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
           {
             std::string message = ":server 324 " +
                                   clientOperator->getNickName() + " " + _name +
-                                  " :User limit set to " + params[2] + "\r\n";
+                                  " :User limit set to " + params[2];
 
             broadcastMessage(message, clientOperator);
             clientOperator->getMessage(message);
@@ -61,7 +61,7 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
       {
         limit = -1;
         std::string message = ":jf.irc 324 " + clientOperator->getNickName() +
-                              " " + _name + " :User limit removed\r\n";
+                              " " + _name + " :User limit removed";
 
         broadcastMessage(message, clientOperator);
       }
@@ -71,9 +71,9 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
       //____________________________________ ADD to the Replies after test .
       _restricTopic = enable;
       message0 = ":jf.irc 324 " + clientOperator->getNickName() + " " + _name +
-                 " :Topic restricted mode set\r\n";
+                 " :Topic restricted mode set";
       message1 = ":jf.irc 324 " + clientOperator->getNickName() + " " + _name +
-                 " :Topic restricted mode unset\r\n";
+                 " :Topic restricted mode unset";
       enable ? (broadcastMessage(message0, clientOperator),
                 clientOperator->getMessage(message0))
              : (broadcastMessage(message1, clientOperator),
@@ -95,17 +95,19 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
             setPrivilige((*iter), enable);
             std::string message =
                 ":jf.irc 381 " + clientOperator->getNickName() + " " + _name +
-                " :Operator privileges given to " + params[2] + "\r\n";
-            std::string message1 = ":You are now an IRC operator";
+                " :Operator privileges given to " + params[2];
+            // std::string message1 = ":You are now an IRC operator";
 
             std::string message2 =
                 ":jf.irc 381 " + clientOperator->getNickName() + " " + _name +
-                " :Operator privileges removed to " + params[2] + "\r\n";
-            std::string message3 = ":You are not more an IRC operator";
+                " :Operator privileges removed to " + params[2];
+            // std::string message3 = ":You are not more an IRC operator";
             enable ? (broadcastMessage(message, clientOperator),
-                      (*iter)->getMessage(message1))
+                      clientOperator->getMessage(message))
+                      // (*iter)->getMessage(message1))
                    : (broadcastMessage(message2, clientOperator),
-                      (*iter)->getMessage(message3));
+                      clientOperator->getMessage(message2));
+                      // (*iter)->getMessage(message3));
             break;
           }
         }
@@ -126,14 +128,14 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
         {
           _channelKey = params[2];
           std::string message = ":jf.irc 324 " + clientOperator->getNickName() +
-                                " " + _name + " :Password set\r\n";
+                                " " + _name + " :Password set";
           broadcastMessage(message, clientOperator);
           clientOperator->getMessage(message);
         }
         else
         {
           std::string message = ":jf.irc 461 " + clientOperator->getNickName() +
-                                " " + _name + " :Not enough parameters\r\n";
+                                " " + _name + " :Not enough parameters";
           clientOperator->getMessage(message);
           clientOperator->getMessage(Replies::ERR_NEEDMOREPARAMS("MODE +k"));
         }
@@ -142,7 +144,7 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
       {
         _channelKey.clear();
         std::string message = ":jf.irc 324 " + clientOperator->getNickName() +
-                              " " + _name + " :Password removed\r\n";
+                              " " + _name + " :Password removed";
         broadcastMessage(message, clientOperator);
       }
       break;

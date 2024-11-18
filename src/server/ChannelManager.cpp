@@ -30,7 +30,8 @@ void Server::privmsg(Client &client, const std::string &cmd,
   std::string mess = oss.str();
 
   if (param[0][0] == '#') {
-    if (this->_channels.find(param[0]) == this->_channels.end()) {
+    if ((this->_channels.find(param[0]) == this->_channels.end()) ||
+        !this->_channels[param[0]].isOnChannel(client.getNickName())) {
       client.getMessage(
           Replies::ERR_NOSUCHCHANNEL(client.getNickName(), param[0]));
       return;
@@ -89,18 +90,44 @@ void Server::mode(Client &client, const std::string &cmd,
   (void)cmd;
   std::cout << "hello :::::::::::: MOD COMMAND" << std::endl;
 
-  if (param.size() < 2 || param[1].empty())
-    return;
-  if (!client.getIsOperator())
+  if (param.size() < 2)
+  {
+    // client.getMessage(Replies::ERR_NEEDMOREPARAMS(param[0]));
+    return ;
+  }
+  if (!findChannel(param[0])) {
+    client.getMessage(Replies::ERR_NOSUCHCHANNEL(client.getNickName(), param[0]));
+    return ;
+  }
+  if (!_channels[param[0]].isOnChannel(client.getNickName())) {
+    client.getMessage(Replies::ERR_NOTONCHANNEL(param[0]));
+    return ;
+  }
+  if (!client.getIsOperator()) {
     client.getMessage(Replies::ERR_CHANOPRIVSNEEDED(param[0]));
-  if (findChannel(param[0])) {
-    _channels[param[0]].isOnChannel(client.getNickName())
-        ? _channels[param[0]].mode(&client, param[1], param)
-        : client.getMessage("You are not in the channel");
-  } else
-    client.getMessage("Channel not found");
+    return ;
+  }
+  _channels[param[0]].mode(&client, param[1], param);
 }
 
 //_____________________________________ LIMIT OF THE CHANNEL.
 
 //_________________Password.
+
+// void Server::mode(Client &client, const std::string &cmd,
+//                   const std::vector<std::string> &param) {
+
+//   (void)cmd;
+//   std::cout << "hello :::::::::::: MOD COMMAND" << std::endl;
+
+//   if (param.size() < 2 || param[1].empty())
+//     return;
+//   if (!client.getIsOperator())
+//     client.getMessage(Replies::ERR_CHANOPRIVSNEEDED(param[0]));
+//   if (findChannel(param[0])) {
+//     _channels[param[0]].isOnChannel(client.getNickName())
+//         ? _channels[param[0]].mode(&client, param[1], param)
+//         : client.getMessage("You are not in the channel");
+//   } else
+//     client.getMessage("Channel not found");
+// }

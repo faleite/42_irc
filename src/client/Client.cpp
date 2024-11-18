@@ -56,30 +56,11 @@ bool Client::getIsOperator(void) const { return (_isOperator); }
 std::string const &Client::getIp() const { return this->_ip; }
 int Client::getPort() const { return this->_port; }
 bool Client::getIsBot(void) const { return this->_isBot; }
-// Setter.
-
-void Client::setName(const std::string _name) { this->_name = _name; }
-void Client::setNickName(const std::string _nick) { this->_nickName = _nick; }
-void Client::setOperator(const bool _isOperator) {
-  this->_isOperator = _isOperator;
-}
-void Client::setAuthAttempted(bool _attempted) { 
-  this->_authAttempted = _attempted; 
-}
-void Client::setAuthenticated(const bool _pass) {
-  this->_isAuthenticated = _pass;
-}
-void Client::setRegistered(const bool _register) {
-  this->_isRegistered = _register;
-}
-
-void Client::setIsBot(bool isBot) { this->_isBot = isBot; }
-
 void Client::getMessage(std::string const &_message) const {
-  std::string msg = _message + "\r\n"; // Update
-  // file modification.
-  send(_clientSocket, msg.c_str(), msg.size(), 0); // Update
+  std::string msg = _message + "\r\n";
+  send(_clientSocket, msg.c_str(), msg.size(), 0);
 }
+std::string &Client::getBuffer() { return this->_buffer; }
 
 void Client::getFile(int serverSocket, std::string const &outputFilePath) {
   std::ofstream outputFile(outputFilePath.c_str(), std::ios::binary);
@@ -101,6 +82,28 @@ void Client::getFile(int serverSocket, std::string const &outputFilePath) {
     }
   }
 }
+
+// Setter.
+
+void Client::setName(const std::string _name) { this->_name = _name; }
+void Client::setNickName(const std::string _nick) { this->_nickName = _nick; }
+void Client::setOperator(const bool _isOperator) {
+  this->_isOperator = _isOperator;
+}
+void Client::setAuthAttempted(bool _attempted) { 
+  this->_authAttempted = _attempted; 
+}
+void Client::setAuthenticated(const bool _pass) {
+  this->_isAuthenticated = _pass;
+}
+void Client::setRegistered(const bool _register) {
+  this->_isRegistered = _register;
+}
+void Client::setIsBot(bool isBot) { this->_isBot = isBot; }
+void Client::setBuffer(const std::string &buffer) { this->_buffer = buffer; }
+
+
+
 
 // Are you in use?
 void Client::joinChanel(const std::string &_chanel,
