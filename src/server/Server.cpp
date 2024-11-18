@@ -4,7 +4,8 @@
 
 //_______________________________________: Constructor
 
-Server::Server(int const &port, std::string pass) : _port(port), _pass(pass) {
+Server::Server(int const &port, std::string pass) : _port(port), _pass(pass)
+{
   this->_sockfd = -1;
   commandMap[NICK] = &Server::nick;
   commandMap[USER] = &Server::user;
@@ -22,7 +23,8 @@ Server::Server(int const &port, std::string pass) : _port(port), _pass(pass) {
   commandMap[MATH] = &Server::math;
 }
 
-Server::Server() : _sockfd(-1), _port(0), _pass("") {
+Server::Server() : _sockfd(-1), _port(0), _pass("")
+{
   commandMap[NICK] = &Server::nick;
   commandMap[USER] = &Server::user;
   commandMap[PASS] = &Server::pass;
@@ -40,8 +42,10 @@ Server::Server() : _sockfd(-1), _port(0), _pass("") {
 
 Server::Server(const Server &copyObj) { *this = copyObj; }
 
-Server &Server::operator=(const Server &assignCopy) {
-  if (this != &assignCopy) {
+Server &Server::operator=(const Server &assignCopy)
+{
+  if (this != &assignCopy)
+  {
     this->_port = assignCopy._port;
     this->_pass = assignCopy._pass;
     this->_pfds = assignCopy._pfds;
@@ -54,9 +58,11 @@ Server &Server::operator=(const Server &assignCopy) {
 
 //_______________________________________: Destructor
 
-Server::~Server() {
+Server::~Server()
+{
   for (std::vector<Client *>::iterator it = _clients.begin();
-       it != _clients.end(); it++) {
+       it != _clients.end(); it++)
+  {
     delete *it;
   }
   this->_clients.clear();
@@ -70,16 +76,20 @@ Server *Server::instance = NULL;
 
 void Server ::stop() { this->_signal = true; }
 
-void Server::closeSignal(int sig) {
-  if (instance == NULL) {
+void Server::closeSignal(int sig)
+{
+  if (instance == NULL)
+  {
     std::cout << "No server to Shut Down" << std::endl;
     return;
   }
-  if (sig == SIGINT || sig == SIGQUIT) {
+  if (sig == SIGINT || sig == SIGQUIT)
+  {
     instance->stop();
   }
 }
-void Server::registerSignalHandler() {
+void Server::registerSignalHandler()
+{
   instance = this;
   signal(SIGINT, closeSignal);
   signal(SIGQUIT, closeSignal);
@@ -87,7 +97,8 @@ void Server::registerSignalHandler() {
 
 // Handle Server
 
-void Server::createSocket() {
+void Server::createSocket()
+{
   this->_signal = false;
   int optval = 1;
 
@@ -116,7 +127,8 @@ void Server::createSocket() {
   _pfds.push_back(pfd);
 }
 
-void Server::acceptClient() {
+void Server::acceptClient()
+{
   sockaddr_in client;
   socklen_t cliSize = sizeof(client);
 
@@ -152,15 +164,10 @@ void Server::acceptClient() {
    - Use `NICK <YourNickname>` to choose a nickname.\n");
 }
 
-void Server::initServer() {
+void Server::initServer()
+{
   this->createSocket();
 
-  // //___________________________________SET CHANNELS
-  // createChannel("#general");
-  // createChannel("#news");
-  // createChannel("#random");
-
-  // //___________________________________SET BOT
   Client *faleiteBot = new Client(-1, "FaleiteLegend");
   faleiteBot->setNickName("faleite");
   Client *juanBot = new Client(-1, "MasterTinxzYoda");
@@ -171,28 +178,20 @@ void Server::initServer() {
   faleiteBot->setOperator(true);
   _clients.push_back(juanBot);
   _clients.push_back(faleiteBot);
-  std::cout << "Bot :::: " << juanBot->getName() << std::endl;
-  std::cout << "Bot :::: " << faleiteBot->getName() << std::endl;
 
-  // //___________________________________SET CHANNELS BOTS.
-  // _channels["#general"].joinChannel(&juanBot, "");
-  // _channels["#random"].joinChannel(&juanBot, "");
-  // _channels["#news"].joinChannel(&juanBot, "");
-
-  // _channels["#general"].joinChannel(&faleiteBot, "");
-  // _channels["#random"].joinChannel(&faleiteBot, "");
-  // _channels["#news"].joinChannel(&faleiteBot, "");
-
-  while (!this->_signal) {
-    // negative timeout waits forever
+  while (!this->_signal)
+  {
     int events = poll(&_pfds[0], _pfds.size(), -1);
-    if (events == -1) {
+    if (events == -1)
+    {
       std::cout << "\nStop\n";
       close(_pfds[0].fd);
       break;
     }
-    for (size_t i = 0; i < _pfds.size(); i++) {
-      if (_pfds[i].revents & POLLIN) {
+    for (size_t i = 0; i < _pfds.size(); i++)
+    {
+      if (_pfds[i].revents & POLLIN)
+      {
         if (_pfds[i].fd == _sockfd)
           this->acceptClient();
         else
@@ -203,38 +202,43 @@ void Server::initServer() {
   closeFds();
 }
 
-void Server::closeFds() {
+void Server::closeFds()
+{
   for (std::vector<Client *>::iterator it = _clients.begin();
-       it != _clients.end(); it++) {
-    if ((*it)->getSocket() != -1) {
+       it != _clients.end(); it++)
+  {
+    if ((*it)->getSocket() != -1)
+    {
       std::cout << "Client has been disconnected :fd: " << (*it)->getSocket()
                 << std::endl;
       close((*it)->getSocket());
     }
   }
-  if (_sockfd != -1) {
+  if (_sockfd != -1)
+  {
     std::cout << "Server has been disconnected :fd: " << _sockfd << std::endl;
     close(_sockfd);
   }
 }
 
-void Server::cleanClient(int fd) {
+void Server::cleanClient(int fd)
+{
   for (std::vector<Client *>::iterator it = _clients.begin();
-       it != _clients.end(); it++) {
-    if ((*it)->getSocket() == fd) {
+       it != _clients.end(); it++)
+  {
+    if ((*it)->getSocket() == fd)
+    {
       it = _clients.erase(it);
       break;
     }
   }
   for (std::vector<pollfd>::iterator it = _pfds.begin(); it != _pfds.end();
-       it++) {
-    if (it->fd == fd) {
+       it++)
+  {
+    if (it->fd == fd)
+    {
       it = _pfds.erase(it);
       break;
     }
   }
-<<<<<<< HEAD
-  _clientBuffers.erase(fd);
-=======
->>>>>>> issue13/checks
 }

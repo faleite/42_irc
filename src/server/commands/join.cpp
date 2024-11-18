@@ -10,7 +10,7 @@ std::vector<std::string> channelsTokenization(const std::string &param)
 
     while (getline(iss, channel, ',')) {
         channels.push_back(channel);
-    }       
+    }
     return channels;
 }
 
