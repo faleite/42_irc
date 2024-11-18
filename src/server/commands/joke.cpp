@@ -44,7 +44,7 @@ void Server::joke(Client &client, const std::string &cmd,
     std::string compare = param[1];
     for (size_t i = 0; i < param[1].length(); ++i)
     {
-      compare[i] = std::toupper(newKey[i]);
+      compare[i] = std::toupper(compare[i]);
     }
     newKey.append("?");
     if (compare.size() == newKey.size())
