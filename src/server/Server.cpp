@@ -19,6 +19,7 @@ Server::Server(int const &port, std::string pass) : _port(port), _pass(pass) {
   commandMap[KICK] = &Server::kick;
   commandMap[PART] = &Server::part;
   commandMap[JOKE] = &Server::joke;
+  commandMap[MATH] = &Server::math;
 }
 
 Server::Server() : _sockfd(-1), _port(0), _pass("") {
@@ -34,6 +35,7 @@ Server::Server() : _sockfd(-1), _port(0), _pass("") {
   commandMap[KICK] = &Server::kick;
   commandMap[PART] = &Server::part;
   commandMap[JOKE] = &Server::joke;
+  commandMap[MATH] = &Server::math;
 }
 
 Server::Server(const Server &copyObj) { *this = copyObj; }

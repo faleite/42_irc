@@ -23,6 +23,7 @@ SRC := main.cpp \
 	  server/commands/registerUser.cpp \
 	  server/commands/topic.cpp \
 	  server/commands/joke.cpp \
+	  server/commands/math.cpp \
 	  replies/Replies.cpp \
 
 OBJ := $(SRC:.cpp=.o)

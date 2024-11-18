@@ -10,11 +10,11 @@ public:
   Galois();
   ~Galois();
 
-  std::string getResponseMath(std::string const &_response);
-  std::string getResponseJoke(std::string const &_response);
+  std::string getResponseMath(std::string const &_url);
+  std::string getResponseJoke(std::string const &_url);
 
   //_______ Getter.
   std::string getSetUp();
   std::string getPunchLine();
-  
+
 };

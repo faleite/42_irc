@@ -7,40 +7,49 @@
 // void Server::joke(Client &client, const std::string &cmd,
 //                   const std::vector<std::string> &param) {
 //   std::string url = "http://official-joke-api.appspot.com/jokes/random";
-//   (void)cmd;
-//   HTTPClient joke;
-//   //
 //   joke.getResponseJoke("http://official-joke-api.appspot.com/jokes/random");
 
-//   if (param.size() == 1) {
-//     std::string response = joke.getResponseJoke(url);
-//     //   std::string response = client.get(url);
-//     if (response.empty()) {
-//       std::cout << "Failed to retrieve the response." << std::endl;
-//     } else {
-//       std::cout << "Response received: " << std::endl;
-//       std::cout << response << std::endl; // Display the raw response
-//     }
-//     client.getMessage("FaleiteBot : ");
-//   } else {
-//     if (param[0] == "more") {
-//       client.getMessage("FaleiteBot : ");
-//     }
-//   }
-// }
 
 void Server::joke(Client &client, const std::string &cmd,
-                  const std::vector<std::string> &param) {
+                  const std::vector<std::string> &param)
+{
   std::string url = "http://official-joke-api.appspot.com/jokes/random";
   (void)cmd;
   static std::string punchLine;
+  static std::string keyWord;
+  static bool jokeRequested = false;
+
   Galois joke;
-  if (param.size() == 0) {
+  if (param.size() == 0)
+  {
+    return;
+  }
+  if (param.size() == 1 && !param[0].empty() && param[0] == "faleiBot")
+  {
+    jokeRequested = true;
     std::string message = joke.getResponseJoke(url);
     std::string setUp = joke.getSetUp();
+    keyWord = setUp.substr(0, setUp.find(" "));
     punchLine = joke.getPunchLine();
-    client.getMessage(joke.getSetUp());
+    client.getMessage("faleiBot : " + joke.getSetUp());
   }
-  else
-    client.getMessage("faleite : " + punchLine);
+  if (param.size() == 2 && param[0] == "faleiBot" && !param[1].empty() &&
+           jokeRequested)
+  {
+    std::string newKey = keyWord;
+    for (size_t i = 0; i < newKey.length(); ++i)
+    {
+      newKey[i] = std::toupper(newKey[i]);
+    }
+    std::string compare = param[1];
+    for (size_t i = 0; i < param[1].length(); ++i)
+    {
+      compare[i] = std::toupper(newKey[i]);
+    }
+    newKey.append("?");
+    if (compare.size() == newKey.size())
+    {
+      client.getMessage("faleiBot : " + punchLine);
+    }
+  }
 }

@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <stdio.h>
 
 //____________________ Constructor and destructor.
 
@@ -80,5 +81,6 @@ std::string HTTPClient::get(const std::string &_url) {
 
   //_____________ Close
   close(sockFd);
+  freeaddrinfo(res);
   return response;
 }
