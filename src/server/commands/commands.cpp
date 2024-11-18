@@ -123,7 +123,7 @@ int validCommand(const std::string &cmd)
 {
   static const char* validComands[] = {
       JOIN, KICK, INVITE, LIST, MODE, PRIVMSG, SEND, PART,
-      PASS, NICK, USER, QUIT, CAP, WHO, TOPIC, JOKE
+      PASS, NICK, USER, QUIT, CAP, WHO, TOPIC, JOKE, MATH
   };
 
   for (size_t i = 0; i < sizeof(validComands) / sizeof(validComands[0]); ++i) {
