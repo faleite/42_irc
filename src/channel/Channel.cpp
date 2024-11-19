@@ -8,7 +8,7 @@
 
 Channel::Channel()
 {
-  std::cout << "The Channel < " << " > was created" << std::endl;
+  // std::cout << "The Channel < " << " > was created" << std::endl;
 }
 Channel::Channel(std::string const &name)
     : _needInvitation(false), _needVerification(false), _channelKey(""),
@@ -20,7 +20,9 @@ Channel::Channel(std::string const &name)
 
 //_______________________________________: Destructor
 
-Channel::~Channel() { std::cout << "Channel Destroyed" << std::endl; }
+Channel::~Channel() { 
+  // std::cout << "Channel Destroyed" << std::endl; 
+}
 
 //_______________________________________: Getter.
 

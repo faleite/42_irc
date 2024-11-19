@@ -8,20 +8,18 @@
 Client::Client()
     : _clientSocket(-1), _ip(""), _port(0), _name(""), _nickName(""), _authAttempted(false), 
     _isAuthenticated(false), _isRegistered(false), _isOperator(false), _isBot(false) {
-  std::cout << "Default Client Constructor Called" << std::endl; // Tolk
-  // about it
+  // std::cout << "Default Client Constructor Called" << std::endl;
 }
 
 Client::Client(int clientSocket, std::string const &name)
   : _clientSocket(clientSocket), _ip(""), _port(0), _name(name), _nickName(""), _authAttempted(false), 
   _isAuthenticated(false), _isRegistered(false), _isOperator(false), _isBot(false) {
-  std::cout << "Name Client Constructor Called" << std::endl; // Tolk
+  // std::cout << "Name Client Constructor Called" << std::endl;
 }
 Client::Client(int clientSoket, std::string ip, int port)
   : _clientSocket(clientSoket), _ip(ip), _port(port), _name(""), _nickName(""), _authAttempted(false), 
   _isAuthenticated(false), _isRegistered(false), _isOperator(false), _isBot(false) {
-  // std::cout << "Client Socket Constructor Connected" << std::endl; // Tolk
-  // about it
+  // std::cout << "Client Socket Constructor Connected" << std::endl; 
 }
 
 Client::Client(const Client &copyObj) { *this = copyObj; }
@@ -42,7 +40,7 @@ Client &Client::operator=(const Client &assignCopy) {
 }
 
 Client::~Client() {
-} // { std::cout << "Client Destroyed" << std::endl; }; // Tolk about it
+} // { std::cout << "Client Destroyed" << std::endl; };
 
 // Getter.
 
@@ -101,17 +99,3 @@ void Client::setRegistered(const bool _register) {
 }
 void Client::setIsBot(bool isBot) { this->_isBot = isBot; }
 void Client::setBuffer(const std::string &buffer) { this->_buffer = buffer; }
-
-
-
-
-// Are you in use?
-void Client::joinChanel(const std::string &_chanel,
-                        const std::string &password = "") const {
-  std::string command;
-  command = "JOIN " + _chanel;
-  if (password.empty() == false) {
-    command += " " + password;
-  }
-  getMessage(command);
-}

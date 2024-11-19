@@ -73,7 +73,7 @@ std::string Replies::ERR_PASSWDMISMATCH() {
 
 std::string Replies::ERR_NOTREGISTERED() {
   return (":jf.irc 451 * :You need to register before you can use that "
-          "command"); // ":You have not registered"
+          "command");
 }
 
 std::string Replies::ERR_ALREADYREGISTRED() {
@@ -88,13 +88,8 @@ std::string Replies::ERR_NICKNAMEINUSE(const std::string &nick) {
 std::string Replies::RPL_WELCOME(const std::string &nick,
                                  const std::string &user,
                                  const std::string &channel_name) {
-  // Opcion 1.
   return std::string(":") + nick + "!" + user + "@localhoost" + " JOIN " +
          channel_name + " * :" + user;
-
-  // Opcion 2.
-  // return std::string(":jf.irc 433") + nick + "!" + user + "@localhoost" +
-  //        " JOIN " + channel_name + " * :" + user + "\r\n";
 }
 
 /**
@@ -172,10 +167,7 @@ std::string Replies::JOIN_CHANNEL(const std::string &nick,
  */
 std::string
 Replies::RPL_NAMREPLY(const std::string &nick, const std::string &channel,
-                      const std::string &type) { // = (public (default))
-  // return std::string(":jf.irc 353 " + nick + type + channel + " :@" + nick +
-  // "!" + is_operator + "@localhoost"); return std::string(":jf.irc 353 " +
-  // nick + " " + type + " " + channel + " :" + is_operator + nick);
+                      const std::string &type) {
   return std::string(":jf.irc 353 " + nick + " " + type + " " + channel + " :");
 }
 

@@ -40,13 +40,13 @@ void Server::join(Client &client, const std::string &cmd,
     }
     std::map<std::string, Channel>::iterator it = _channels.find(channels[i]);
     if (it != _channels.end()) {
-      std::cout << ":::::::: Channel Found :::::::: " << channels[i]
-                << std::endl;
+      // std::cout << ":::::::: Channel Found :::::::: " << channels[i]
+      //           << std::endl;
       (param.size() > 1) ? _channels[channels[i]].joinChannel(&client, param[1])
                          : _channels[channels[i]].joinChannel(&client, "");
     } else {
-      std::cout << "::::::: Creating Channel ::::::: " << channels[i]
-                << std::endl;
+      // std::cout << "::::::: Creating Channel ::::::: " << channels[i]
+                // << std::endl;
       createChannel(channels[i]);
       it = _channels.find(channels[i]);
       it->second.joinChannel(&client, "");

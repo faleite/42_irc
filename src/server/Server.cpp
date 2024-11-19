@@ -105,7 +105,7 @@ void Server::createSocket()
   sockaddr_in servAddr;
   servAddr.sin_family = AF_INET;
   servAddr.sin_addr.s_addr =
-      INADDR_ANY; // Accepts connections on any network interface
+      INADDR_ANY;
   servAddr.sin_port = htons(_port);
 
   _sockfd = socket(AF_INET, SOCK_STREAM, 0);

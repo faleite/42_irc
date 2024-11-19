@@ -1,9 +1,5 @@
 #include "../Server.hpp"
 
-//___________Invite to a channel
-// Command : IVITE <#channel> <user>
-// invite username #channelname
-
 void Server::invite(Client &client, const std::string &cmd,
                     const std::vector<std::string> &param)
 {

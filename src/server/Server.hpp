@@ -1,9 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-// #include "../channel/Channel.hpp"
 #include "../client/Client.hpp"
-#include "../file/File.hpp"
 #include "../client/HTTPClient.hpp"
 #include "../replies/Replies.hpp"
 #include "../client/Galois.hpp"
@@ -42,7 +40,7 @@ private:
 	std::vector<struct pollfd> _pfds;
 	static Server *instance;
 	bool _signal;
-	std::map<std::string, Channel> _channels; // structure to keeep track of the channels,
+	std::map<std::string, Channel> _channels;
 public:
 	Server();
 	Server(const Server &copyObj);
@@ -65,9 +63,6 @@ public:
 	void sendWelcomeMessage(Client newClient);
 	std::string getMessage(int fd);
 	void handleMessage(int fd);
-
-	// File Message Logic.
-	// Bot Message Logic.
 
 	// ________________________ COMMANDS HANDLER.
 	void pass(Client &client, const std::string &cmd, const std::vector<std::string> &param);
@@ -94,14 +89,9 @@ public:
 	void math(Client &client, const std::string &cmd, const std::vector<std::string> &param);
 	void joke(Client &client, const std::string &cmd, const std::vector<std::string> &param);
 
-	//_________________________ File transfer
-	void fileTransfer(int const &clienteFd, std::string const &paht);
-
 	// ________________________ CHANNEL MESSAGE.
-	void channelManager(Client const &client, std::string const &channelName);
 	void createChannel(std::string const &name);
 	bool findChannel(std::string const &channelName);
-	void listChannels();
 
 	// ________________________ AUTHENTICATION.
 	std::string const &getPass() const;

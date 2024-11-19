@@ -1,7 +1,6 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-// #include "../communicator/Communicator.hpp"
 #include <algorithm>
 #include <fstream>
 #include <arpa/inet.h>
@@ -21,7 +20,6 @@
 #include <map>
 #include <set>
 
-// class Client : public Communicator {
 class Client {
 protected:
   int _clientSocket;
@@ -34,7 +32,7 @@ protected:
   bool _isRegistered;
   bool _isOperator;
   bool _isBot;
-  std::string _buffer; // Resolved `Ctrl+D` issue.
+  std::string _buffer;
 
 public:
   // Canonical Form.
@@ -46,7 +44,6 @@ public:
   Client &operator=(const Client &assignCopy);
 
   // Function Create Client.
-  // Virtual Class functions.
   void getMessage(std::string const &_message) const;
   void createConnection() const {}
   void closeConnection() const {}
@@ -73,17 +70,6 @@ public:
   void setRegistered(const bool _register);
   void setBuffer(const std::string &buffer);
 
-  // Operating Functions.
-  void joinChanel(const std::string &_chanel,
-                  const std::string &password) const;
-  
-  // Factory method
-
-  // setters
 };
-
-Client *createRandomClient(int clientSocket);
-
-
 
 #endif

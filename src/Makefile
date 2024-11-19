@@ -8,9 +8,7 @@ SRC := main.cpp \
 	  client/Client.cpp \
 	  client/Galois.cpp \
 	  client/HTTPClient.cpp\
-	  file/File.cpp \
 	  server/Server.cpp \
-	  server/messageUtils.cpp\
 	  server/handleMessage.cpp\
 	  server/registerClient.cpp \
 	  server/ChannelManager.cpp \

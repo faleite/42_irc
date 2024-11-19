@@ -1,25 +1,11 @@
 #include "../Server.hpp"
 
-// KICK <channel> <nickname>
-//______________________________________ KICK.
-// command : TOPIC <#CHANNEL> <nickname>.
-// EX :      KICK #GENERAL user1
-// EX :      KICK #channelname usernickname Reason
-// Param : 3 param[0] para[1] param[2]
-// What we handle.
-
-// Remove the client from the channel
-
 void Channel::leaveChannel(Client *client) {
   std::vector<Client *>::iterator it =
       std::find(channelUsers.begin(), channelUsers.end(), client);
   if (it != channelUsers.end()) {
     channelUsers.erase(it);
   }
-
-  // treat when channel gets empty.
-  // if (channelUsers.empty())
-  //   _active = false;
 }
 
 

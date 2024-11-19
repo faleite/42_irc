@@ -88,8 +88,6 @@ void Server::mode(Client &client, const std::string &cmd,
                   const std::vector<std::string> &param) {
 
   (void)cmd;
-  std::cout << "hello :::::::::::: MOD COMMAND" << std::endl;
-
   if (param.size() < 2)
   {
     // client.getMessage(Replies::ERR_NEEDMOREPARAMS(param[0]));
@@ -109,25 +107,3 @@ void Server::mode(Client &client, const std::string &cmd,
   }
   _channels[param[0]].mode(&client, param[1], param);
 }
-
-//_____________________________________ LIMIT OF THE CHANNEL.
-
-//_________________Password.
-
-// void Server::mode(Client &client, const std::string &cmd,
-//                   const std::vector<std::string> &param) {
-
-//   (void)cmd;
-//   std::cout << "hello :::::::::::: MOD COMMAND" << std::endl;
-
-//   if (param.size() < 2 || param[1].empty())
-//     return;
-//   if (!client.getIsOperator())
-//     client.getMessage(Replies::ERR_CHANOPRIVSNEEDED(param[0]));
-//   if (findChannel(param[0])) {
-//     _channels[param[0]].isOnChannel(client.getNickName())
-//         ? _channels[param[0]].mode(&client, param[1], param)
-//         : client.getMessage("You are not in the channel");
-//   } else
-//     client.getMessage("Channel not found");
-// }

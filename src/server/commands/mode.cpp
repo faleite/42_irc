@@ -1,14 +1,11 @@
 #include "../Server.hpp"
-// void Channel::modeLimit(int limit, bool enable) {}
+
 void Channel::mode(Client *clientOperator, std::string const &modeCmd,
                    std::vector<std::string> params)
 {
   std::string message0;
   std::string message1;
   bool isOnChan = false;
-
-  // if (!isOnChannel(clientOperator->getNickName()))
-  //   throw(std::runtime_error("You are not part of this channel"));
 
   //__________________________ IF IS + WILL ADD THIS MODE OF THE CHANNEL.
   bool enable;
@@ -96,18 +93,14 @@ void Channel::mode(Client *clientOperator, std::string const &modeCmd,
             std::string message =
                 ":jf.irc 381 " + clientOperator->getNickName() + " " + _name +
                 " :Operator privileges given to " + params[2];
-            // std::string message1 = ":You are now an IRC operator";
 
             std::string message2 =
                 ":jf.irc 381 " + clientOperator->getNickName() + " " + _name +
                 " :Operator privileges removed to " + params[2];
-            // std::string message3 = ":You are not more an IRC operator";
             enable ? (broadcastMessage(message, clientOperator),
                       clientOperator->getMessage(message))
-                      // (*iter)->getMessage(message1))
                    : (broadcastMessage(message2, clientOperator),
                       clientOperator->getMessage(message2));
-                      // (*iter)->getMessage(message3));
             break;
           }
         }

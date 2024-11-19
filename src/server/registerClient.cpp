@@ -55,7 +55,6 @@ int Server::connectionRegistration(Client &client, std::string &message)
 
 int checkInvalidCommand(const std::string &cmd)
 {
-  // See if exist others commands already
   if (cmd == JOIN || cmd == KICK || cmd == INVITE || cmd == LIST 
       || cmd == MODE || cmd == PRIVMSG || cmd == SEND || cmd == PART)
     return (1);
