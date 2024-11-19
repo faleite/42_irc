@@ -6,30 +6,25 @@
 
 // ________ Constructors ________
 Client::Client()
-    : isWelcome(false), _clientSocket(-1), _ip(""), _port(0), _name(""),
-      _nickName(""), _authAttempted(false), _isAuthenticated(false),
-      _isOperator(false), _isBot(false) {
-  std::cout << "Default Client Constructor Called" << std::endl; // Tolk
-  // about it
+    : _clientSocket(-1), _ip(""), _port(0), _name(""), _nickName(""), _authAttempted(false), 
+    _isAuthenticated(false), _isRegistered(false), _isOperator(false), _isBot(false) {
+  // std::cout << "Default Client Constructor Called" << std::endl;
 }
 
 Client::Client(int clientSocket, std::string const &name)
-    : isWelcome(false), _clientSocket(clientSocket), _ip(""), _port(0),
-      _name(name), _nickName(name), _isOperator(true), _isBot(false) {
-  std::cout << "Name Client Constructor Called" << std::endl; // Tolk
+  : _clientSocket(clientSocket), _ip(""), _port(0), _name(name), _nickName(""), _authAttempted(false), 
+  _isAuthenticated(false), _isRegistered(false), _isOperator(false), _isBot(false) {
+  // std::cout << "Name Client Constructor Called" << std::endl;
 }
 Client::Client(int clientSoket, std::string ip, int port)
-    : isWelcome(false), _clientSocket(clientSoket), _ip(ip), _port(port),
-      _name(""), _nickName(""), _authAttempted(false), _isAuthenticated(false),
-      _isOperator(false) {
-  // std::cout << "Client Socket Constructor Connected" << std::endl; // Tolk
-  // about it
+  : _clientSocket(clientSoket), _ip(ip), _port(port), _name(""), _nickName(""), _authAttempted(false), 
+  _isAuthenticated(false), _isRegistered(false), _isOperator(false), _isBot(false) {
+  // std::cout << "Client Socket Constructor Connected" << std::endl; 
 }
 
 Client::Client(const Client &copyObj) { *this = copyObj; }
 Client &Client::operator=(const Client &assignCopy) {
   if (this != &assignCopy) {
-    this->isWelcome = assignCopy._isOperator;
     this->_clientSocket = assignCopy._clientSocket;
     this->_ip = assignCopy._ip;
     this->_port = assignCopy._port;
@@ -37,13 +32,15 @@ Client &Client::operator=(const Client &assignCopy) {
     this->_nickName = assignCopy._nickName;
     this->_authAttempted = assignCopy._authAttempted;
     this->_isAuthenticated = assignCopy._isAuthenticated;
+    this->_isRegistered = assignCopy._isRegistered;
     this->_isOperator = assignCopy._isOperator;
+    this->_isBot = assignCopy._isBot;
   }
   return *this;
 }
 
 Client::~Client() {
-} // { std::cout << "Client Destroyed" << std::endl; }; // Tolk about it
+} // { std::cout << "Client Destroyed" << std::endl; };
 
 // Getter.
 
@@ -51,33 +48,17 @@ int Client::getSocket(void) const { return (_clientSocket); }
 std::string const &Client::getName(void) const { return (_name); }
 std::string const &Client::getNickName(void) const { return (_nickName); }
 bool Client::getAuthenticator(void) const { return (_isAuthenticated); }
+bool Client::getAuthAttempted() const { return _authAttempted; }
+bool Client::getRegistered() const { return _isRegistered; }
 bool Client::getIsOperator(void) const { return (_isOperator); }
 std::string const &Client::getIp() const { return this->_ip; }
 int Client::getPort() const { return this->_port; }
 bool Client::getIsBot(void) const { return this->_isBot; }
-// Setter.
-
-void Client::setName(const std::string _name) { this->_name = _name; }
-void Client::setNickName(const std::string _nick) { this->_nickName = _nick; }
-void Client::setOperator(const bool _isOperator) {
-  this->_isOperator = _isOperator;
-}
-
-bool Client::getIsWelcome() const {return isWelcome;}
-bool Client::getAuthAttempted() const { return _authAttempted; }
-void Client::setAuthAttempted(bool _attempted) { _authAttempted = _attempted; }
-void Client::setAuthenticated(const bool _pass) {
-  this->_isAuthenticated = _pass;
-}
-void Client::setIsWelcome(bool welcome) { this->isWelcome = welcome; }
-
-void Client::setIsBot(bool isBot) { this->_isBot = isBot; }
-
 void Client::getMessage(std::string const &_message) const {
-  std::string msg = _message + "\r\n"; // Update
-  // file modification.
-  send(_clientSocket, msg.c_str(), msg.size(), 0); // Update
+  std::string msg = _message + "\r\n";
+  send(_clientSocket, msg.c_str(), msg.size(), 0);
 }
+std::string &Client::getBuffer() { return this->_buffer; }
 
 void Client::getFile(int serverSocket, std::string const &outputFilePath) {
   std::ofstream outputFile(outputFilePath.c_str(), std::ios::binary);
@@ -99,12 +80,22 @@ void Client::getFile(int serverSocket, std::string const &outputFilePath) {
     }
   }
 }
-void Client::joinChanel(const std::string &_chanel,
-                        const std::string &password = "") const {
-  std::string command;
-  command = "JOIN " + _chanel;
-  if (password.empty() == false) {
-    command += " " + password;
-  }
-  getMessage(command);
+
+// Setter.
+
+void Client::setName(const std::string _name) { this->_name = _name; }
+void Client::setNickName(const std::string _nick) { this->_nickName = _nick; }
+void Client::setOperator(const bool _isOperator) {
+  this->_isOperator = _isOperator;
 }
+void Client::setAuthAttempted(bool _attempted) { 
+  this->_authAttempted = _attempted; 
+}
+void Client::setAuthenticated(const bool _pass) {
+  this->_isAuthenticated = _pass;
+}
+void Client::setRegistered(const bool _register) {
+  this->_isRegistered = _register;
+}
+void Client::setIsBot(bool isBot) { this->_isBot = isBot; }
+void Client::setBuffer(const std::string &buffer) { this->_buffer = buffer; }

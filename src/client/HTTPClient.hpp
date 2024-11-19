@@ -4,13 +4,17 @@
 #include <string>
 
 class HTTPClient {
-public:
-    HTTPClient();
-    ~HTTPClient();
-    std::string get(const std::string& url);
 private:
-    std::string extractHost(const std::string& url);
-    std::string extractPath(const std::string& url);
+  std::string path;
+  std::string host;
+  std::string protocol;
+  void extractHost(std::string const &_url);
+  void extractPath(std::string const &_url);
+
+public:
+  HTTPClient();
+  ~HTTPClient();
+  std::string get(std::string const &_url);
 };
 
-#endif // HTTPCLIENT_HPP
+#endif
