@@ -12,8 +12,7 @@
 
  Skills | Grade |
 :------:|:-----:|
-[**Network & system administration**] [**Object-oriented programming**] [**Unix**] [**Rigor**] | *Subscribed* |
-<!-- **:white_check_mark: 100%** -->
+[**Network & system administration**] [**Object-oriented programming**] [**Unix**] [**Rigor**] | **:white_check_mark: 125%**
 
 * **[Mandatory part](#mandatory-part)**
 * **[Study resources](#study-resources)**
